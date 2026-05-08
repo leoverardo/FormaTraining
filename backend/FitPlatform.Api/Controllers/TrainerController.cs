@@ -1,0 +1,72 @@
+using FitPlatform.Application.DTOs.Subscription;
+using FitPlatform.Application.DTOs.Trainer;
+using FitPlatform.Application.Interfaces;
+using FitPlatform.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FitPlatform.Api.Controllers;
+
+[ApiController]
+[Route("api/trainer")]
+[Authorize(Roles = "Trainer")]
+public class TrainerController : ControllerBase
+{
+    private readonly TrainerService _service;
+    private readonly ICurrentUserService _currentUser;
+
+    public TrainerController(TrainerService service, ICurrentUserService currentUser)
+    {
+        _service = service;
+        _currentUser = currentUser;
+    }
+
+    [HttpGet("dashboard")]
+    public async Task<IActionResult> Dashboard()
+    {
+        var result = await _service.GetDashboardAsync(_currentUser.TrainerId!.Value);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        var result = await _service.GetProfileAsync(_currentUser.TrainerId!.Value);
+        return result.Success ? Ok(result) : NotFound(result);
+    }
+
+    [HttpPut("profile")]
+    public async Task<IActionResult> UpdateProfile([FromBody] TrainerProfileRequest request)
+    {
+        var result = await _service.UpdateProfileAsync(_currentUser.TrainerId!.Value, request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet("subscription")]
+    public async Task<IActionResult> GetSubscription()
+    {
+        var result = await _service.GetSubscriptionAsync(_currentUser.TrainerId!.Value);
+        return result.Success ? Ok(result) : NotFound(result);
+    }
+
+    [HttpPost("subscription/create")]
+    public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionRequest request, [FromServices] PaymentService paymentService)
+    {
+        var result = await paymentService.CreateSubscriptionAsync(_currentUser.TrainerId!.Value, request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("subscription/simulate-approved")]
+    public async Task<IActionResult> SimulateApproved([FromServices] PaymentService paymentService)
+    {
+        var result = await paymentService.SimulateApprovedAsync(_currentUser.TrainerId!.Value);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("subscription/simulate-expired")]
+    public async Task<IActionResult> SimulateExpired([FromServices] PaymentService paymentService)
+    {
+        var result = await paymentService.SimulateExpiredAsync(_currentUser.TrainerId!.Value);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+}

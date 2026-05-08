@@ -1,0 +1,76 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { trainerService } from '../../services/trainerService';
+import { LoadingState } from '../../components/ui/LoadingState';
+import { Button } from '../../components/ui/Button';
+import { PageContainer } from '../../components/ui/PageContainer';
+import { ContentGrid } from '../../components/ui/ContentGrid';
+import { SectionCard } from '../../components/ui/SectionCard';
+import { StatCard } from '../../components/ui/StatCard';
+import { FeedCard } from '../../components/social/FeedCard';
+import { PostComposer } from '../../components/social/PostComposer';
+import { mapPostToFeedItem, mockFeedFallback } from '../../features/feed/feedAdapter';
+import { useAuth } from '../../contexts/AuthContext';
+import { Plus, Users, ClipboardList, FileText, AlertTriangle, Globe } from 'lucide-react';
+
+export function TrainerDashboard() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    trainerService.getDashboard().then((r) => setData(r.data.data)).finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <LoadingState />;
+  if (!data) return null;
+
+  const feed = (data.recentPosts || []).map((post) => mapPostToFeedItem(post, { name: user?.name || 'Personal', role: 'Trainer' }));
+
+  return (
+    <PageContainer className="space-y-5">
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_32px_rgba(15,23,42,0.08)]">
+        <div className="flex flex-wrap gap-3 items-start justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Painel do personal</h1>
+            <p className="text-sm text-slate-500 mt-1">Resumo da consultoria e ações rápidas.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" onClick={() => navigate('/trainer/students')}><Plus size={14} />Novo aluno</Button>
+            <Button size="sm" variant="outline" onClick={() => navigate('/trainer/workouts')}>Novo treino</Button>
+            <Button size="sm" variant="outline" onClick={() => navigate('/trainer/public-page')}><Globe size={14} />Página pública</Button>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <StatCard icon={Users} title="Alunos ativos" value={data.activeStudents} />
+        <StatCard icon={ClipboardList} title="Treinos criados" value={data.totalWorkouts} />
+        <StatCard icon={FileText} title="Conteúdos" value={data.totalPublishedPosts || 0} />
+        <StatCard icon={AlertTriangle} title="Check-ins pendentes" value={data.pendingCheckIns || 0} />
+      </div>
+
+      <ContentGrid>
+        <div className="lg:col-span-8 space-y-4">
+          <PostComposer onCreate={() => navigate('/trainer/posts')} />
+          <SectionCard title="Atividade recente" description="Publicações e interações dos alunos">
+            <div className="space-y-3">{(feed.length ? feed : mockFeedFallback).map((item) => <FeedCard key={item.id} item={item} />)}</div>
+          </SectionCard>
+        </div>
+        <div className="lg:col-span-4 space-y-4">
+          <SectionCard title="Gestão rápida">
+            <div className="grid grid-cols-1 gap-2">
+              <Button variant="outline" onClick={() => navigate('/trainer/students')}>Gerenciar alunos</Button>
+              <Button variant="outline" onClick={() => navigate('/trainer/workouts')}>Gerenciar treinos</Button>
+              <Button variant="outline" onClick={() => navigate('/trainer/posts')}>Gerenciar conteúdos</Button>
+              <Button variant="outline" onClick={() => navigate('/trainer/public-page')}>Editar página pública</Button>
+            </div>
+          </SectionCard>
+        </div>
+      </ContentGrid>
+    </PageContainer>
+  );
+}
+
+
