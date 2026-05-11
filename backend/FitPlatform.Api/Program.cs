@@ -63,10 +63,12 @@ builder.Services.AddScoped<StudentMonitoringService>();
 builder.Services.AddScoped<ExerciseLibraryService>();
 builder.Services.AddScoped<InternalNotesService>();
 builder.Services.AddScoped<PublicPageService>();
+builder.Services.AddScoped<TrainerLeadService>();
 builder.Services.AddScoped<ReportsService>();
 builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<FeedBuilderService>();
 builder.Services.AddScoped<FeedSocialService>();
+builder.Services.AddScoped<ExploreService>();
 builder.Services.AddScoped<OwnerDashboardService>();
 
 builder.Services.AddScoped<LocalStorageService>();
@@ -125,10 +127,21 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("StartupMigration");
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
+
+    await EnsureTrainerExploreColumnsAsync(db, logger);
+
     await DatabaseSeeder.SeedAsync(db);
-    await DatabaseSeeder.EnrichExistingDataAsync(db);
+    try
+    {
+        await DatabaseSeeder.EnrichExistingDataAsync(db);
+    }
+    catch (Exception ex)
+    {
+        logger.LogWarning(ex, "Database enrichment skipped due to schema mismatch or transient issue.");
+    }
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -146,3 +159,26 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static async Task EnsureTrainerExploreColumnsAsync(AppDbContext db, ILogger logger)
+{
+    try
+    {
+        await db.Database.ExecuteSqlRawAsync(@"
+IF COL_LENGTH('Trainers', 'AcceptingStudents') IS NULL
+    ALTER TABLE [Trainers] ADD [AcceptingStudents] bit NOT NULL CONSTRAINT [DF_Trainers_AcceptingStudents] DEFAULT(1);
+IF COL_LENGTH('Trainers', 'PublicSearchEnabled') IS NULL
+    ALTER TABLE [Trainers] ADD [PublicSearchEnabled] bit NOT NULL CONSTRAINT [DF_Trainers_PublicSearchEnabled] DEFAULT(0);
+IF COL_LENGTH('Trainers', 'Latitude') IS NULL
+    ALTER TABLE [Trainers] ADD [Latitude] float NULL;
+IF COL_LENGTH('Trainers', 'Longitude') IS NULL
+    ALTER TABLE [Trainers] ADD [Longitude] float NULL;
+IF COL_LENGTH('Trainers', 'ServiceMode') IS NULL
+    ALTER TABLE [Trainers] ADD [ServiceMode] nvarchar(50) NULL;
+");
+    }
+    catch (Exception ex)
+    {
+        logger.LogWarning(ex, "Could not ensure explore columns in Trainers table at startup.");
+    }
+}

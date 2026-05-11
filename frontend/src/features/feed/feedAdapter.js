@@ -7,8 +7,15 @@ export function mapPostToFeedItem(post, authorFallback = {}) {
   if (post.imageUrl) media.push({ type: 'image', url: post.imageUrl, alt: post.title || 'Imagem do post' });
   if (post.videoUrl) media.push({ type: 'video', url: post.videoUrl, alt: post.title || 'Vídeo do post' });
 
+  const resolvedId =
+    post.id
+    ?? post.postId
+    ?? post.notificationId
+    ?? post.relatedEntityId
+    ?? `${post.type || post.relatedEntityType || 'item'}-${post.createdAt || Date.now()}-${post.title || ''}`;
+
   return {
-    id: String(post.id),
+    id: String(resolvedId),
     authorName: authorFallback.name || 'Personal Trainer',
     authorAvatarUrl: authorFallback.avatarUrl || '',
     authorRole: authorFallback.role || 'Trainer',

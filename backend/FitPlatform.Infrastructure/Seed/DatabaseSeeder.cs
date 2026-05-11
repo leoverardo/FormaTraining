@@ -1,6 +1,7 @@
 using FitPlatform.Domain.Entities;
 using FitPlatform.Domain.Enums;
 using FitPlatform.Infrastructure.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitPlatform.Infrastructure.Seed;
@@ -211,6 +212,8 @@ public static class DatabaseSeeder
         // Configurar página pública do trainer
         trainer.PublicSlug = "carlos-trainer";
         trainer.PublicPageEnabled = true;
+        trainer.PublicSearchEnabled = true;
+        trainer.AcceptingStudents = true;
         trainer.PublicHeadline = "Personal Trainer Especialista em Hipertrofia";
         trainer.PublicDescription = "Ajudo você a transformar seu corpo com treinos personalizados e acompanhamento completo. 10 anos de experiência, mais de 200 alunos transformados.";
         trainer.WhatsappNumber = "11999999999";
@@ -221,6 +224,10 @@ public static class DatabaseSeeder
         trainer.BannerUrl = "https://placehold.co/1200x400/0f3460/ffffff?text=Carlos+Trainer";
         trainer.PrimaryColor = "#0f3460";
         trainer.SecondaryColor = "#e94560";
+        trainer.ServiceMode = "Hybrid";
+        trainer.Latitude = -23.550520;
+        trainer.Longitude = -46.633308;
+        trainer.Specialties = "Hipertrofia,Emagrecimento,Consultoria Online";
 
         // Platform features
         var features = new[]
@@ -316,12 +323,23 @@ public static class DatabaseSeeder
     // Enriquece dados existentes de forma idempotente (runs always after SeedAsync)
     public static async Task EnrichExistingDataAsync(AppDbContext context)
     {
-        var trainer = await context.Trainers
-            .FirstOrDefaultAsync(t => t.PublicSlug == null || t.PublicSlug == "");
+        Trainer? trainer;
+        try
+        {
+            trainer = await context.Trainers
+                .FirstOrDefaultAsync(t => t.PublicSlug == null || t.PublicSlug == "");
+        }
+        catch (SqlException ex) when (ex.Number is 207 or 208)
+        {
+            return;
+        }
+
         if (trainer == null) return; // Already enriched or no trainer
 
         trainer.PublicSlug = "carlos-trainer";
         trainer.PublicPageEnabled = true;
+        trainer.PublicSearchEnabled = true;
+        trainer.AcceptingStudents = true;
         trainer.PublicHeadline = "Personal Trainer Especialista em Hipertrofia";
         trainer.PublicDescription = "Ajudo você a transformar seu corpo com treinos personalizados e acompanhamento completo. 10 anos de experiência, mais de 200 alunos transformados.";
         trainer.WhatsappNumber = "11999999999";
@@ -332,6 +350,10 @@ public static class DatabaseSeeder
         trainer.BannerUrl ??= "https://placehold.co/1200x400/0f3460/ffffff?text=Carlos+Trainer";
         trainer.PrimaryColor ??= "#0f3460";
         trainer.SecondaryColor ??= "#e94560";
+        trainer.ServiceMode ??= "Hybrid";
+        trainer.Latitude ??= -23.550520;
+        trainer.Longitude ??= -46.633308;
+        trainer.Specialties ??= "Hipertrofia,Emagrecimento,Consultoria Online";
 
         // Add public posts if none exist with Visibility field
         var hasPublicPosts = await context.Posts
@@ -472,6 +494,147 @@ public static class DatabaseSeeder
                 );
             }
         }
+
+        await context.SaveChangesAsync();
+
+        await EnsureExploreTrainerAsync(
+            context,
+            "trainer.poa@test.com",
+            "Marina Rocha",
+            "Marina Performance",
+            "marina-performance",
+            "Porto Alegre",
+            "RS",
+            "Moinhos de Vento",
+            -30.027704,
+            -51.228735,
+            "InPerson",
+            "Emagrecimento,Funcional",
+            "Treinos presenciais para condicionamento e emagrecimento."
+        );
+        await EnsureExploreTrainerAsync(
+            context,
+            "trainer.canoas@test.com",
+            "Lucas Farias",
+            "Lucas Fit",
+            "lucas-fit-canoas",
+            "Canoas",
+            "RS",
+            "Centro",
+            -29.917881,
+            -51.183228,
+            "Hybrid",
+            "Hipertrofia,Força",
+            "Acompanhamento híbrido para ganho de massa e força."
+        );
+        await EnsureExploreTrainerAsync(
+            context,
+            "trainer.scs@test.com",
+            "Paula Martins",
+            "Paula Trainer",
+            "paula-trainer-scs",
+            "Santa Cruz do Sul",
+            "RS",
+            "Centro",
+            -29.722019,
+            -52.434444,
+            "InPerson",
+            "Reabilitação,Funcional",
+            "Treinos personalizados com foco em mobilidade e saúde."
+        );
+        await EnsureExploreTrainerAsync(
+            context,
+            "trainer.sp@test.com",
+            "Renato Alves",
+            "Renato Personal",
+            "renato-personal-sp",
+            "São Paulo",
+            "SP",
+            "Vila Mariana",
+            -23.589949,
+            -46.634596,
+            "Hybrid",
+            "Hipertrofia,Emagrecimento",
+            "Consultoria presencial e online para evolução consistente."
+        );
+        await EnsureExploreTrainerAsync(
+            context,
+            "trainer.online@test.com",
+            "Carla Mendes",
+            "Carla Online Coach",
+            "carla-online-coach",
+            "Remoto",
+            "BR",
+            null,
+            null,
+            null,
+            "Online",
+            "Consultoria Online,Emagrecimento",
+            "Atendimento 100% online com plano semanal."
+        );
+    }
+
+    private static async Task EnsureExploreTrainerAsync(
+        AppDbContext context,
+        string email,
+        string name,
+        string brandName,
+        string slug,
+        string city,
+        string state,
+        string? neighborhood,
+        double? latitude,
+        double? longitude,
+        string serviceMode,
+        string specialties,
+        string bio)
+    {
+        var normalizedEmail = email.Trim().ToLowerInvariant();
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == normalizedEmail);
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = Guid.NewGuid(),
+                Name = name,
+                Email = normalizedEmail,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
+                Role = UserRole.Trainer,
+                IsActive = true
+            };
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+        }
+
+        var trainer = await context.Trainers.FirstOrDefaultAsync(t => t.UserId == user.Id);
+        if (trainer == null)
+        {
+            trainer = new Trainer
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                BrandName = brandName
+            };
+            context.Trainers.Add(trainer);
+        }
+
+        trainer.BrandName = brandName;
+        trainer.City = city;
+        trainer.State = state;
+        trainer.Neighborhood = neighborhood;
+        trainer.Latitude = latitude;
+        trainer.Longitude = longitude;
+        trainer.ServiceMode = serviceMode;
+        trainer.Specialties = specialties;
+        trainer.Bio = bio;
+        trainer.PublicSlug = slug;
+        trainer.PublicHeadline = $"Personal Trainer - {city}/{state}";
+        trainer.PublicDescription = bio;
+        trainer.PublicPageEnabled = true;
+        trainer.PublicSearchEnabled = true;
+        trainer.AcceptingStudents = true;
+        trainer.ShowInstagram = true;
+        trainer.ShowTestimonials = true;
 
         await context.SaveChangesAsync();
     }

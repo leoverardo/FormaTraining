@@ -8,5 +8,8 @@ export const trainerService = {
   createSubscription: (data) => api.post('/trainer/subscription/create', data),
   simulateApproved: () => api.post('/trainer/subscription/simulate-approved'),
   simulateExpired: () => api.post('/trainer/subscription/simulate-expired'),
+  getLeads: () => api.get('/trainer/leads'),
+  updateLeadStatus: (id, status) => api.put(`/trainer/leads/${id}/status`, { status }),
+  convertLeadToStudent: (id) => api.post(`/trainer/leads/${id}/convert-to-student`),
 };
 

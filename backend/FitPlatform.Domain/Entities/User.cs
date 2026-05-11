@@ -16,4 +16,5 @@ public class User : BaseEntity
 
     public Trainer? Trainer { get; set; }
     public Student? Student { get; set; }
+    public StudentProfile? StudentProfile { get; set; }
 }

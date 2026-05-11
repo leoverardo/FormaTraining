@@ -23,4 +23,19 @@ public class TrainerDashboardResponse
     public int StudentsNeedingAttentionCount { get; set; }
     public string? PublicPageUrl { get; set; }
     public List<TrainerActivityDto> RecentActivities { get; set; } = new();
+    public bool HasActiveSubscription { get; set; }
+    public TrainerDashboardSubscriptionDto? Subscription { get; set; }
+}
+
+public class TrainerDashboardSubscriptionDto
+{
+    public Guid Id { get; set; }
+    public string PlanName { get; set; } = string.Empty;
+    public string BillingCycle { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public DateTime? EndDate { get; set; }
+    public decimal? CurrentCyclePrice { get; set; }
+    public string? MercadoPagoSubscriptionId { get; set; }
+    public string? MercadoPagoPayerId { get; set; }
+    public string? LastPaymentStatus { get; set; }
 }

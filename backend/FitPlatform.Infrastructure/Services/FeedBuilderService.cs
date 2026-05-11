@@ -41,12 +41,16 @@ public class FeedBuilderService
         Guid studentId, Guid userId, string? type = null, int page = 1, int pageSize = 20)
     {
         var student = await _db.Students.Include(s => s.Trainer).ThenInclude(t => t.User)
+            .Include(s => s.User)
             .FirstOrDefaultAsync(s => s.Id == studentId);
 
         if (student == null) return ApiResponse<List<FeedItemDto>>.Fail("Aluno não encontrado.");
 
         var trainerId = student.TrainerId;
         var trainer = student.Trainer;
+        var studentName = student.User?.Name ?? "Aluno";
+        var trainerName = trainer?.User?.Name ?? "Personal Trainer";
+        var trainerPhotoUrl = trainer?.ProfilePhotoUrl;
 
         var items = new List<FeedItemDto>();
 
@@ -59,7 +63,7 @@ public class FeedBuilderService
                 .OrderByDescending(p => p.PublishedAt ?? p.CreatedAt)
                 .ToListAsync();
 
-            items.AddRange(posts.Select(p => BuildPostItem(p, trainer.User.Name, trainer.ProfilePhotoUrl)));
+            items.AddRange(posts.Select(p => BuildPostItem(p, trainerName, trainerPhotoUrl)));
         }
 
         if (type == null || type == "Progress")
@@ -70,8 +74,7 @@ public class FeedBuilderService
                 .Take(10)
                 .ToListAsync();
 
-            var studentUser = await _db.Students.Include(s => s.User).FirstAsync(s => s.Id == studentId);
-            items.AddRange(progresses.Select(p => BuildProgressItem(p, studentUser.User.Name)));
+            items.AddRange(progresses.Select(p => BuildProgressItem(p, studentName)));
         }
 
         if (type == null || type == "CheckIn")
@@ -82,8 +85,7 @@ public class FeedBuilderService
                 .Take(5)
                 .ToListAsync();
 
-            var studentUser = await _db.Students.Include(s => s.User).FirstAsync(s => s.Id == studentId);
-            items.AddRange(checkIns.Select(c => BuildCheckInItem(c, studentUser.User.Name, trainerId)));
+            items.AddRange(checkIns.Select(c => BuildCheckInItem(c, studentName, trainerId)));
         }
 
         if (type == null || type == "ProgressPhoto")
@@ -94,8 +96,7 @@ public class FeedBuilderService
                 .Take(10)
                 .ToListAsync();
 
-            var studentUser = await _db.Students.Include(s => s.User).FirstAsync(s => s.Id == studentId);
-            items.AddRange(photos.Select(p => BuildPhotoItem(p, studentUser.User.Name, trainerId)));
+            items.AddRange(photos.Select(p => BuildPhotoItem(p, studentName, trainerId)));
         }
 
         if (type == null || type == "WorkoutCompleted")
@@ -107,8 +108,7 @@ public class FeedBuilderService
                 .Take(10)
                 .ToListAsync();
 
-            var studentUser = await _db.Students.Include(s => s.User).FirstAsync(s => s.Id == studentId);
-            items.AddRange(sessions.Select(ws => BuildWorkoutSessionItem(ws, studentUser.User.Name, trainerId)));
+            items.AddRange(sessions.Select(ws => BuildWorkoutSessionItem(ws, studentName, trainerId)));
         }
 
         // Enrich with social data
@@ -141,7 +141,7 @@ public class FeedBuilderService
             Type = "Progress",
             Title = "Novo progresso registrado",
             Description = $"Peso: {p.Weight}kg",
-            StudentName = p.Student.User.Name,
+            StudentName = p.Student?.User?.Name ?? "Aluno",
             RelatedEntityId = p.Id,
             RelatedEntityType = "StudentProgress",
             CreatedAt = p.CreatedAt
@@ -158,8 +158,8 @@ public class FeedBuilderService
         {
             Type = "ProgressPhoto",
             Title = "Nova foto de progresso",
-            Description = p.Description,
-            StudentName = p.Student.User.Name,
+            Description = p.Description ?? "Foto de progresso enviada",
+            StudentName = p.Student?.User?.Name ?? "Aluno",
             RelatedEntityId = p.Id,
             RelatedEntityType = "StudentProgressPhoto",
             CreatedAt = p.CreatedAt
@@ -177,7 +177,7 @@ public class FeedBuilderService
             Type = "CheckIn",
             Title = "Check-in semanal enviado",
             Description = $"Humor: {c.MoodLevel}/5 | Energia: {c.EnergyLevel}/5",
-            StudentName = c.Student.User.Name,
+            StudentName = c.Student?.User?.Name ?? "Aluno",
             RelatedEntityId = c.Id,
             RelatedEntityType = "StudentWeeklyCheckIn",
             CreatedAt = c.CreatedAt
@@ -195,8 +195,8 @@ public class FeedBuilderService
         {
             Type = "WorkoutCompleted",
             Title = "Treino concluído",
-            Description = ws.Workout.Name,
-            StudentName = ws.Student.User.Name,
+            Description = ws.Workout?.Name ?? "Treino",
+            StudentName = ws.Student?.User?.Name ?? "Aluno",
             RelatedEntityId = ws.Id,
             RelatedEntityType = "WorkoutSession",
             CreatedAt = ws.CompletedAt ?? ws.CreatedAt

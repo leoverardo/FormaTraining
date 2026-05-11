@@ -10,6 +10,10 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Trainer> Trainers => Set<Trainer>();
     public DbSet<Student> Students => Set<Student>();
+    public DbSet<StudentProfile> StudentProfiles => Set<StudentProfile>();
+    public DbSet<TrainerFollower> TrainerFollowers => Set<TrainerFollower>();
+    public DbSet<SavedTrainer> SavedTrainers => Set<SavedTrainer>();
+    public DbSet<TrainerLead> TrainerLeads => Set<TrainerLead>();
     public DbSet<Exercise> Exercises => Set<Exercise>();
     public DbSet<Workout> Workouts => Set<Workout>();
     public DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
@@ -61,6 +65,9 @@ public class AppDbContext : DbContext
         {
             e.HasIndex(t => t.UserId).IsUnique();
             e.HasIndex(t => t.PublicSlug).IsUnique().HasFilter("[PublicSlug] IS NOT NULL");
+            e.HasIndex(t => new { t.PublicPageEnabled, t.PublicSearchEnabled, t.AcceptingStudents });
+            e.Property(t => t.Latitude).HasColumnType("float");
+            e.Property(t => t.Longitude).HasColumnType("float");
             e.HasOne(t => t.User).WithOne(u => u.Trainer).HasForeignKey<Trainer>(t => t.UserId);
             e.HasOne(t => t.ProfilePhotoMedia).WithMany().HasForeignKey(t => t.ProfilePhotoMediaId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
             e.HasOne(t => t.LogoMedia).WithMany().HasForeignKey(t => t.LogoMediaId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
@@ -76,6 +83,38 @@ public class AppDbContext : DbContext
             e.Property(s => s.MonitoringStatus).HasConversion<int>();
             e.HasOne(s => s.User).WithOne(u => u.Student).HasForeignKey<Student>(s => s.UserId);
             e.HasOne(s => s.Trainer).WithMany(t => t.Students).HasForeignKey(s => s.TrainerId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<StudentProfile>(e =>
+        {
+            e.HasIndex(s => s.UserId).IsUnique();
+            e.HasIndex(s => new { s.City, s.State });
+            e.Property(s => s.AccountStatus).HasConversion<int>();
+            e.HasOne(s => s.User).WithOne(u => u.StudentProfile).HasForeignKey<StudentProfile>(s => s.UserId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TrainerFollower>(e =>
+        {
+            e.HasIndex(x => new { x.TrainerId, x.StudentProfileId }).IsUnique();
+            e.HasOne(x => x.Trainer).WithMany().HasForeignKey(x => x.TrainerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.StudentProfile).WithMany(x => x.FollowingTrainers).HasForeignKey(x => x.StudentProfileId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SavedTrainer>(e =>
+        {
+            e.HasIndex(x => new { x.TrainerId, x.StudentProfileId }).IsUnique();
+            e.HasOne(x => x.Trainer).WithMany().HasForeignKey(x => x.TrainerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.StudentProfile).WithMany(x => x.SavedTrainers).HasForeignKey(x => x.StudentProfileId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TrainerLead>(e =>
+        {
+            e.HasIndex(x => x.TrainerId);
+            e.HasIndex(x => x.Status);
+            e.Property(x => x.Status).HasConversion<int>();
+            e.Property(x => x.Source).HasConversion<int>();
+            e.HasOne(x => x.Trainer).WithMany().HasForeignKey(x => x.TrainerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.StudentProfile).WithMany().HasForeignKey(x => x.StudentProfileId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
         });
 
         modelBuilder.Entity<Exercise>(e =>

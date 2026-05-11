@@ -20,13 +20,29 @@ export function TrainerDashboard() {
   const { user } = useAuth();
 
   useEffect(() => {
-    trainerService.getDashboard().then((r) => setData(r.data.data)).finally(() => setLoading(false));
+    const loadDashboard = async () => {
+      try {
+        const response = await trainerService.getDashboard();
+        setData(response.data.data);
+      } catch (error) {
+        console.error('Erro ao carregar dashboard do treinador', {
+          status: error?.response?.status,
+          data: error?.response?.data,
+          message: error?.message,
+        });
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboard();
   }, []);
 
   if (loading) return <LoadingState />;
   if (!data) return null;
 
-  const feed = (data.recentPosts || []).map((post) => mapPostToFeedItem(post, { name: user?.name || 'Personal', role: 'Trainer' }));
+  const feed = (data.recentActivities || []).map((post) => mapPostToFeedItem(post, { name: user?.name || 'Personal', role: 'Trainer' }));
 
   return (
     <PageContainer className="space-y-5">
@@ -48,14 +64,18 @@ export function TrainerDashboard() {
         <StatCard icon={Users} title="Alunos ativos" value={data.activeStudents} />
         <StatCard icon={ClipboardList} title="Treinos criados" value={data.totalWorkouts} />
         <StatCard icon={FileText} title="Conteúdos" value={data.totalPublishedPosts || 0} />
-        <StatCard icon={AlertTriangle} title="Check-ins pendentes" value={data.pendingCheckIns || 0} />
+        <StatCard icon={AlertTriangle} title="Check-ins pendentes" value={data.missingCheckInsCount || 0} />
       </div>
 
       <ContentGrid>
         <div className="lg:col-span-8 space-y-4">
           <PostComposer onCreate={() => navigate('/trainer/posts')} />
           <SectionCard title="Atividade recente" description="Publicações e interações dos alunos">
-            <div className="space-y-3">{(feed.length ? feed : mockFeedFallback).map((item) => <FeedCard key={item.id} item={item} />)}</div>
+            <div className="space-y-3">
+              {(feed.length ? feed : mockFeedFallback).map((item, index) => (
+                <FeedCard key={item.id ?? item.postId ?? item.relatedEntityId ?? `feed-${index}`} item={item} />
+              ))}
+            </div>
           </SectionCard>
         </div>
         <div className="lg:col-span-4 space-y-4">
@@ -72,5 +92,4 @@ export function TrainerDashboard() {
     </PageContainer>
   );
 }
-
 

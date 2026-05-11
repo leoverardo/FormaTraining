@@ -1,24 +1,54 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { studentAreaService } from '../../services/studentAreaService';
+import { useAuth } from '../../contexts/AuthContext';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { Tabs } from '../../components/ui/Tabs';
+import { Button } from '../../components/ui/Button';
 import { FeedCard } from '../../components/social/FeedCard';
 import { mapPostToFeedItem, feedTabs } from '../../features/feed/feedAdapter';
 import { FileText, ChevronLeft, Play } from 'lucide-react';
 
 export function StudentPostsPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [tab, setTab] = useState('all');
 
   useEffect(() => {
-    studentAreaService.getPosts().then((r) => setPosts(r.data.data || [])).finally(() => setLoading(false));
-  }, []);
+    if (!user?.hasActiveTrainerLink) {
+      setPosts([]);
+      setLoading(false);
+      return;
+    }
+
+    const load = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await studentAreaService.getPosts();
+        setPosts(response.data.data || []);
+      } catch (err) {
+        if (err.response?.status === 403) {
+          setError('Você ainda não possui um personal vinculado.');
+          return;
+        }
+
+        setError('Não foi possível carregar os conteúdos agora.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [user?.hasActiveTrainerLink]);
 
   const feedItems = useMemo(() => posts.map((post) => mapPostToFeedItem(post, { role: 'Trainer' })), [posts]);
+  const isBlockedState = !user?.hasActiveTrainerLink || !!error;
 
   if (loading) return <LoadingState />;
 
@@ -32,25 +62,49 @@ export function StudentPostsPage() {
       {feedItems.length === 0 ? (
         <EmptyState
           icon={FileText}
-          title="Ainda não há conteúdos por aqui"
-          description="Quando seu personal publicar dicas, aulas ou avisos, eles aparecerão neste feed."
+          title={isBlockedState
+            ? 'Essa área será liberada quando você estiver vinculado a um personal.'
+            : 'Ainda não há conteúdos por aqui'}
+          description={isBlockedState
+            ? (error || 'Encontre um personal para liberar seus conteúdos privados.')
+            : 'Quando seu personal publicar dicas, aulas ou avisos, eles aparecerão neste feed.'}
+          action={isBlockedState
+            ? <Button onClick={() => navigate('/explore/trainers')}>Explorar personais</Button>
+            : null}
         />
       ) : (
-        <div className="space-y-3">{feedItems.map((item) => <FeedCard key={item.id} item={item} />)}</div>
+        <div className="space-y-3">{feedItems.map((item, index) => <FeedCard key={item.id ?? item.postId ?? item.relatedEntityId ?? `feed-${index}`} item={item} />)}</div>
       )}
     </PageContainer>
   );
 }
 
 export function StudentPostDetailPage() {
+  const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    studentAreaService.getPostById(id).then((r) => setPost(r.data.data)).catch(() => navigate('/student/posts')).finally(() => setLoading(false));
-  }, [id, navigate]);
+    if (!user?.hasActiveTrainerLink) {
+      navigate('/explore', { replace: true });
+      return;
+    }
+
+    const load = async () => {
+      try {
+        const response = await studentAreaService.getPostById(id);
+        setPost(response.data.data);
+      } catch {
+        navigate('/student/posts');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [id, navigate, user?.hasActiveTrainerLink]);
 
   if (loading) return <LoadingState />;
   if (!post) return null;
@@ -76,5 +130,3 @@ export function StudentPostDetailPage() {
     </PageContainer>
   );
 }
-
-

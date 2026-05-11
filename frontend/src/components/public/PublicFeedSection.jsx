@@ -12,8 +12,8 @@ export function PublicFeedSection({ items, fallbackName, fallbackAvatar, feedRef
 
       {items.length ? (
         <div className="space-y-4">
-          {items.map((item) => (
-            <PublicFeedCard key={item.id} item={item} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} />
+          {items.map((item, index) => (
+            <PublicFeedCard key={item.id ?? item.postId ?? item.relatedEntityId ?? `feed-${index}`} item={item} fallbackName={fallbackName} fallbackAvatar={fallbackAvatar} />
           ))}
         </div>
       ) : (

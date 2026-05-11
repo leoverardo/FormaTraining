@@ -10,6 +10,7 @@ namespace FitPlatform.Infrastructure.Services;
 
 public class StudentAreaService
 {
+    private const string ExplorerForbiddenMessage = "Student is not linked to an active trainer.";
     private readonly AppDbContext _db;
     private readonly FeedBuilderService _feedBuilder;
 
@@ -51,7 +52,7 @@ public class StudentAreaService
     public async Task<ApiResponse<object>> GetDashboardAsync(Guid studentId)
     {
         if (!await IsAccessAllowedAsync(studentId))
-            return ApiResponse<object>.Fail("Acesso bloqueado.");
+            return ApiResponse<object>.Fail(ExplorerForbiddenMessage);
 
         var student = await _db.Students
             .Include(s => s.User)
@@ -161,7 +162,7 @@ public class StudentAreaService
     public async Task<ApiResponse<List<WorkoutResponse>>> GetWorkoutsAsync(Guid studentId)
     {
         if (!await IsAccessAllowedAsync(studentId))
-            return ApiResponse<List<WorkoutResponse>>.Fail("Acesso bloqueado.");
+            return ApiResponse<List<WorkoutResponse>>.Fail(ExplorerForbiddenMessage);
 
         var schedules = await _db.StudentWorkoutSchedules
             .Include(s => s.Workout).ThenInclude(w => w.WorkoutExercises).ThenInclude(we => we.Exercise)
@@ -196,7 +197,7 @@ public class StudentAreaService
     public async Task<ApiResponse<WorkoutResponse>> GetWorkoutByIdAsync(Guid studentId, Guid workoutId)
     {
         if (!await IsAccessAllowedAsync(studentId))
-            return ApiResponse<WorkoutResponse>.Fail("Acesso bloqueado.");
+            return ApiResponse<WorkoutResponse>.Fail(ExplorerForbiddenMessage);
 
         var inSchedule = await _db.StudentWorkoutSchedules
             .AnyAsync(s => s.StudentId == studentId && s.WorkoutId == workoutId);
@@ -235,7 +236,7 @@ public class StudentAreaService
     public async Task<ApiResponse<List<PostResponse>>> GetPostsAsync(Guid studentId)
     {
         if (!await IsAccessAllowedAsync(studentId))
-            return ApiResponse<List<PostResponse>>.Fail("Acesso bloqueado.");
+            return ApiResponse<List<PostResponse>>.Fail(ExplorerForbiddenMessage);
 
         var student = await _db.Students.FindAsync(studentId);
         var posts = await _db.Posts
@@ -258,7 +259,7 @@ public class StudentAreaService
     public async Task<ApiResponse<PostResponse>> GetPostByIdAsync(Guid studentId, Guid postId)
     {
         if (!await IsAccessAllowedAsync(studentId))
-            return ApiResponse<PostResponse>.Fail("Acesso bloqueado.");
+            return ApiResponse<PostResponse>.Fail(ExplorerForbiddenMessage);
 
         var student = await _db.Students.FindAsync(studentId);
         var post = await _db.Posts.FirstOrDefaultAsync(p => p.Id == postId && p.TrainerId == student!.TrainerId && p.Status == PostStatus.Published);

@@ -22,7 +22,8 @@
       "Bash(Invoke-WebRequest -Uri \"http://localhost:5000/api/public/trainers/carlos-trainer\" -UseBasicParsing)",
       "Bash(Select-Object -ExpandProperty Content)",
       "Bash(Select-Object -First 500)",
-      "PowerShell($r = Invoke-RestMethod -Uri \"http://localhost:5000/api/public/trainers/carlos-trainer\"; \"slug=$\\($r.data.publicSlug\\)\"; \"posts=$\\($r.data.recentPosts.Count\\)\"; \"stats=$\\($r.data.stats | ConvertTo-Json -Compress\\)\"; \"testimonials=$\\($r.data.testimonials.Count\\)\"; \"transforms=$\\($r.data.transformations.Count\\)\")"
+      "PowerShell($r = Invoke-RestMethod -Uri \"http://localhost:5000/api/public/trainers/carlos-trainer\"; \"slug=$\\($r.data.publicSlug\\)\"; \"posts=$\\($r.data.recentPosts.Count\\)\"; \"stats=$\\($r.data.stats | ConvertTo-Json -Compress\\)\"; \"testimonials=$\\($r.data.testimonials.Count\\)\"; \"transforms=$\\($r.data.transformations.Count\\)\")",
+      "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://localhost:5000/api/trainer/dashboard\" -TimeoutSec 5 -ErrorAction Stop; \"Status: $\\($response.StatusCode\\)\" } catch { \"Error: $\\($_.Exception.Message\\)\" })"
     ]
   }
 }

@@ -22,27 +22,27 @@ export function PublicProfileHero({ profile, onPrimaryClick, onSecondaryClick, h
               name={profile.name}
               className="h-24 w-24 border-4 border-white/95 text-lg shadow-xl sm:h-28 sm:w-28"
             />
-            <div>
-              <p className="text-sm font-medium uppercase tracking-[0.15em] text-cyan-100">Perfil profissional</p>
-              <h1 className="mt-1 text-2xl font-bold text-white sm:text-4xl">{profile.name}</h1>
-              <p className="mt-2 max-w-2xl text-sm text-slate-100 sm:text-base">{profile.headline}</p>
-              {profile.bio ? <p className="mt-2 max-w-2xl text-sm text-slate-200/90">{profile.bio}</p> : null}
+            <div className="rounded-2xl border border-slate-200/80 bg-white/95 p-4 shadow-sm backdrop-blur sm:p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cyan-700">Perfil profissional</p>
+              <h1 className="mt-1 text-2xl font-bold text-slate-950 sm:text-4xl">{profile.name}</h1>
+              <p className="mt-2 max-w-2xl text-sm text-slate-700 sm:text-base">{profile.headline}</p>
+              {profile.bio ? <p className="mt-2 max-w-2xl text-sm text-slate-600">{profile.bio}</p> : null}
             </div>
             {!!profile.specialties?.length && (
               <div className="flex flex-wrap gap-2">
                 {profile.specialties.slice(0, 6).map((tag) => (
-                  <span key={tag} className="rounded-full border border-white/30 bg-white/15 px-2.5 py-1 text-xs font-semibold text-cyan-50 backdrop-blur">{tag}</span>
+                  <span key={tag} className="rounded-full border border-cyan-100 bg-cyan-50 px-2.5 py-1 text-xs font-semibold text-cyan-700">{tag}</span>
                 ))}
               </div>
             )}
           </div>
 
           <div className="flex w-full max-w-md flex-col gap-2 sm:flex-row lg:w-auto lg:flex-col">
-            <Button onClick={onPrimaryClick} disabled={!hasWhatsapp} size="lg" className="w-full bg-emerald-500 text-slate-950 hover:bg-emerald-400 focus:ring-emerald-300">
+            <Button onClick={onPrimaryClick} disabled={!hasWhatsapp} size="lg" className={`w-full ${hasWhatsapp ? 'bg-violet-600 text-white hover:bg-violet-700 focus:ring-violet-300' : 'bg-slate-100 text-slate-500 border border-slate-200 cursor-not-allowed'}`}>
               <MessageCircle size={18} />
               {hasWhatsapp ? 'Falar no WhatsApp' : 'WhatsApp indisponivel'}
             </Button>
-            <Button onClick={onSecondaryClick} variant="outline" size="lg" className="w-full border-white/60 bg-white/10 text-white backdrop-blur hover:bg-white/20">
+            <Button onClick={onSecondaryClick} variant="outline" size="lg" className="w-full border-slate-300 bg-white text-slate-700 hover:bg-slate-50">
               <PlayCircle size={18} />
               Ver conteudos
             </Button>
@@ -52,9 +52,9 @@ export function PublicProfileHero({ profile, onPrimaryClick, onSecondaryClick, h
         {!!profile.stats?.length && (
           <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
             {profile.stats.map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-white/25 bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xl font-bold text-white">{stat.value}</p>
-                <p className="text-xs uppercase tracking-wide text-slate-200">{stat.label}</p>
+              <div key={stat.label} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <p className="text-xl font-bold text-slate-950">{stat.value}</p>
+                <p className="text-xs uppercase tracking-wide text-slate-500">{stat.label}</p>
               </div>
             ))}
           </div>

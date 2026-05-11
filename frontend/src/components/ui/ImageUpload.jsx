@@ -1,12 +1,11 @@
 import { useRef, useState } from 'react';
 import { uploadService } from '../../services/uploadService';
 import { useToast } from './Toast';
-import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { X, Image as ImageIcon, Loader2 } from 'lucide-react';
 
 export function ImageUpload({
   category,
   currentUrl,
-  currentMediaId,
   onUploaded,
   onRemoved,
   label = 'Imagem',

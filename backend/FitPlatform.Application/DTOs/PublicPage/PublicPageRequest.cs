@@ -4,13 +4,19 @@ public class PublicPageRequest
 {
     public string? PublicSlug { get; set; }
     public bool PublicPageEnabled { get; set; }
+    public bool PublicSearchEnabled { get; set; } = false;
+    public bool AcceptingStudents { get; set; } = true;
     public string? PublicHeadline { get; set; }
     public string? PublicDescription { get; set; }
     public string? WhatsappNumber { get; set; }
     public bool ShowInstagram { get; set; } = true;
     public bool ShowTestimonials { get; set; } = true;
     public string? BannerUrl { get; set; }
+    public string? PublicBannerUrl { get; set; }
+    public Guid? PublicBannerMediaId { get; set; }
     public string? WelcomeMessage { get; set; }
+    public string? PrimaryColor { get; set; }
+    public string? SecondaryColor { get; set; }
 }
 
 public class PublicPageResponse
@@ -20,6 +26,8 @@ public class PublicPageResponse
     public string BrandName { get; set; } = string.Empty;
     public string? PublicSlug { get; set; }
     public bool PublicPageEnabled { get; set; }
+    public bool PublicSearchEnabled { get; set; }
+    public bool AcceptingStudents { get; set; }
     public string? PublicHeadline { get; set; }
     public string? PublicDescription { get; set; }
     public string? Bio { get; set; }
@@ -29,9 +37,13 @@ public class PublicPageResponse
     public string? ProfilePhotoUrl { get; set; }
     public string? LogoUrl { get; set; }
     public string? BannerUrl { get; set; }
+    public string? PublicBannerUrl { get; set; }
+    public Guid? PublicBannerMediaId { get; set; }
     public string? PrimaryColor { get; set; }
     public string? SecondaryColor { get; set; }
+    public bool ShowInstagram { get; set; }
     public bool ShowTestimonials { get; set; }
+    public string? WelcomeMessage { get; set; }
     public PublicPageStatsDto Stats { get; set; } = new();
     public List<PublicPostItemDto> RecentPosts { get; set; } = new();
     public List<TestimonialPublicItem> Testimonials { get; set; } = new();

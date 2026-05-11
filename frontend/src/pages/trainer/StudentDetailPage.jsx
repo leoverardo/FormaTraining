@@ -3,16 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { studentService } from '../../services/studentService';
 import { scheduleService } from '../../services/scheduleService';
 import { progressService } from '../../services/progressService';
-import { workoutService } from '../../services/workoutService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
-import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { ChevronLeft, Plus, Trash2, TrendingUp, Camera, CalendarDays, User } from 'lucide-react';
+import { ChevronLeft, Plus, Trash2, TrendingUp, Camera } from 'lucide-react';
 
 const TABS = ['Dados', 'Rotina', 'Progresso', 'Fotos'];
 const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -26,7 +24,6 @@ export function StudentDetailPage() {
   const [activeTab, setActiveTab] = useState('Dados');
   const [student, setStudent] = useState(null);
   const [schedules, setSchedules] = useState([]);
-  const [workouts, setWorkouts] = useState([]);
   const [progress, setProgress] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,13 +40,11 @@ export function StudentDetailPage() {
     Promise.all([
       studentService.getById(id),
       scheduleService.getByStudent(id),
-      workoutService.getAll(),
       progressService.getByStudent(id),
       progressService.getPhotosByStudent(id),
-    ]).then(([s, sc, w, pr, ph]) => {
+    ]).then(([s, sc, pr, ph]) => {
       setStudent(s.data.data);
       setSchedules(sc.data.data || []);
-      setWorkouts(w.data.data || []);
       setProgress(pr.data.data || []);
       setPhotos(ph.data.data || []);
     }).finally(() => setLoading(false));

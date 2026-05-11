@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { notificationService } from '../../services/notificationService';
 import { Bell } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export function NotificationBell() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [count, setCount] = useState(0);
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -26,17 +24,24 @@ export function NotificationBell() {
       try {
         const r = await notificationService.getAll();
         setNotifications(r.data.data || []);
-      } catch {}
+      } catch {
+        return;
+      }
     }
     setOpen(v => !v);
   };
 
+  const resolveNotificationId = (notification) => notification?.id ?? notification?.notificationId;
+
   const markRead = async (id) => {
+    if (!id) return;
     try {
       await notificationService.markRead(id);
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+      setNotifications(prev => prev.map(n => (resolveNotificationId(n) === id ? { ...n, isRead: true } : n)));
       setCount(prev => Math.max(0, prev - 1));
-    } catch {}
+    } catch {
+      return;
+    }
   };
 
   if (!user) return null;
@@ -59,7 +64,11 @@ export function NotificationBell() {
             <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
               <span className="font-semibold text-sm text-gray-900">Notificações</span>
               {count > 0 && (
-                <button onClick={() => { notificationService.markAllRead(); setNotifications(p => p.map(n => ({ ...n, isRead: true }))); setCount(0); }} className="text-xs text-indigo-600 hover:underline">
+                <button onClick={async () => {
+                  try { await notificationService.markAllRead(); } catch { return; }
+                  setNotifications(p => p.map(n => ({ ...n, isRead: true })));
+                  setCount(0);
+                }} className="text-xs text-indigo-600 hover:underline">
                   Marcar todas como lidas
                 </button>
               )}
@@ -67,8 +76,8 @@ export function NotificationBell() {
             <div className="max-h-80 overflow-y-auto">
               {notifications.length === 0 ? (
                 <p className="text-center text-sm text-gray-400 py-8">Nenhuma notificação</p>
-              ) : notifications.map(n => (
-                <div key={n.id} onClick={() => markRead(n.id)}
+              ) : notifications.map((n, index) => (
+                <div key={resolveNotificationId(n) ?? `notification-${index}`} onClick={() => markRead(resolveNotificationId(n))}
                   className={`px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors ${!n.isRead ? 'bg-indigo-50/40' : ''}`}>
                   <div className="flex items-start gap-2">
                     {!n.isRead && <div className="w-2 h-2 bg-indigo-500 rounded-full mt-1.5 shrink-0" />}

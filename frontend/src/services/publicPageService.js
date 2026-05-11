@@ -2,6 +2,9 @@ import api from './api';
 
 export const publicPageService = {
   getBySlug: (slug) => api.get(`/public/trainers/${slug}`),
+  getTrainerPageSettings: () => api.get('/trainer/public-page'),
+  createLeadBySlug: (slug, data) => api.post(`/public/trainers/${slug}/lead`, data),
+  createLeadByTrainerId: (trainerId, data) => api.post(`/public/trainers/${trainerId}/lead`, data),
   updatePage: (data) => api.put('/trainer/public-page', data),
   getTestimonials: () => api.get('/testimonials'),
   createTestimonial: (studentId, data) => api.post(`/students/${studentId}/testimonials`, data),

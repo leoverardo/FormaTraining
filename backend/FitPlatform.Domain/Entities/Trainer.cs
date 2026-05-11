@@ -29,6 +29,11 @@ public class Trainer : BaseEntity
     public string? Neighborhood { get; set; }
     public string? City { get; set; }
     public string? State { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
+    public string? ServiceMode { get; set; }
+    public bool PublicSearchEnabled { get; set; } = false;
+    public bool AcceptingStudents { get; set; } = true;
 
     // Public page
     public string? PublicSlug { get; set; }

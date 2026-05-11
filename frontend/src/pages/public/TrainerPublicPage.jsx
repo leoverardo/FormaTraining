@@ -2,6 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { publicPageService } from '../../services/publicPageService';
+import { useToast } from '../../components/ui/Toast';
+import { Modal } from '../../components/ui/Modal';
+import { Input } from '../../components/ui/Input';
+import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { mapPostToFeedItem } from '../../features/feed/feedAdapter';
 import { PublicProfileHero } from '../../components/public/PublicProfileHero';
@@ -37,6 +41,10 @@ export function TrainerPublicPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [leadOpen, setLeadOpen] = useState(false);
+  const [sendingLead, setSendingLead] = useState(false);
+  const [leadForm, setLeadForm] = useState({ name: '', email: '', phone: '', goal: '', message: '' });
+  const { toast } = useToast();
   const feedRef = useRef(null);
 
   useEffect(() => {
@@ -88,8 +96,20 @@ export function TrainerPublicPage() {
     window.open(`https://wa.me/${whatsapp}`, '_blank', 'noopener,noreferrer');
   };
 
-  const scrollToFeed = () => {
-    feedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const sendLead = async (event) => {
+    event.preventDefault();
+    if (!slug) return;
+    setSendingLead(true);
+    try {
+      await publicPageService.createLeadBySlug(slug, leadForm);
+      toast('Interesse enviado com sucesso!');
+      setLeadOpen(false);
+      setLeadForm({ name: '', email: '', phone: '', goal: '', message: '' });
+    } catch (error) {
+      toast(error?.response?.data?.message || 'Falha ao enviar interesse.', 'error');
+    } finally {
+      setSendingLead(false);
+    }
   };
 
   if (loading) return <PublicPageSkeleton />;
@@ -112,7 +132,7 @@ export function TrainerPublicPage() {
         <PublicProfileHero
           profile={profile}
           onPrimaryClick={openWhatsapp}
-          onSecondaryClick={scrollToFeed}
+          onSecondaryClick={() => setLeadOpen(true)}
           hasWhatsapp={hasWhatsapp}
         />
 
@@ -133,13 +153,27 @@ export function TrainerPublicPage() {
 
         <PublicCtaSection
           onPrimaryClick={openWhatsapp}
-          onSecondaryClick={scrollToFeed}
+          onSecondaryClick={() => setLeadOpen(true)}
           hasWhatsapp={hasWhatsapp}
           trainerName={profile.name}
         />
 
         <PublicFooter />
       </main>
+
+      <Modal open={leadOpen} onClose={() => setLeadOpen(false)} title="Tenho interesse" size="md">
+        <form onSubmit={sendLead} className="space-y-3">
+          <Input label="Nome" value={leadForm.name} onChange={(e) => setLeadForm((p) => ({ ...p, name: e.target.value }))} required />
+          <Input label="E-mail" type="email" value={leadForm.email} onChange={(e) => setLeadForm((p) => ({ ...p, email: e.target.value }))} required />
+          <Input label="Telefone" value={leadForm.phone} onChange={(e) => setLeadForm((p) => ({ ...p, phone: e.target.value }))} />
+          <Input label="Objetivo" value={leadForm.goal} onChange={(e) => setLeadForm((p) => ({ ...p, goal: e.target.value }))} />
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Mensagem</label>
+            <textarea className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" rows={4} value={leadForm.message} onChange={(e) => setLeadForm((p) => ({ ...p, message: e.target.value }))} />
+          </div>
+          <Button type="submit" className="w-full" loading={sendingLead}>Enviar interesse</Button>
+        </form>
+      </Modal>
     </div>
   );
 }

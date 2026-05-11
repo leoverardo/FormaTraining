@@ -110,7 +110,7 @@ export function PostsPage() {
             const cfg = statusConfig[post.status] || statusConfig.Draft;
             const item = feedItems[idx];
             return (
-              <div key={post.id} className="space-y-2 rounded-2xl border border-slate-200 bg-white p-3">
+              <div key={post.id ?? post.postId ?? item?.id ?? `post-${idx}`} className="space-y-2 rounded-2xl border border-slate-200 bg-white p-3">
                 <div className="flex items-center justify-between">
                   <Badge variant={cfg.badge}>{cfg.label}</Badge>
                   <div className="flex gap-1">

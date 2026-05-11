@@ -16,7 +16,7 @@ function SidebarItems({ groups, onNavigate }) {
           <div className="space-y-1">
             {group.items.map(({ to, icon: Icon, label, end }) => (
               <NavLink
-                key={to}
+                key={`${group.label || 'group'}-${label}-${to}`}
                 to={to}
                 end={end}
                 onClick={onNavigate}
@@ -130,9 +130,9 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
       {useBottomNav && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 md:hidden">
           <div className="flex">
-            {primaryItems.slice(0, 5).map(({ to, icon: Icon, label, end }) => (
+            {primaryItems.slice(0, 5).map(({ to, icon: Icon, label, end }, index) => (
               <NavLink
-                key={to}
+                key={`${label}-${to}-${index}`}
                 to={to}
                 end={end}
                 className={({ isActive }) =>

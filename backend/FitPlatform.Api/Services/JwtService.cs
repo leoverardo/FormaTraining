@@ -14,7 +14,7 @@ public class JwtService : IJwtService
 
     public JwtService(IConfiguration config) => _config = config;
 
-    public string GenerateToken(User user, Guid? trainerId, Guid? studentId)
+    public string GenerateToken(User user, Guid? trainerId, Guid? studentId, Guid? studentProfileId = null)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Secret"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -29,6 +29,7 @@ public class JwtService : IJwtService
 
         if (trainerId.HasValue) claims.Add(new("TrainerId", trainerId.Value.ToString()));
         if (studentId.HasValue) claims.Add(new("StudentId", studentId.Value.ToString()));
+        if (studentProfileId.HasValue) claims.Add(new("StudentProfileId", studentProfileId.Value.ToString()));
 
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],

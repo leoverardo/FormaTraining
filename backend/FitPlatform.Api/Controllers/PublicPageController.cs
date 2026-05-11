@@ -1,5 +1,6 @@
 using FitPlatform.Application.DTOs.PublicPage;
 using FitPlatform.Application.DTOs.Testimonials;
+using FitPlatform.Application.DTOs.Leads;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,14 +15,37 @@ namespace FitPlatform.Api.Controllers;
 public class PublicTrainerPageController : ControllerBase
 {
     private readonly PublicPageService _service;
+    private readonly TrainerLeadService _leadService;
+    private readonly ICurrentUserService _currentUser;
 
-    public PublicTrainerPageController(PublicPageService service) => _service = service;
+    public PublicTrainerPageController(PublicPageService service, TrainerLeadService leadService, ICurrentUserService currentUser)
+    {
+        _service = service;
+        _leadService = leadService;
+        _currentUser = currentUser;
+    }
 
     [HttpGet("{slug}")]
     public async Task<IActionResult> GetBySlug(string slug)
     {
         var result = await _service.GetBySlugAsync(slug);
         return result.Success ? Ok(result) : NotFound(result);
+    }
+
+    [HttpPost("{slug}/lead")]
+    public async Task<IActionResult> CreateLeadBySlug(string slug, [FromBody] CreateTrainerLeadRequest request)
+    {
+        var studentProfileId = User.Identity?.IsAuthenticated == true ? _currentUser.StudentProfileId : null;
+        var result = await _leadService.CreateBySlugAsync(slug, request, studentProfileId);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("{trainerId:guid}/lead")]
+    public async Task<IActionResult> CreateLeadByTrainerId(Guid trainerId, [FromBody] CreateTrainerLeadRequest request)
+    {
+        var studentProfileId = User.Identity?.IsAuthenticated == true ? _currentUser.StudentProfileId : null;
+        var result = await _leadService.CreateByTrainerIdAsync(trainerId, request, studentProfileId);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }
 
@@ -44,6 +68,13 @@ public class TrainerPublicPageController : ControllerBase
     {
         var result = await _service.UpdatePageAsync(_currentUser.TrainerId!.Value, request);
         return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet("api/trainer/public-page")]
+    public async Task<IActionResult> GetPageSettings()
+    {
+        var result = await _service.GetTrainerSettingsAsync(_currentUser.TrainerId!.Value);
+        return result.Success ? Ok(result) : NotFound(result);
     }
 
     [HttpGet("api/testimonials")]
@@ -78,6 +109,27 @@ public class TrainerPublicPageController : ControllerBase
     public async Task<IActionResult> CreateTransformation(Guid studentId, [FromBody] TransformationRequest request)
     {
         var result = await _service.CreateTransformationAsync(studentId, request, _currentUser.TrainerId!.Value);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet("api/trainer/leads")]
+    public async Task<IActionResult> GetLeads([FromServices] TrainerLeadService leadService)
+    {
+        var result = await leadService.GetForTrainerAsync(_currentUser.TrainerId!.Value);
+        return Ok(result);
+    }
+
+    [HttpPut("api/trainer/leads/{id:guid}/status")]
+    public async Task<IActionResult> UpdateLeadStatus(Guid id, [FromBody] UpdateLeadStatusRequest request, [FromServices] TrainerLeadService leadService)
+    {
+        var result = await leadService.UpdateStatusAsync(_currentUser.TrainerId!.Value, id, request.Status);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("api/trainer/leads/{id:guid}/convert-to-student")]
+    public async Task<IActionResult> ConvertLead(Guid id, [FromServices] TrainerLeadService leadService)
+    {
+        var result = await leadService.ConvertToStudentAsync(_currentUser.TrainerId!.Value, id);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

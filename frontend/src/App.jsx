@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './components/ui/Toast';
-import { ProtectedRoute } from './routes/ProtectedRoute';
+import { ProtectedRoute, ProtectedStudentAreaRoute } from './routes/ProtectedRoute';
 
 import { TrainerLayout } from './layouts/TrainerLayout';
 import { StudentLayout } from './layouts/StudentLayout';
@@ -10,6 +10,7 @@ import { OwnerLayout } from './layouts/OwnerLayout';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { SetPasswordPage } from './pages/auth/SetPasswordPage';
+import { StudentRegisterPage } from './pages/auth/StudentRegisterPage';
 
 import { OwnerDashboard } from './pages/owner/OwnerDashboard';
 import { PlansPage } from './pages/owner/PlansPage';
@@ -26,6 +27,7 @@ import { SubscriptionPage } from './pages/trainer/SubscriptionPage';
 import { ProfilePage } from './pages/trainer/ProfilePage';
 import { ReportsPage } from './pages/trainer/ReportsPage';
 import { PublicPageSettingsPage } from './pages/trainer/PublicPageSettingsPage';
+import { TrainerLeadsPage } from './pages/trainer/TrainerLeadsPage';
 
 import { StudentDashboard } from './pages/student/StudentDashboard';
 import { StudentWorkoutsPage, StudentWorkoutDetailPage } from './pages/student/StudentWorkoutsPage';
@@ -35,20 +37,28 @@ import { StudentPhotosPage } from './pages/student/StudentPhotosPage';
 import { StudentAccessPage } from './pages/student/StudentAccessPage';
 import { StudentCheckInPage } from './pages/student/StudentCheckInPage';
 import { StudentAnamnesisPage } from './pages/student/StudentAnamnesisPage';
+import { ExploreFeedPage } from './pages/student/ExploreFeedPage';
+import { ExploreTrainersPage } from './pages/student/ExploreTrainersPage';
+import { ExploreSavedPage } from './pages/student/ExploreSavedPage';
+import { ExploreFollowingPage } from './pages/student/ExploreFollowingPage';
 
 import { TrainerPublicPage } from './pages/public/TrainerPublicPage';
 
 function HomeRedirect() {
-  const { user } = useAuth();
+  const { user, loading, isExplorerStudent, isLinkedStudent } = useAuth();
+  if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
   if (user.role === 'Owner') return <Navigate to="/owner" replace />;
-  if (user.role === 'Trainer') return <Navigate to="/trainer" replace />;
-  return <Navigate to="/student" replace />;
+  if (user.role === 'Trainer') return <Navigate to="/trainer/dashboard" replace />;
+  if (isLinkedStudent) return <Navigate to="/student/dashboard" replace />;
+  if (isExplorerStudent) return <Navigate to="/explore" replace />;
+  return <Navigate to="/explore" replace />;
 }
 
 const T = ({ children }) => <ProtectedRoute roles={['Trainer']}><TrainerLayout>{children}</TrainerLayout></ProtectedRoute>;
 const S = ({ children }) => <ProtectedRoute roles={['Student']}><StudentLayout>{children}</StudentLayout></ProtectedRoute>;
 const O = ({ children }) => <ProtectedRoute roles={['Owner']}><OwnerLayout>{children}</OwnerLayout></ProtectedRoute>;
+const SL = ({ children }) => <ProtectedStudentAreaRoute><StudentLayout>{children}</StudentLayout></ProtectedStudentAreaRoute>;
 
 export default function App() {
   return (
@@ -59,6 +69,7 @@ export default function App() {
             <Route path="/" element={<HomeRedirect />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/student/register" element={<StudentRegisterPage />} />
             <Route path="/set-password" element={<SetPasswordPage />} />
             <Route path="/p/:slug" element={<TrainerPublicPage />} />
 
@@ -68,6 +79,7 @@ export default function App() {
 
             {/* Trainer */}
             <Route path="/trainer" element={<T><TrainerDashboard /></T>} />
+            <Route path="/trainer/dashboard" element={<T><TrainerDashboard /></T>} />
             <Route path="/trainer/students" element={<T><StudentsPage /></T>} />
             <Route path="/trainer/students/:id" element={<T><StudentDetailPage /></T>} />
             <Route path="/trainer/reports" element={<T><ReportsPage /></T>} />
@@ -77,20 +89,27 @@ export default function App() {
             <Route path="/trainer/schedule" element={<T><SchedulePage /></T>} />
             <Route path="/trainer/posts" element={<T><PostsPage /></T>} />
             <Route path="/trainer/public-page" element={<T><PublicPageSettingsPage /></T>} />
+            <Route path="/trainer/leads" element={<T><TrainerLeadsPage /></T>} />
             <Route path="/trainer/subscription" element={<T><SubscriptionPage /></T>} />
             <Route path="/trainer/profile" element={<T><ProfilePage /></T>} />
 
             {/* Student */}
-            <Route path="/student" element={<S><StudentDashboard /></S>} />
-            <Route path="/student/workouts" element={<S><StudentWorkoutsPage /></S>} />
-            <Route path="/student/workouts/:id" element={<S><StudentWorkoutDetailPage /></S>} />
-            <Route path="/student/check-in" element={<S><StudentCheckInPage /></S>} />
-            <Route path="/student/anamnesis" element={<S><StudentAnamnesisPage /></S>} />
-            <Route path="/student/posts" element={<S><StudentPostsPage /></S>} />
-            <Route path="/student/posts/:id" element={<S><StudentPostDetailPage /></S>} />
-            <Route path="/student/progress" element={<S><StudentProgressPage /></S>} />
-            <Route path="/student/photos" element={<S><StudentPhotosPage /></S>} />
-            <Route path="/student/access" element={<S><StudentAccessPage /></S>} />
+            <Route path="/student" element={<Navigate to="/student/dashboard" replace />} />
+            <Route path="/student/dashboard" element={<SL><StudentDashboard /></SL>} />
+            <Route path="/student/workouts" element={<SL><StudentWorkoutsPage /></SL>} />
+            <Route path="/student/workouts/:id" element={<SL><StudentWorkoutDetailPage /></SL>} />
+            <Route path="/student/check-in" element={<SL><StudentCheckInPage /></SL>} />
+            <Route path="/student/anamnesis" element={<SL><StudentAnamnesisPage /></SL>} />
+            <Route path="/student/posts" element={<SL><StudentPostsPage /></SL>} />
+            <Route path="/student/posts/:id" element={<SL><StudentPostDetailPage /></SL>} />
+            <Route path="/student/progress" element={<SL><StudentProgressPage /></SL>} />
+            <Route path="/student/photos" element={<SL><StudentPhotosPage /></SL>} />
+            <Route path="/student/access" element={<SL><StudentAccessPage /></SL>} />
+            <Route path="/student/profile" element={<S><StudentAccessPage /></S>} />
+            <Route path="/explore" element={<S><ExploreFeedPage /></S>} />
+            <Route path="/explore/trainers" element={<S><ExploreTrainersPage /></S>} />
+            <Route path="/explore/saved" element={<S><ExploreSavedPage /></S>} />
+            <Route path="/explore/following" element={<S><ExploreFollowingPage /></S>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

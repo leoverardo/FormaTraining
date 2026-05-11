@@ -81,7 +81,7 @@ export function StudentDashboard() {
 
           <SectionCard title="Feed do personal" description="Dicas, aulas e avisos recentes">
             <div className="space-y-3">
-              {feedItems.length ? feedItems.map((item) => <FeedCard key={item.id} item={item} />) : (
+              {feedItems.length ? feedItems.map((item, index) => <FeedCard key={item.id ?? item.postId ?? item.relatedEntityId ?? `feed-${index}`} item={item} />) : (
                 <EmptyState icon={FileText} title="Ainda não há conteúdos por aqui" description="Quando seu personal publicar dicas, aulas ou avisos, eles aparecerão neste feed." />
               )}
             </div>

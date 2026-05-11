@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { uploadService } from '../../services/uploadService';
 import { useToast } from './Toast';
-import { Video, X, Loader2, Play } from 'lucide-react';
+import { Video, X, Loader2 } from 'lucide-react';
 
 export function VideoUpload({
   category,
@@ -17,7 +17,6 @@ export function VideoUpload({
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(currentUrl || null);
-  const [progress, setProgress] = useState(0);
 
   const handleFile = async (file) => {
     if (!file) return;
@@ -35,7 +34,6 @@ export function VideoUpload({
     const localUrl = URL.createObjectURL(file);
     setPreview(localUrl);
     setUploading(true);
-    setProgress(0);
 
     try {
       const res = await uploadService.upload(file, category);

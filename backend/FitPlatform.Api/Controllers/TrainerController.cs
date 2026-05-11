@@ -1,3 +1,4 @@
+using System;
 using FitPlatform.Application.DTOs.Subscription;
 using FitPlatform.Application.DTOs.Trainer;
 using FitPlatform.Application.Interfaces;
@@ -24,8 +25,21 @@ public class TrainerController : ControllerBase
     [HttpGet("dashboard")]
     public async Task<IActionResult> Dashboard()
     {
-        var result = await _service.GetDashboardAsync(_currentUser.TrainerId!.Value);
-        return result.Success ? Ok(result) : BadRequest(result);
+        var trainerId = _currentUser.TrainerId;
+        if (!trainerId.HasValue)
+        {
+            return Unauthorized();
+        }
+
+        var result = await _service.GetDashboardAsync(trainerId.Value);
+        if (result.Success) return Ok(result);
+
+        if (string.Equals(result.Message, "Trainer não encontrado.", StringComparison.OrdinalIgnoreCase))
+        {
+            return NotFound(result);
+        }
+
+        return StatusCode(500, result);
     }
 
     [HttpGet("profile")]

@@ -4,5 +4,5 @@ namespace FitPlatform.Application.Interfaces;
 
 public interface IJwtService
 {
-    string GenerateToken(User user, Guid? trainerId, Guid? studentId);
+    string GenerateToken(User user, Guid? trainerId, Guid? studentId, Guid? studentProfileId = null);
 }

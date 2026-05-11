@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Dumbbell, ClipboardList, CalendarDays,
-  FileText, CreditCard, User, BarChart2, Globe, Library
+  FileText, CreditCard, User, BarChart2, Globe, Library, Inbox
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { AppShell } from './AppShell';
@@ -32,6 +32,7 @@ const groups = [
     label: 'Conta',
     items: [
       { to: '/trainer/public-page', icon: Globe, label: 'Pagina Publica' },
+      { to: '/trainer/leads', icon: Inbox, label: 'Leads' },
       { to: '/trainer/subscription', icon: CreditCard, label: 'Assinatura' },
       { to: '/trainer/profile', icon: User, label: 'Meu Perfil' },
     ],

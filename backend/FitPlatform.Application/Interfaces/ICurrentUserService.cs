@@ -6,4 +6,5 @@ public interface ICurrentUserService
     string Role { get; }
     Guid? TrainerId { get; }
     Guid? StudentId { get; }
+    Guid? StudentProfileId { get; }
 }

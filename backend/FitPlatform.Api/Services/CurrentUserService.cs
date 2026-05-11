@@ -9,15 +9,22 @@ public class CurrentUserService : ICurrentUserService
 
     public CurrentUserService(IHttpContextAccessor http) => _http = http;
 
-    public Guid UserId => Guid.Parse(_http.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    public string Role => _http.HttpContext!.User.FindFirstValue(ClaimTypes.Role)!;
+    public Guid UserId
+    {
+        get
+        {
+            var value = _http.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Guid.TryParse(value, out var userId) ? userId : Guid.Empty;
+        }
+    }
+    public string Role => _http.HttpContext?.User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
 
     public Guid? TrainerId
     {
         get
         {
-            var val = _http.HttpContext!.User.FindFirstValue("TrainerId");
-            return val != null ? Guid.Parse(val) : null;
+            var val = _http.HttpContext?.User.FindFirstValue("TrainerId");
+            return Guid.TryParse(val, out var trainerId) ? trainerId : null;
         }
     }
 
@@ -25,8 +32,17 @@ public class CurrentUserService : ICurrentUserService
     {
         get
         {
-            var val = _http.HttpContext!.User.FindFirstValue("StudentId");
-            return val != null ? Guid.Parse(val) : null;
+            var val = _http.HttpContext?.User.FindFirstValue("StudentId");
+            return Guid.TryParse(val, out var studentId) ? studentId : null;
+        }
+    }
+
+    public Guid? StudentProfileId
+    {
+        get
+        {
+            var val = _http.HttpContext?.User.FindFirstValue("StudentProfileId");
+            return Guid.TryParse(val, out var studentProfileId) ? studentProfileId : null;
         }
     }
 }

@@ -56,7 +56,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("DataPrivacyRequests", (string)null);
+                    b.ToTable("DataPrivacyRequests");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Exercise", b =>
@@ -110,7 +110,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("VideoMediaId");
 
-                    b.ToTable("Exercises", (string)null);
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.ExerciseLibraryItem", b =>
@@ -154,7 +154,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("IsActive");
 
-                    b.ToTable("ExerciseLibraryItems", (string)null);
+                    b.ToTable("ExerciseLibraryItems");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.FeedComment", b =>
@@ -199,7 +199,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FeedComments", (string)null);
+                    b.ToTable("FeedComments");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.FeedReaction", b =>
@@ -244,7 +244,7 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("FeedItemKey", "UserId", "ReactionType")
                         .IsUnique();
 
-                    b.ToTable("FeedReactions", (string)null);
+                    b.ToTable("FeedReactions");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.FeedSavedItem", b =>
@@ -286,7 +286,7 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("FeedItemKey", "UserId")
                         .IsUnique();
 
-                    b.ToTable("FeedSavedItems", (string)null);
+                    b.ToTable("FeedSavedItems");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.MediaFile", b =>
@@ -362,7 +362,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("MediaFiles", (string)null);
+                    b.ToTable("MediaFiles");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Notification", b =>
@@ -409,7 +409,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.PasswordSetupToken", b =>
@@ -444,7 +444,51 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PasswordSetupTokens", (string)null);
+                    b.ToTable("PasswordSetupTokens");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.PaymentWebhookLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RawPayload")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResourceId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResourceId");
+
+                    b.HasIndex("Provider", "EventId")
+                        .IsUnique();
+
+                    b.ToTable("PaymentWebhookLogs");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.PlatformFeature", b =>
@@ -478,7 +522,7 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("PlatformFeatures", (string)null);
+                    b.ToTable("PlatformFeatures");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.PlatformPlan", b =>
@@ -514,7 +558,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("Active");
 
-                    b.ToTable("PlatformPlans", (string)null);
+                    b.ToTable("PlatformPlans");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.PlatformPlanFeature", b =>
@@ -545,7 +589,7 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("PlatformPlanId", "PlatformFeatureId")
                         .IsUnique();
 
-                    b.ToTable("PlatformPlanFeatures", (string)null);
+                    b.ToTable("PlatformPlanFeatures");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.PlatformPlanPrice", b =>
@@ -577,7 +621,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("PlatformPlanId");
 
-                    b.ToTable("PlatformPlanPrices", (string)null);
+                    b.ToTable("PlatformPlanPrices");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Post", b =>
@@ -637,7 +681,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("VideoMediaId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.ProgressComment", b =>
@@ -678,7 +722,35 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("ProgressComments", (string)null);
+                    b.ToTable("ProgressComments");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.SavedTrainer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StudentProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentProfileId");
+
+                    b.HasIndex("TrainerId", "StudentProfileId")
+                        .IsUnique();
+
+                    b.ToTable("SavedTrainers");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Student", b =>
@@ -727,7 +799,7 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentAnamnesis", b =>
@@ -790,7 +862,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("StudentAnamnesisRecords", (string)null);
+                    b.ToTable("StudentAnamnesisRecords");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentInvite", b =>
@@ -834,7 +906,69 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("StudentInvites", (string)null);
+                    b.ToTable("StudentInvites");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccountStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Goal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Interests")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Neighborhood")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreferredTrainingMode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePhotoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TrainingLevel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("City", "State");
+
+                    b.ToTable("StudentProfiles");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentProgress", b =>
@@ -917,7 +1051,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("StudentProgressRecords", (string)null);
+                    b.ToTable("StudentProgressRecords");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentProgressPhoto", b =>
@@ -965,7 +1099,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("StudentProgressPhotos", (string)null);
+                    b.ToTable("StudentProgressPhotos");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentTestimonial", b =>
@@ -1005,7 +1139,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("StudentTestimonials", (string)null);
+                    b.ToTable("StudentTestimonials");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentTransformation", b =>
@@ -1057,7 +1191,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("StudentTransformations", (string)null);
+                    b.ToTable("StudentTransformations");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentWeeklyCheckIn", b =>
@@ -1125,7 +1259,7 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("StudentId", "WeekStartDate")
                         .IsUnique();
 
-                    b.ToTable("StudentWeeklyCheckIns", (string)null);
+                    b.ToTable("StudentWeeklyCheckIns");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentWorkoutSchedule", b =>
@@ -1163,7 +1297,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("StudentWorkoutSchedules", (string)null);
+                    b.ToTable("StudentWorkoutSchedules");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.TermsDocument", b =>
@@ -1198,7 +1332,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TermsDocuments", (string)null);
+                    b.ToTable("TermsDocuments");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Trainer", b =>
@@ -1330,7 +1464,87 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Trainers", (string)null);
+                    b.ToTable("Trainers");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerFollower", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StudentProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentProfileId");
+
+                    b.HasIndex("TrainerId", "StudentProfileId")
+                        .IsUnique();
+
+                    b.ToTable("TrainerFollowers");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerLead", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Goal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("StudentProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("StudentProfileId");
+
+                    b.HasIndex("TrainerId");
+
+                    b.ToTable("TrainerLeads");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerOnboarding", b =>
@@ -1437,7 +1651,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("SelectedPlatformPlanPriceId");
 
-                    b.ToTable("TrainerOnboardings", (string)null);
+                    b.ToTable("TrainerOnboardings");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerPayment", b =>
@@ -1463,6 +1677,12 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<string>("ProviderPaymentId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProviderSubscriptionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RawPayload")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -1481,7 +1701,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerSubscriptionId");
 
-                    b.ToTable("TrainerPayments", (string)null);
+                    b.ToTable("TrainerPayments");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerStudentNote", b =>
@@ -1519,7 +1739,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId", "StudentId");
 
-                    b.ToTable("TrainerStudentNotes", (string)null);
+                    b.ToTable("TrainerStudentNotes");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerSubscription", b =>
@@ -1537,7 +1757,13 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("InitPoint")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LastPaymentStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MercadoPagoPayerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MercadoPagoSubscriptionId")
@@ -1569,7 +1795,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("TrainerSubscriptions", (string)null);
+                    b.ToTable("TrainerSubscriptions");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.User", b =>
@@ -1616,7 +1842,7 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.UserConsent", b =>
@@ -1652,7 +1878,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UserId", "TermsDocumentId");
 
-                    b.ToTable("UserConsents", (string)null);
+                    b.ToTable("UserConsents");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Workout", b =>
@@ -1690,7 +1916,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("Workouts", (string)null);
+                    b.ToTable("Workouts");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutExercise", b =>
@@ -1735,7 +1961,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("WorkoutExercises", (string)null);
+                    b.ToTable("WorkoutExercises");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutSession", b =>
@@ -1782,7 +2008,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("WorkoutSessions", (string)null);
+                    b.ToTable("WorkoutSessions");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutSessionExercise", b =>
@@ -1824,7 +2050,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("WorkoutSessionId");
 
-                    b.ToTable("WorkoutSessionExercises", (string)null);
+                    b.ToTable("WorkoutSessionExercises");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutTemplate", b =>
@@ -1859,7 +2085,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("IsActive");
 
-                    b.ToTable("WorkoutTemplates", (string)null);
+                    b.ToTable("WorkoutTemplates");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutTemplateExercise", b =>
@@ -1904,7 +2130,7 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("WorkoutTemplateId");
 
-                    b.ToTable("WorkoutTemplateExercises", (string)null);
+                    b.ToTable("WorkoutTemplateExercises");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.DataPrivacyRequest", b =>
@@ -2097,6 +2323,25 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("WeeklyCheckIn");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.SavedTrainer", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.StudentProfile", "StudentProfile")
+                        .WithMany("SavedTrainers")
+                        .HasForeignKey("StudentProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("StudentProfile");
+
+                    b.Navigation("Trainer");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.Student", b =>
                 {
                     b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
@@ -2152,6 +2397,17 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentProfile", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.User", "User")
+                        .WithOne("StudentProfile")
+                        .HasForeignKey("FitPlatform.Domain.Entities.StudentProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentProgress", b =>
@@ -2334,6 +2590,43 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("PublicBannerMedia");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerFollower", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.StudentProfile", "StudentProfile")
+                        .WithMany("FollowingTrainers")
+                        .HasForeignKey("StudentProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("StudentProfile");
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerLead", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.StudentProfile", "StudentProfile")
+                        .WithMany()
+                        .HasForeignKey("StudentProfileId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("StudentProfile");
+
+                    b.Navigation("Trainer");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerOnboarding", b =>
@@ -2571,6 +2864,13 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("WorkoutSessions");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentProfile", b =>
+                {
+                    b.Navigation("FollowingTrainers");
+
+                    b.Navigation("SavedTrainers");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentWeeklyCheckIn", b =>
                 {
                     b.Navigation("Comments");
@@ -2602,6 +2902,8 @@ namespace FitPlatform.Infrastructure.Migrations
             modelBuilder.Entity("FitPlatform.Domain.Entities.User", b =>
                 {
                     b.Navigation("Student");
+
+                    b.Navigation("StudentProfile");
 
                     b.Navigation("Trainer");
                 });

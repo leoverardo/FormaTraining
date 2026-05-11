@@ -25,8 +25,8 @@ export function LoginPage() {
     try {
       const user = await login(form.email, form.password);
       if (user.role === 'Owner') navigate('/owner');
-      else if (user.role === 'Trainer') navigate('/trainer');
-      else navigate('/student');
+      else if (user.role === 'Trainer') navigate('/trainer/dashboard');
+      else navigate(user.hasActiveTrainerLink ? '/student/dashboard' : '/explore');
     } catch (err) {
       toast(err.response?.data?.message || 'E-mail ou senha incorretos.', 'error');
     } finally {
@@ -102,6 +102,10 @@ export function LoginPage() {
             <p className="text-center text-sm text-slate-500 mt-5">
               Personal trainer?{' '}
               <Link to="/register" className="text-indigo-600 font-semibold hover:text-indigo-700">Criar conta</Link>
+            </p>
+            <p className="text-center text-sm text-slate-500 mt-2">
+              Aluno explorador?{' '}
+              <Link to="/student/register" className="text-indigo-600 font-semibold hover:text-indigo-700">Criar conta</Link>
             </p>
           </div>
 

@@ -5,14 +5,20 @@ using FitPlatform.Domain.Entities;
 using FitPlatform.Domain.Enums;
 using FitPlatform.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FitPlatform.Infrastructure.Services;
 
 public class PublicPageService
 {
     private readonly AppDbContext _db;
+    private readonly ILogger<PublicPageService> _logger;
 
-    public PublicPageService(AppDbContext db) => _db = db;
+    public PublicPageService(AppDbContext db, ILogger<PublicPageService> logger)
+    {
+        _db = db;
+        _logger = logger;
+    }
 
     public async Task<ApiResponse<PublicPageResponse>> GetBySlugAsync(string slug)
     {
@@ -47,6 +53,8 @@ public class PublicPageService
             BrandName = trainer.BrandName,
             PublicSlug = trainer.PublicSlug,
             PublicPageEnabled = trainer.PublicPageEnabled,
+            PublicSearchEnabled = trainer.PublicSearchEnabled,
+            AcceptingStudents = trainer.AcceptingStudents,
             PublicHeadline = trainer.PublicHeadline,
             PublicDescription = trainer.PublicDescription,
             Bio = trainer.Bio,
@@ -56,9 +64,13 @@ public class PublicPageService
             ProfilePhotoUrl = trainer.ProfilePhotoUrl,
             LogoUrl = trainer.LogoUrl,
             BannerUrl = trainer.BannerUrl,
+            PublicBannerUrl = trainer.BannerUrl,
+            PublicBannerMediaId = trainer.PublicBannerMediaId,
             PrimaryColor = trainer.PrimaryColor,
             SecondaryColor = trainer.SecondaryColor,
+            ShowInstagram = trainer.ShowInstagram,
             ShowTestimonials = trainer.ShowTestimonials,
+            WelcomeMessage = trainer.WelcomeMessage,
             Stats = new PublicPageStatsDto
             {
                 ActiveStudentsCount = activeStudentsCount,
@@ -88,40 +100,58 @@ public class PublicPageService
         });
     }
 
+    public async Task<ApiResponse<PublicPageResponse>> GetTrainerSettingsAsync(Guid trainerId)
+    {
+        var trainer = await _db.Trainers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == trainerId);
+        if (trainer == null) return ApiResponse<PublicPageResponse>.Fail("Trainer não encontrado.");
+
+        _logger.LogInformation("Public page settings loaded. TrainerId={TrainerId}, PublicPageEnabled={PublicPageEnabled}, PublicSlug={PublicSlug}",
+            trainerId, trainer.PublicPageEnabled, trainer.PublicSlug);
+
+        return ApiResponse<PublicPageResponse>.Ok(MapTrainerSettings(trainer));
+    }
+
     public async Task<ApiResponse<PublicPageResponse>> UpdatePageAsync(Guid trainerId, PublicPageRequest request)
     {
         var trainer = await _db.Trainers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == trainerId);
         if (trainer == null) return ApiResponse<PublicPageResponse>.Fail("Trainer não encontrado.");
 
+        if (request.PublicPageEnabled && string.IsNullOrWhiteSpace(request.PublicSlug) && string.IsNullOrWhiteSpace(trainer.PublicSlug))
+            return ApiResponse<PublicPageResponse>.Fail("Informe um slug para ativar a página pública.");
+
         if (!string.IsNullOrWhiteSpace(request.PublicSlug))
         {
-            var slug = request.PublicSlug.Trim().ToLower().Replace(" ", "-");
+            var slug = NormalizeSlug(request.PublicSlug);
             var exists = await _db.Trainers.AnyAsync(t => t.PublicSlug == slug && t.Id != trainerId);
             if (exists) return ApiResponse<PublicPageResponse>.Fail("Este slug já está em uso.");
             trainer.PublicSlug = slug;
         }
 
+        _logger.LogInformation("Public page save requested. TrainerId={TrainerId}, PublicPageEnabled={PublicPageEnabled}, PublicSlug={PublicSlug}, PublicHeadline={PublicHeadline}",
+            trainerId, request.PublicPageEnabled, request.PublicSlug, request.PublicHeadline);
+
         trainer.PublicPageEnabled = request.PublicPageEnabled;
+        trainer.PublicSearchEnabled = request.PublicSearchEnabled;
+        trainer.AcceptingStudents = request.AcceptingStudents;
         trainer.PublicHeadline = request.PublicHeadline;
         trainer.PublicDescription = request.PublicDescription;
         trainer.WhatsappNumber = request.WhatsappNumber;
         trainer.ShowInstagram = request.ShowInstagram;
         trainer.ShowTestimonials = request.ShowTestimonials;
-        trainer.BannerUrl = request.BannerUrl;
+        trainer.BannerUrl = request.PublicBannerUrl ?? request.BannerUrl;
+        trainer.PublicBannerMediaId = request.PublicBannerMediaId;
         trainer.WelcomeMessage = request.WelcomeMessage;
+        trainer.PrimaryColor = request.PrimaryColor ?? trainer.PrimaryColor;
+        trainer.SecondaryColor = request.SecondaryColor ?? trainer.SecondaryColor;
         trainer.UpdatedAt = DateTime.UtcNow;
 
-        await _db.SaveChangesAsync();
-        return ApiResponse<PublicPageResponse>.Ok(new PublicPageResponse
-        {
-            TrainerId = trainer.Id, BrandName = trainer.BrandName, PublicSlug = trainer.PublicSlug,
-            PublicPageEnabled = trainer.PublicPageEnabled, PublicHeadline = trainer.PublicHeadline,
-            Bio = trainer.Bio, PrimaryColor = trainer.PrimaryColor
-        });
+        var affected = await _db.SaveChangesAsync();
+        _logger.LogInformation("Public page save completed. TrainerId={TrainerId}, SaveChangesAffected={SaveChangesAffected}", trainerId, affected);
+
+        return ApiResponse<PublicPageResponse>.Ok(MapTrainerSettings(trainer));
     }
 
     // ── Testimonials ─────────────────────────────────────────────────────────
-
     public async Task<ApiResponse<List<TestimonialResponse>>> GetTestimonialsAsync(Guid trainerId)
     {
         var list = await _db.StudentTestimonials.Include(t => t.Student).ThenInclude(s => s.User)
@@ -198,6 +228,42 @@ public class PublicPageService
         await _db.SaveChangesAsync();
         return ApiResponse<TransformationResponse>.Ok(MapTransformation(t));
     }
+
+    private static string NormalizeSlug(string slug)
+    {
+        var normalized = slug.Trim().ToLowerInvariant();
+        normalized = normalized.Replace(" ", "-");
+        normalized = System.Text.RegularExpressions.Regex.Replace(normalized, @"[^a-z0-9\-]", string.Empty);
+        normalized = System.Text.RegularExpressions.Regex.Replace(normalized, @"\-{2,}", "-").Trim('-');
+        return normalized;
+    }
+
+    private static PublicPageResponse MapTrainerSettings(Trainer trainer) => new()
+    {
+        TrainerId = trainer.Id,
+        FullName = trainer.User.Name,
+        BrandName = trainer.BrandName,
+        PublicSlug = trainer.PublicSlug,
+        PublicPageEnabled = trainer.PublicPageEnabled,
+        PublicSearchEnabled = trainer.PublicSearchEnabled,
+        AcceptingStudents = trainer.AcceptingStudents,
+        PublicHeadline = trainer.PublicHeadline,
+        PublicDescription = trainer.PublicDescription,
+        Bio = trainer.Bio,
+        Specialties = trainer.Specialties,
+        Instagram = trainer.ShowInstagram ? trainer.Instagram : null,
+        WhatsappNumber = trainer.WhatsappNumber,
+        ProfilePhotoUrl = trainer.ProfilePhotoUrl,
+        LogoUrl = trainer.LogoUrl,
+        BannerUrl = trainer.BannerUrl,
+        PublicBannerUrl = trainer.BannerUrl,
+        PublicBannerMediaId = trainer.PublicBannerMediaId,
+        PrimaryColor = trainer.PrimaryColor,
+        SecondaryColor = trainer.SecondaryColor,
+        ShowInstagram = trainer.ShowInstagram,
+        ShowTestimonials = trainer.ShowTestimonials,
+        WelcomeMessage = trainer.WelcomeMessage
+    };
 
     private static TestimonialResponse MapTestimonial(StudentTestimonial t) => new()
     {

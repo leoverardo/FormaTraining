@@ -1,24 +1,62 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { studentAreaService } from '../../services/studentAreaService';
+import { useAuth } from '../../contexts/AuthContext';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { Badge } from '../../components/ui/Badge';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { ClipboardList, ChevronRight, ChevronLeft, Play, Clock, Repeat } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
+import { ClipboardList, ChevronRight, ChevronLeft, Play, Clock } from 'lucide-react';
 
 const levelBadge = { Beginner: 'success', Intermediate: 'warning', Advanced: 'danger' };
 const levelLabel = { Beginner: 'Iniciante', Intermediate: 'Intermediário', Advanced: 'Avançado' };
 
 export function StudentWorkoutsPage() {
+  const { user } = useAuth();
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    studentAreaService.getWorkouts().then(r => setWorkouts(r.data.data || [])).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+    if (!user?.hasActiveTrainerLink) {
+      setWorkouts([]);
+      setLoading(false);
+      return;
+    }
+
+    const load = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await studentAreaService.getWorkouts();
+        setWorkouts(response.data.data || []);
+      } catch (err) {
+        if (err.response?.status === 403) {
+          setError('Você ainda não possui um personal vinculado.');
+          return;
+        }
+        setError('Não foi possível carregar seus treinos agora.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [user?.hasActiveTrainerLink]);
 
   if (loading) return <LoadingState />;
+
+  if (!user?.hasActiveTrainerLink || error) {
+    return (
+      <EmptyState
+        icon={ClipboardList}
+        title="Essa área será liberada quando você estiver vinculado a um personal."
+        description={error || 'Encontre um personal para liberar seus treinos.'}
+        action={<Button onClick={() => navigate('/explore/trainers')}>Explorar personais</Button>}
+      />
+    );
+  }
 
   return (
     <div className="space-y-4 pb-20 sm:pb-0">
@@ -48,14 +86,31 @@ export function StudentWorkoutsPage() {
 }
 
 export function StudentWorkoutDetailPage() {
+  const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const [workout, setWorkout] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    studentAreaService.getWorkoutById(id).then(r => setWorkout(r.data.data)).catch(() => navigate('/student/workouts')).finally(() => setLoading(false));
-  }, [id]);
+    if (!user?.hasActiveTrainerLink) {
+      navigate('/explore', { replace: true });
+      return;
+    }
+
+    const load = async () => {
+      try {
+        const response = await studentAreaService.getWorkoutById(id);
+        setWorkout(response.data.data);
+      } catch {
+        navigate('/student/workouts');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [id, navigate, user?.hasActiveTrainerLink]);
 
   if (loading) return <LoadingState />;
   if (!workout) return null;
