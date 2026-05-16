@@ -1,5 +1,5 @@
 import api from './api';
 
 export const ownerService = {
-  getDashboard: () => api.get('/owner/dashboard'),
+  getDashboard: (range = 30) => api.get('/owner/dashboard', { params: { range } }),
 };

@@ -64,6 +64,29 @@ public class WorkoutSessionsStudentController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
+    [HttpGet("{id:guid}/execution")]
+    public async Task<IActionResult> GetExecution(Guid id)
+    {
+        var result = await _service.GetExecutionAsync(id, _currentUser.StudentId!.Value);
+        return result.Success ? Ok(result) : NotFound(result);
+    }
+
+    [HttpPatch("{sessionId:guid}/sets/{setId:guid}")]
+    public async Task<IActionResult> UpdateSet(Guid sessionId, Guid setId, [FromBody] UpdateWorkoutSessionSetRequest request)
+    {
+        if (!ModelState.IsValid) return ValidationProblem(ModelState);
+        var result = await _service.UpdateSetAsync(sessionId, setId, _currentUser.StudentId!.Value, request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPut("{sessionId:guid}/exercises/{exerciseSessionId:guid}/complete")]
+    public async Task<IActionResult> CompleteExercise(Guid sessionId, Guid exerciseSessionId, [FromBody] CompleteWorkoutSessionExerciseRequest request)
+    {
+        if (!ModelState.IsValid) return ValidationProblem(ModelState);
+        var result = await _service.CompleteExerciseAsync(sessionId, exerciseSessionId, _currentUser.StudentId!.Value, request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
     [HttpPut("{id:guid}/skip")]
     public async Task<IActionResult> Skip(Guid id)
     {

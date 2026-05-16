@@ -20,7 +20,9 @@ public class ExerciseLibraryRequest
     public string? Description { get; set; }
     public string? Instructions { get; set; }
     public string? ImageUrl { get; set; }
+    public Guid? ImageMediaId { get; set; }
     public string? VideoUrl { get; set; }
+    public Guid? VideoMediaId { get; set; }
     public int Level { get; set; } = 1;
     public bool IsActive { get; set; } = true;
 }

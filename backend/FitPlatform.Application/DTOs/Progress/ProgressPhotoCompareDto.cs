@@ -14,6 +14,7 @@ public class ProgressPhotoItemDto
 {
     public Guid Id { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
+    public Guid? MediaAssetId { get; set; }
     public string? Description { get; set; }
     public DateTime PhotoDate { get; set; }
     public string CreatedByRole { get; set; } = string.Empty;

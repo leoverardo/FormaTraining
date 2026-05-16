@@ -8,7 +8,9 @@ public class ExerciseResponse
     public string? Description { get; set; }
     public string? Instructions { get; set; }
     public string? ImageUrl { get; set; }
+    public Guid? ImageMediaId { get; set; }
     public string? VideoUrl { get; set; }
+    public Guid? VideoMediaId { get; set; }
     public string Level { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }

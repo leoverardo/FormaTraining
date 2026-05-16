@@ -1,4 +1,5 @@
 namespace FitPlatform.Application.DTOs.PublicPage;
+using FitPlatform.Application.DTOs.ServiceSales;
 
 public class PublicPageRequest
 {
@@ -11,8 +12,6 @@ public class PublicPageRequest
     public string? WhatsappNumber { get; set; }
     public bool ShowInstagram { get; set; } = true;
     public bool ShowTestimonials { get; set; } = true;
-    public string? BannerUrl { get; set; }
-    public string? PublicBannerUrl { get; set; }
     public Guid? PublicBannerMediaId { get; set; }
     public string? WelcomeMessage { get; set; }
     public string? PrimaryColor { get; set; }
@@ -48,6 +47,7 @@ public class PublicPageResponse
     public List<PublicPostItemDto> RecentPosts { get; set; } = new();
     public List<TestimonialPublicItem> Testimonials { get; set; } = new();
     public List<TransformationPublicItem> Transformations { get; set; } = new();
+    public List<PublicServiceOfferResponse> ServiceOffers { get; set; } = new();
 }
 
 public class PublicPageStatsDto

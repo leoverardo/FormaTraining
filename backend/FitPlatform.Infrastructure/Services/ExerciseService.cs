@@ -30,6 +30,24 @@ public class ExerciseService
 
     public async Task<ApiResponse<ExerciseResponse>> CreateAsync(ExerciseRequest request, Guid trainerId)
     {
+        if (!string.IsNullOrWhiteSpace(request.ImageUrl) || !string.IsNullOrWhiteSpace(request.VideoUrl))
+            return ApiResponse<ExerciseResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+
+        string? imageUrl = null;
+        string? videoUrl = null;
+        if (request.ImageMediaId.HasValue)
+        {
+            var imageMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.ImageMediaId.Value);
+            if (imageMedia == null) return ApiResponse<ExerciseResponse>.Fail("MÃ­dia de imagem nÃ£o encontrada.");
+            imageUrl = imageMedia.SecureUrl ?? imageMedia.Url;
+        }
+        if (request.VideoMediaId.HasValue)
+        {
+            var videoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.VideoMediaId.Value);
+            if (videoMedia == null) return ApiResponse<ExerciseResponse>.Fail("MÃ­dia de vÃ­deo nÃ£o encontrada.");
+            videoUrl = videoMedia.SecureUrl ?? videoMedia.Url;
+        }
+
         var exercise = new Exercise
         {
             TrainerId = trainerId,
@@ -37,8 +55,10 @@ public class ExerciseService
             MuscleGroup = request.MuscleGroup,
             Description = request.Description,
             Instructions = request.Instructions,
-            ImageUrl = request.ImageUrl,
-            VideoUrl = request.VideoUrl,
+            ImageUrl = imageUrl,
+            ImageMediaId = request.ImageMediaId,
+            VideoUrl = videoUrl,
+            VideoMediaId = request.VideoMediaId,
             Level = request.Level
         };
         _db.Exercises.Add(exercise);
@@ -51,12 +71,27 @@ public class ExerciseService
         var exercise = await _db.Exercises.FirstOrDefaultAsync(e => e.Id == id && e.TrainerId == trainerId);
         if (exercise == null) return ApiResponse<ExerciseResponse>.Fail("Exercício não encontrado.");
 
+        if (!string.IsNullOrWhiteSpace(request.ImageUrl) || !string.IsNullOrWhiteSpace(request.VideoUrl))
+            return ApiResponse<ExerciseResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+
         exercise.Name = request.Name;
         exercise.MuscleGroup = request.MuscleGroup;
         exercise.Description = request.Description;
         exercise.Instructions = request.Instructions;
-        exercise.ImageUrl = request.ImageUrl;
-        exercise.VideoUrl = request.VideoUrl;
+        if (request.ImageMediaId.HasValue)
+        {
+            var imageMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.ImageMediaId.Value);
+            if (imageMedia == null) return ApiResponse<ExerciseResponse>.Fail("MÃ­dia de imagem nÃ£o encontrada.");
+            exercise.ImageMediaId = imageMedia.Id;
+            exercise.ImageUrl = imageMedia.SecureUrl ?? imageMedia.Url;
+        }
+        if (request.VideoMediaId.HasValue)
+        {
+            var videoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.VideoMediaId.Value);
+            if (videoMedia == null) return ApiResponse<ExerciseResponse>.Fail("MÃ­dia de vÃ­deo nÃ£o encontrada.");
+            exercise.VideoMediaId = videoMedia.Id;
+            exercise.VideoUrl = videoMedia.SecureUrl ?? videoMedia.Url;
+        }
         exercise.Level = request.Level;
         exercise.UpdatedAt = DateTime.UtcNow;
 
@@ -82,7 +117,9 @@ public class ExerciseService
         Description = e.Description,
         Instructions = e.Instructions,
         ImageUrl = e.ImageUrl,
+        ImageMediaId = e.ImageMediaId,
         VideoUrl = e.VideoUrl,
+        VideoMediaId = e.VideoMediaId,
         Level = e.Level.ToString(),
         CreatedAt = e.CreatedAt
     };

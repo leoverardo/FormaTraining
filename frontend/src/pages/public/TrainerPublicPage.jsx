@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { publicPageService } from '../../services/publicPageService';
+import { serviceSalesService } from '../../services/serviceSalesService';
 import { useToast } from '../../components/ui/Toast';
 import { Modal } from '../../components/ui/Modal';
 import { Input } from '../../components/ui/Input';
@@ -43,6 +44,10 @@ export function TrainerPublicPage() {
   const [notFound, setNotFound] = useState(false);
   const [leadOpen, setLeadOpen] = useState(false);
   const [sendingLead, setSendingLead] = useState(false);
+  const [buyingOfferId, setBuyingOfferId] = useState(null);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [checkoutForm, setCheckoutForm] = useState({ buyerName: '', buyerEmail: '', buyerPhone: '' });
   const [leadForm, setLeadForm] = useState({ name: '', email: '', phone: '', goal: '', message: '' });
   const { toast } = useToast();
   const feedRef = useRef(null);
@@ -112,6 +117,26 @@ export function TrainerPublicPage() {
     }
   };
 
+  const buyOffer = async (event) => {
+    event.preventDefault();
+    if (!selectedOffer) return;
+    setBuyingOfferId(selectedOffer.id);
+    try {
+      const response = await serviceSalesService.createPublicOrder(slug, selectedOffer.id, {
+        buyerName: checkoutForm.buyerName,
+        buyerEmail: checkoutForm.buyerEmail,
+        buyerPhone: checkoutForm.buyerPhone || null,
+      });
+      const checkoutUrl = response?.data?.data?.checkoutUrl;
+      if (!checkoutUrl) throw new Error('Checkout indisponível.');
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      toast(error?.response?.data?.message || 'Não foi possível iniciar a contratação.', 'error');
+    } finally {
+      setBuyingOfferId(null);
+    }
+  };
+
   if (loading) return <PublicPageSkeleton />;
 
   if (notFound || !data || !profile) {
@@ -151,6 +176,35 @@ export function TrainerPublicPage() {
 
         <PublicTransformationsSection transformations={data.transformations || []} />
 
+        {Array.isArray(data.serviceOffers) && data.serviceOffers.length > 0 && (
+          <section className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Serviços</h2>
+                <p className="text-sm text-slate-500">Contrate diretamente pelo checkout seguro.</p>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {data.serviceOffers.map((offer) => (
+                <div key={offer.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="font-semibold text-slate-900">{offer.title}</p>
+                  <p className="mt-1 text-sm text-slate-600">{offer.description || 'Serviço personalizado.'}</p>
+                  <p className="mt-2 text-lg font-bold text-slate-900">R$ {Number(offer.price || 0).toFixed(2)}</p>
+                  <Button
+                    className="mt-3 w-full"
+                    onClick={() => {
+                      setSelectedOffer(offer);
+                      setCheckoutOpen(true);
+                    }}
+                  >
+                    Contratar
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         <PublicCtaSection
           onPrimaryClick={openWhatsapp}
           onSecondaryClick={() => setLeadOpen(true)}
@@ -172,6 +226,15 @@ export function TrainerPublicPage() {
             <textarea className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" rows={4} value={leadForm.message} onChange={(e) => setLeadForm((p) => ({ ...p, message: e.target.value }))} />
           </div>
           <Button type="submit" className="w-full" loading={sendingLead}>Enviar interesse</Button>
+        </form>
+      </Modal>
+
+      <Modal open={checkoutOpen} onClose={() => setCheckoutOpen(false)} title={`Contratar ${selectedOffer?.title || 'serviço'}`} size="md">
+        <form onSubmit={buyOffer} className="space-y-3">
+          <Input label="Nome" value={checkoutForm.buyerName} onChange={(e) => setCheckoutForm((p) => ({ ...p, buyerName: e.target.value }))} required />
+          <Input label="E-mail" type="email" value={checkoutForm.buyerEmail} onChange={(e) => setCheckoutForm((p) => ({ ...p, buyerEmail: e.target.value }))} required />
+          <Input label="Telefone" value={checkoutForm.buyerPhone} onChange={(e) => setCheckoutForm((p) => ({ ...p, buyerPhone: e.target.value }))} />
+          <Button type="submit" className="w-full" loading={buyingOfferId === selectedOffer?.id}>Ir para pagamento</Button>
         </form>
       </Modal>
     </div>

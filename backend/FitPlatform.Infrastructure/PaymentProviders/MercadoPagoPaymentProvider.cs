@@ -33,7 +33,7 @@ public class MercadoPagoPaymentProvider : IPaymentProvider
             {
                 frequency,
                 frequency_type = frequencyType,
-                transaction_amount = request.Amount,
+                transaction_amount = request.AmountInCents / 100m,
                 currency_id = "BRL"
             },
             back_url = string.IsNullOrWhiteSpace(_options.PendingUrl) ? _options.SuccessUrl : _options.PendingUrl,
@@ -128,15 +128,20 @@ public class MercadoPagoPaymentProvider : IPaymentProvider
         };
     }
 
-    public async Task CancelSubscriptionAsync(string providerSubscriptionId)
+    public async Task CancelSubscriptionAsync(string providerSubscriptionId, CancellationToken cancellationToken = default)
     {
         EnsureAccessToken();
         using var message = CreateRequest(HttpMethod.Put, $"/preapproval/{providerSubscriptionId}", new { status = "cancelled" });
-        using var response = await _httpClient.SendAsync(message);
+        using var response = await _httpClient.SendAsync(message, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw new InvalidOperationException($"Falha ao cancelar assinatura no Mercado Pago. HTTP {(int)response.StatusCode}.");
         }
+    }
+
+    public Task ChangeSubscriptionPlanAsync(ChangeProviderSubscriptionPlanRequest request, CancellationToken cancellationToken = default)
+    {
+        throw new NotSupportedException("MercadoPago provider legado não suporta troca de plano via esta integração.");
     }
 
     private HttpRequestMessage CreateRequest(HttpMethod method, string path, object? body = null)

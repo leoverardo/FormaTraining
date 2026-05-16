@@ -8,7 +8,9 @@ public class PostRequest
     public string? Description { get; set; }
     public string? Content { get; set; }
     public string? ImageUrl { get; set; }
+    public Guid? CoverMediaId { get; set; }
     public string? VideoUrl { get; set; }
+    public Guid? VideoMediaId { get; set; }
     public PostStatus Status { get; set; } = PostStatus.Draft;
     public PostVisibility Visibility { get; set; } = PostVisibility.StudentsOnly;
     public string? Tags { get; set; }

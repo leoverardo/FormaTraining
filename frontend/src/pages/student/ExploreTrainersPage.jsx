@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { MapPin, Users } from 'lucide-react';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { exploreService } from '../../services/exploreService';
+import { privacyService } from '../../services/privacyService';
 
 const defaultQuery = {
   search: '',
@@ -22,9 +23,11 @@ export function ExploreTrainersPage() {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState('');
+  const [hasLoadError, setHasLoadError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState(null);
+  const [showGeoPrompt, setShowGeoPrompt] = useState(false);
 
   const load = async (params = {}) => {
     setLoading(true);
@@ -35,10 +38,12 @@ export function ExploreTrainersPage() {
       const payload = response.data?.data || {};
       setItems(payload.items || []);
       setTotal(payload.total || 0);
+      setHasLoadError(false);
     } catch {
       setItems([]);
       setTotal(0);
-      setError('Não foi possível carregar a busca de personais agora.');
+      setHasLoadError(true);
+      setError('Nao foi possivel carregar a busca de personais agora.');
     } finally {
       setLoading(false);
     }
@@ -53,9 +58,12 @@ export function ExploreTrainersPage() {
     await load({ ...query, ...location, page: 1 });
   };
 
-  const handleUseMyLocation = () => {
+  const handleUseMyLocation = () => setShowGeoPrompt(true);
+
+  const confirmUseMyLocation = () => {
     if (!navigator.geolocation) {
-      setError('Seu navegador não suporta localização. Você ainda pode buscar por cidade ou estado.');
+      setError('Seu navegador nao suporta localizacao. Voce ainda pode buscar por cidade ou estado.');
+      setShowGeoPrompt(false);
       return;
     }
 
@@ -66,12 +74,15 @@ export function ExploreTrainersPage() {
         const lng = Number(position.coords.longitude.toFixed(6));
         const nextLocation = { latitude: lat, longitude: lng };
         setLocation(nextLocation);
+        await privacyService.updateConsent('GEOLOCATION_FOR_EXPLORE', true).catch(() => {});
         await load({ ...query, ...nextLocation, radiusKm: 50, page: 1 });
         setLocationLoading(false);
+        setShowGeoPrompt(false);
       },
       () => {
         setLocationLoading(false);
-        setError('Não foi possível acessar sua localização. Você ainda pode buscar por cidade ou estado.');
+        setShowGeoPrompt(false);
+        setError('Nao foi possivel acessar sua localizacao. Voce ainda pode buscar por cidade ou estado.');
       },
       {
         enableHighAccuracy: false,
@@ -96,7 +107,7 @@ export function ExploreTrainersPage() {
       await exploreService.followTrainer(trainer.trainerId);
       setItems((prev) => prev.map((x) => (x.trainerId === trainer.trainerId ? { ...x, isFollowedByCurrentUser: true } : x)));
     } catch (err) {
-      setError(getErrorMessage(err, 'Não foi possível atualizar o status de seguir.'));
+      setError(getErrorMessage(err, 'Nao foi possivel atualizar o status de seguir.'));
     } finally {
       setActionLoadingId(null);
     }
@@ -114,7 +125,7 @@ export function ExploreTrainersPage() {
       await exploreService.saveTrainer(trainer.trainerId);
       setItems((prev) => prev.map((x) => (x.trainerId === trainer.trainerId ? { ...x, isSavedByCurrentUser: true } : x)));
     } catch (err) {
-      setError(getErrorMessage(err, 'Não foi possível atualizar o status de salvar.'));
+      setError(getErrorMessage(err, 'Nao foi possivel atualizar o status de salvar.'));
     } finally {
       setActionLoadingId(null);
     }
@@ -146,11 +157,22 @@ export function ExploreTrainersPage() {
         </form>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button variant="outline" onClick={handleUseMyLocation} loading={locationLoading}>
-            <MapPin size={14} />Usar minha localização
+            <MapPin size={14} />Usar minha localizacao
           </Button>
           <Button variant="ghost" onClick={clearFilters}>Limpar filtros</Button>
           <Button variant="ghost" onClick={handleOnlyOnline}>Ver personais online</Button>
         </div>
+        {showGeoPrompt && (
+          <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm">
+            <p>Usamos sua localizacao aproximada apenas para sugerir trainers proximos. Voce pode continuar sem permitir.</p>
+            <div className="mt-2 flex gap-2">
+              <Button onClick={confirmUseMyLocation} loading={locationLoading}>Permitir localizacao</Button>
+              <Button variant="outline" onClick={() => { setShowGeoPrompt(false); privacyService.updateConsent('GEOLOCATION_FOR_EXPLORE', false).catch(() => {}); }}>
+                Continuar sem localizacao
+              </Button>
+            </div>
+          </div>
+        )}
         <p className="mt-2 text-xs text-slate-500">Total encontrado: {total}</p>
       </section>
 
@@ -163,7 +185,7 @@ export function ExploreTrainersPage() {
               <div className="mt-2 flex flex-wrap gap-1">
                 {trainer.serviceMode && <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700">{trainer.serviceMode}</span>}
                 {trainer.acceptingStudents && <span className="rounded bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">Aceitando alunos</span>}
-                {trainer.distanceKm != null && <span className="rounded bg-indigo-100 px-2 py-0.5 text-[11px] text-indigo-700">A {trainer.distanceKm} km de você</span>}
+                {trainer.distanceKm != null && <span className="rounded bg-indigo-100 px-2 py-0.5 text-[11px] text-indigo-700">A {trainer.distanceKm} km de voce</span>}
               </div>
               <p className="mt-2 text-xs text-slate-400">{trainer.city || '-'}{trainer.state ? `, ${trainer.state}` : ''}</p>
               <div className="mt-3 flex gap-2">
@@ -189,8 +211,8 @@ export function ExploreTrainersPage() {
       ) : (
         <EmptyState
           icon={Users}
-          title="Nenhum personal encontrado"
-          description={error || 'Tente ajustar os filtros, buscar por outra cidade ou explorar personais online.'}
+          title={hasLoadError ? 'Erro ao carregar busca' : 'Nenhum personal encontrado'}
+          description={hasLoadError ? error : 'Tente ajustar os filtros, buscar por outra cidade ou explorar personais online.'}
           action={
             <div className="flex gap-2">
               <Button variant="outline" onClick={clearFilters}>Limpar filtros</Button>

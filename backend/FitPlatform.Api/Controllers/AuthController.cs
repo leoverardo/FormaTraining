@@ -3,6 +3,7 @@ using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FitPlatform.Api.Controllers;
 
@@ -20,6 +21,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register-trainer")]
+    [EnableRateLimiting("TrainerOnboarding")]
     public async Task<IActionResult> RegisterTrainer([FromBody] RegisterTrainerRequest request)
     {
         var result = await _authService.RegisterTrainerAsync(request);
@@ -28,6 +30,7 @@ public class AuthController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("/api/public/student-register")]
+    [EnableRateLimiting("StudentRegister")]
     public async Task<IActionResult> RegisterStudent([FromBody] RegisterStudentRequest request)
     {
         var result = await _authService.RegisterStudentAsync(request);
@@ -36,6 +39,7 @@ public class AuthController : ControllerBase
 
     [HttpPost("login")]
     [AllowAnonymous]
+    [EnableRateLimiting("AuthLogin")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var result = await _authService.LoginAsync(request);

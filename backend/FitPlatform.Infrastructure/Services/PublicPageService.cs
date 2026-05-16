@@ -1,5 +1,6 @@
 using FitPlatform.Application.Common;
 using FitPlatform.Application.DTOs.PublicPage;
+using FitPlatform.Application.DTOs.ServiceSales;
 using FitPlatform.Application.DTOs.Testimonials;
 using FitPlatform.Domain.Entities;
 using FitPlatform.Domain.Enums;
@@ -13,11 +14,13 @@ public class PublicPageService
 {
     private readonly AppDbContext _db;
     private readonly ILogger<PublicPageService> _logger;
+    private readonly PrivacyLgpdService _privacyLgpdService;
 
-    public PublicPageService(AppDbContext db, ILogger<PublicPageService> logger)
+    public PublicPageService(AppDbContext db, ILogger<PublicPageService> logger, PrivacyLgpdService privacyLgpdService)
     {
         _db = db;
         _logger = logger;
+        _privacyLgpdService = privacyLgpdService;
     }
 
     public async Task<ApiResponse<PublicPageResponse>> GetBySlugAsync(string slug)
@@ -45,6 +48,11 @@ public class PublicPageService
 
         var postsCount = await _db.Posts
             .CountAsync(p => p.TrainerId == trainer.Id && p.Status == PostStatus.Published && p.Visibility == PostVisibility.Public);
+
+        var offers = await _db.TrainerServiceOffers
+            .Where(o => o.TrainerId == trainer.Id && o.IsActive && o.IsPublic && o.BillingType == TrainerServiceBillingType.OneTime)
+            .OrderBy(o => o.DisplayOrder).ThenBy(o => o.Title)
+            .ToListAsync();
 
         return ApiResponse<PublicPageResponse>.Ok(new PublicPageResponse
         {
@@ -96,6 +104,15 @@ public class PublicPageService
                 BeforePhotoUrl = t.BeforePhotoUrl,
                 AfterPhotoUrl = t.AfterPhotoUrl,
                 Description = t.Description
+            }).ToList(),
+            ServiceOffers = offers.Select(o => new PublicServiceOfferResponse
+            {
+                Id = o.Id,
+                Title = o.Title,
+                Description = o.Description,
+                Price = o.Price,
+                BillingType = o.BillingType.ToString(),
+                DurationDays = o.DurationDays
             }).ToList()
         });
     }
@@ -138,14 +155,20 @@ public class PublicPageService
         trainer.WhatsappNumber = request.WhatsappNumber;
         trainer.ShowInstagram = request.ShowInstagram;
         trainer.ShowTestimonials = request.ShowTestimonials;
-        trainer.BannerUrl = request.PublicBannerUrl ?? request.BannerUrl;
-        trainer.PublicBannerMediaId = request.PublicBannerMediaId;
+        if (request.PublicBannerMediaId.HasValue)
+        {
+            var bannerMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.PublicBannerMediaId.Value);
+            if (bannerMedia == null) return ApiResponse<PublicPageResponse>.Fail("MÃ­dia de banner nÃ£o encontrada.");
+            trainer.PublicBannerMediaId = bannerMedia.Id;
+            trainer.BannerUrl = bannerMedia.SecureUrl ?? bannerMedia.Url;
+        }
         trainer.WelcomeMessage = request.WelcomeMessage;
         trainer.PrimaryColor = request.PrimaryColor ?? trainer.PrimaryColor;
         trainer.SecondaryColor = request.SecondaryColor ?? trainer.SecondaryColor;
         trainer.UpdatedAt = DateTime.UtcNow;
 
         var affected = await _db.SaveChangesAsync();
+        await _privacyLgpdService.UpdateConsentAsync("PUBLIC_PROFILE_VISIBILITY", trainer.PublicPageEnabled, null, null, trainer.UserId);
         _logger.LogInformation("Public page save completed. TrainerId={TrainerId}, SaveChangesAffected={SaveChangesAffected}", trainerId, affected);
 
         return ApiResponse<PublicPageResponse>.Ok(MapTrainerSettings(trainer));
@@ -211,7 +234,33 @@ public class PublicPageService
         if (!await _db.Students.AnyAsync(s => s.Id == studentId && s.TrainerId == trainerId))
             return ApiResponse<TransformationResponse>.Fail("Aluno não encontrado.");
 
-        var t = new StudentTransformation { TrainerId = trainerId, StudentId = studentId, BeforePhotoUrl = request.BeforePhotoUrl, AfterPhotoUrl = request.AfterPhotoUrl, Description = request.Description };
+        string? beforePhotoUrl = null;
+        string? afterPhotoUrl = null;
+        if (request.BeforeMediaId.HasValue)
+        {
+            var beforeMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.BeforeMediaId.Value);
+            if (beforeMedia == null) return ApiResponse<TransformationResponse>.Fail("MÃ­dia 'antes' nÃ£o encontrada.");
+            beforePhotoUrl = beforeMedia.SecureUrl ?? beforeMedia.Url;
+        }
+        if (request.AfterMediaId.HasValue)
+        {
+            var afterMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.AfterMediaId.Value);
+            if (afterMedia == null) return ApiResponse<TransformationResponse>.Fail("MÃ­dia 'depois' nÃ£o encontrada.");
+            afterPhotoUrl = afterMedia.SecureUrl ?? afterMedia.Url;
+        }
+        if (!request.BeforeMediaId.HasValue && !request.AfterMediaId.HasValue)
+            return ApiResponse<TransformationResponse>.Fail("Informe ao menos uma mÃ­dia (before/after).");
+
+        var t = new StudentTransformation
+        {
+            TrainerId = trainerId,
+            StudentId = studentId,
+            BeforeMediaId = request.BeforeMediaId,
+            AfterMediaId = request.AfterMediaId,
+            BeforePhotoUrl = beforePhotoUrl,
+            AfterPhotoUrl = afterPhotoUrl,
+            Description = request.Description
+        };
         _db.StudentTransformations.Add(t);
         await _db.SaveChangesAsync();
         await _db.Entry(t).Reference(x => x.Student).LoadAsync();
@@ -275,7 +324,7 @@ public class PublicPageService
     private static TransformationResponse MapTransformation(StudentTransformation t) => new()
     {
         Id = t.Id, StudentId = t.StudentId, StudentName = t.Student?.User?.Name ?? "",
-        BeforePhotoUrl = t.BeforePhotoUrl, AfterPhotoUrl = t.AfterPhotoUrl, Description = t.Description,
+        BeforePhotoUrl = t.BeforePhotoUrl, AfterPhotoUrl = t.AfterPhotoUrl, BeforeMediaId = t.BeforeMediaId, AfterMediaId = t.AfterMediaId, Description = t.Description,
         ApprovedByStudent = t.ApprovedByStudent, Published = t.Published, CreatedAt = t.CreatedAt
     };
 }

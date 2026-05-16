@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Dumbbell, ClipboardList, CalendarDays,
-  FileText, CreditCard, User, BarChart2, Globe, Library, Inbox
+  FileText, CreditCard, User, BarChart2, Globe, Library, Inbox, MessageCircle, ShoppingBag
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { AppShell } from './AppShell';
@@ -25,7 +25,9 @@ const groups = [
       { to: '/trainer/workouts', icon: ClipboardList, label: 'Treinos' },
       { to: '/trainer/library', icon: Library, label: 'Biblioteca Base' },
       { to: '/trainer/schedule', icon: CalendarDays, label: 'Rotina Semanal' },
+      { to: '/trainer/appointments', icon: CalendarDays, label: 'Compromissos' },
       { to: '/trainer/posts', icon: FileText, label: 'Conteudos' },
+      { to: '/trainer/messages', icon: MessageCircle, label: 'Mensagens' },
     ],
   },
   {
@@ -33,8 +35,10 @@ const groups = [
     items: [
       { to: '/trainer/public-page', icon: Globe, label: 'Pagina Publica' },
       { to: '/trainer/leads', icon: Inbox, label: 'Leads' },
+      { to: '/trainer/sales', icon: ShoppingBag, label: 'Servicos e Vendas' },
       { to: '/trainer/subscription', icon: CreditCard, label: 'Assinatura' },
       { to: '/trainer/profile', icon: User, label: 'Meu Perfil' },
+      { to: '/trainer/privacy', icon: User, label: 'Privacidade e Dados' },
     ],
   },
 ];

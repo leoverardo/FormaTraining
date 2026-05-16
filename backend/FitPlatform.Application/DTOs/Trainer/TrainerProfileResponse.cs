@@ -15,7 +15,9 @@ public class TrainerProfileResponse
     public string? Specialties { get; set; }
     public string? Instagram { get; set; }
     public string? ProfilePhotoUrl { get; set; }
+    public Guid? ProfilePhotoMediaId { get; set; }
     public string? LogoUrl { get; set; }
+    public Guid? LogoMediaId { get; set; }
     public string? PrimaryColor { get; set; }
     public string? SecondaryColor { get; set; }
     public string? ZipCode { get; set; }

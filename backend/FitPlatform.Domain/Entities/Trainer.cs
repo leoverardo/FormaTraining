@@ -64,4 +64,6 @@ public class Trainer : BaseEntity
     public ICollection<Workout> Workouts { get; set; } = new List<Workout>();
     public ICollection<Post> Posts { get; set; } = new List<Post>();
     public ICollection<TrainerSubscription> Subscriptions { get; set; } = new List<TrainerSubscription>();
+    public ICollection<TrainerServiceOffer> ServiceOffers { get; set; } = new List<TrainerServiceOffer>();
+    public ICollection<TrainerServiceOrder> ServiceOrders { get; set; } = new List<TrainerServiceOrder>();
 }

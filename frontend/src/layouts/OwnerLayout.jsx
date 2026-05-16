@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Tag } from 'lucide-react';
+import { LayoutDashboard, ShieldCheck, Tag } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { AppShell } from './AppShell';
 
@@ -8,6 +8,7 @@ const groups = [{
   items: [
     { to: '/owner', icon: LayoutDashboard, label: 'Dashboard', end: true },
     { to: '/owner/plans', icon: Tag, label: 'Planos' },
+    { to: '/owner/privacy', icon: ShieldCheck, label: 'Privacidade / LGPD' },
   ],
 }];
 

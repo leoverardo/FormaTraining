@@ -65,6 +65,7 @@ export function PublicPageSettingsPage() {
   const formRef = useRef(null);
   const [tab, setTab] = useState('edit');
   const [form, setForm] = useState(initialForm);
+  const [initialPublicEnabled, setInitialPublicEnabled] = useState(false);
 
   const loadSettings = async () => {
     setLoading(true);
@@ -72,6 +73,7 @@ export function PublicPageSettingsPage() {
       const response = await publicPageService.getTrainerPageSettings();
       const mapped = mapResponseToForm(response.data?.data);
       setForm(mapped);
+      setInitialPublicEnabled(mapped.publicPageEnabled);
       setIsDirty(false);
     } catch (err) {
       toast(err.response?.data?.message || 'Erro ao carregar página pública', 'error');
@@ -97,6 +99,14 @@ export function PublicPageSettingsPage() {
 
     setSaving(true);
     try {
+      if (!initialPublicEnabled && form.publicPageEnabled) {
+        const confirmed = window.confirm('Ao ativar, seu perfil podera ser exibido publicamente e listado na busca de trainers, conforme as informacoes selecionadas. Deseja continuar?');
+        if (!confirmed) {
+          setSaving(false);
+          return;
+        }
+      }
+
       const payload = {
         publicPageEnabled: form.publicPageEnabled,
         publicSearchEnabled: form.publicSearchEnabled,
@@ -117,6 +127,7 @@ export function PublicPageSettingsPage() {
       const response = await publicPageService.updatePage(payload);
       const mapped = mapResponseToForm(response.data?.data);
       setForm(mapped);
+      setInitialPublicEnabled(mapped.publicPageEnabled);
       setIsDirty(false);
       toast('Página pública atualizada!');
     } catch (err) {

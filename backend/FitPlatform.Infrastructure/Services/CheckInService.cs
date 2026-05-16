@@ -11,11 +11,13 @@ public class CheckInService
 {
     private readonly AppDbContext _db;
     private readonly NotificationService _notifications;
+    private readonly GamificationService _gamification;
 
-    public CheckInService(AppDbContext db, NotificationService notifications)
+    public CheckInService(AppDbContext db, NotificationService notifications, GamificationService gamification)
     {
         _db = db;
         _notifications = notifications;
+        _gamification = gamification;
     }
 
     public async Task<ApiResponse<List<CheckInResponse>>> GetByStudentAsync(Guid studentId, Guid trainerId)
@@ -115,6 +117,8 @@ public class CheckInService
         var trainerUser = await _db.Trainers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == student.TrainerId);
         if (trainerUser != null)
             await _notifications.CreateAsync(trainerUser.UserId, "Check-in recebido", $"{checkIn.Student.User.Name} enviou o check-in semanal.", NotificationType.CheckInSubmitted, student.TrainerId, studentId);
+
+        await _gamification.EvaluateForCheckInSubmittedAsync(studentId);
 
         return ApiResponse<CheckInResponse>.Ok(MapResponse(checkIn));
     }

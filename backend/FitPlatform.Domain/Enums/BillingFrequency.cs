@@ -4,5 +4,6 @@ public enum BillingFrequency
 {
     Monthly = 1,
     Quarterly = 2,
-    Yearly = 3
+    Semiannual = 3,
+    Yearly = 4
 }

@@ -133,10 +133,13 @@ public class StudentProgressService
         var student = await _db.Students.FirstOrDefaultAsync(s => s.Id == studentId && s.TrainerId == trainerId);
         if (student == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("Aluno não encontrado.");
 
+        var media = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.MediaAssetId);
+        if (media == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("MÃ­dia nÃ£o encontrada.");
+
         var photo = new StudentProgressPhoto
         {
             StudentId = studentId, TrainerId = trainerId,
-            ImageUrl = request.ImageUrl, Description = request.Description,
+            ImageUrl = media.SecureUrl ?? media.Url, MediaAssetId = media.Id, Description = request.Description,
             PhotoDate = request.PhotoDate ?? DateTime.UtcNow,
             CreatedByUserId = userId, CreatedByRole = ProgressCreatedByRole.Trainer
         };
@@ -171,10 +174,13 @@ public class StudentProgressService
             .FirstOrDefaultAsync(s => s.Id == studentId);
         if (student == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("Aluno não encontrado.");
 
+        var media = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.MediaAssetId);
+        if (media == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("MÃ­dia nÃ£o encontrada.");
+
         var photo = new StudentProgressPhoto
         {
             StudentId = studentId, TrainerId = student.TrainerId,
-            ImageUrl = request.ImageUrl, Description = request.Description,
+            ImageUrl = media.SecureUrl ?? media.Url, MediaAssetId = media.Id, Description = request.Description,
             PhotoDate = request.PhotoDate ?? DateTime.UtcNow,
             CreatedByUserId = userId, CreatedByRole = ProgressCreatedByRole.Student
         };
@@ -301,6 +307,7 @@ public class StudentProgressService
     {
         Id = p.Id,
         ImageUrl = p.ImageUrl,
+        MediaAssetId = p.MediaAssetId,
         Description = p.Description,
         PhotoDate = p.PhotoDate,
         CreatedByRole = p.CreatedByRole.ToString(),
@@ -347,7 +354,7 @@ public class StudentProgressService
     public static StudentProgressPhotoResponse MapPhoto(StudentProgressPhoto p) => new()
     {
         Id = p.Id, StudentId = p.StudentId,
-        ImageUrl = p.ImageUrl, Description = p.Description,
+        ImageUrl = p.ImageUrl, MediaAssetId = p.MediaAssetId, Description = p.Description,
         PhotoDate = p.PhotoDate, CreatedByRole = p.CreatedByRole.ToString(),
         CreatedAt = p.CreatedAt
     };

@@ -9,6 +9,7 @@ using FitPlatform.Infrastructure.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitPlatform.Api.Controllers;
@@ -20,12 +21,14 @@ public class ExploreController : ControllerBase
     private readonly ExploreService _service;
     private readonly ICurrentUserService _currentUser;
     private readonly AppDbContext _db;
+    private readonly ILogger<ExploreController> _logger;
 
-    public ExploreController(ExploreService service, ICurrentUserService currentUser, AppDbContext db)
+    public ExploreController(ExploreService service, ICurrentUserService currentUser, AppDbContext db, ILogger<ExploreController> logger)
     {
         _service = service;
         _currentUser = currentUser;
         _db = db;
+        _logger = logger;
     }
 
     private static bool IsSchemaSqlException(Exception ex)
@@ -93,6 +96,7 @@ public class ExploreController : ControllerBase
 
     [HttpGet("feed")]
     [AllowAnonymous]
+    [EnableRateLimiting("ExplorePublicSearch")]
     public async Task<IActionResult> Feed([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
         Guid? userId = User.Identity?.IsAuthenticated == true ? _currentUser.UserId : null;
@@ -102,6 +106,7 @@ public class ExploreController : ControllerBase
 
     [HttpGet("trainers")]
     [AllowAnonymous]
+    [EnableRateLimiting("ExplorePublicSearch")]
     public async Task<IActionResult> Trainers([FromQuery] ExploreTrainerQuery query)
     {
         try
@@ -117,9 +122,10 @@ public class ExploreController : ControllerBase
         {
             return Ok(ApiResponse<TrainerSearchResponseDto>.Ok(new(), "Explore schema not applied yet."));
         }
-        catch
+        catch (Exception ex)
         {
-            return Ok(ApiResponse<TrainerSearchResponseDto>.Ok(new(), "Explore unavailable right now."));
+            _logger.LogError(ex, "Failed to search explore trainers.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ApiResponse<TrainerSearchResponseDto>.Fail("Explore unavailable right now."));
         }
     }
 
@@ -160,9 +166,10 @@ public class ExploreController : ControllerBase
         {
             return Ok(ApiResponse<TrainerSearchResponseDto>.Ok(new(), "Explore schema not applied yet."));
         }
-        catch
+        catch (Exception ex)
         {
-            return Ok(ApiResponse<TrainerSearchResponseDto>.Ok(new(), "Explore unavailable right now."));
+            _logger.LogError(ex, "Failed to load recommended trainers.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ApiResponse<TrainerSearchResponseDto>.Fail("Explore unavailable right now."));
         }
     }
 
@@ -272,11 +279,13 @@ public class StudentExploreListsController : ControllerBase
 {
     private readonly AppDbContext _db;
     private readonly ICurrentUserService _currentUser;
+    private readonly ILogger<StudentExploreListsController> _logger;
 
-    public StudentExploreListsController(AppDbContext db, ICurrentUserService currentUser)
+    public StudentExploreListsController(AppDbContext db, ICurrentUserService currentUser, ILogger<StudentExploreListsController> logger)
     {
         _db = db;
         _currentUser = currentUser;
+        _logger = logger;
     }
 
     private static bool IsSchemaSqlException(Exception ex)
@@ -362,9 +371,10 @@ public class StudentExploreListsController : ControllerBase
         {
             return Ok(ApiResponse<List<TrainerSearchResultDto>>.Ok(new(), "Explore schema not applied yet."));
         }
-        catch
+        catch (Exception ex)
         {
-            return Ok(ApiResponse<List<TrainerSearchResultDto>>.Ok(new(), "Explore unavailable right now."));
+            _logger.LogError(ex, "Failed to load following trainers list.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ApiResponse<List<TrainerSearchResultDto>>.Fail("Explore unavailable right now."));
         }
     }
 
@@ -403,9 +413,10 @@ public class StudentExploreListsController : ControllerBase
         {
             return Ok(ApiResponse<List<TrainerSearchResultDto>>.Ok(new(), "Explore schema not applied yet."));
         }
-        catch
+        catch (Exception ex)
         {
-            return Ok(ApiResponse<List<TrainerSearchResultDto>>.Ok(new(), "Explore unavailable right now."));
+            _logger.LogError(ex, "Failed to load saved trainers list.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ApiResponse<List<TrainerSearchResultDto>>.Fail("Explore unavailable right now."));
         }
     }
 }

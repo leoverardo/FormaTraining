@@ -6,5 +6,6 @@ public interface IPaymentProvider
 {
     Task<ProviderSubscriptionCreated> CreateSubscriptionAsync(CreateProviderSubscriptionRequest request, CancellationToken cancellationToken = default);
     Task<ProviderSubscriptionDetails?> GetSubscriptionAsync(string providerSubscriptionId, CancellationToken cancellationToken = default);
-    Task CancelSubscriptionAsync(string providerSubscriptionId);
+    Task CancelSubscriptionAsync(string providerSubscriptionId, CancellationToken cancellationToken = default);
+    Task ChangeSubscriptionPlanAsync(ChangeProviderSubscriptionPlanRequest request, CancellationToken cancellationToken = default);
 }

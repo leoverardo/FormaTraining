@@ -12,4 +12,9 @@ public class RegisterStudentRequest
     public string? Interests { get; set; }
     public string? TrainingLevel { get; set; }
     public string? PreferredTrainingMode { get; set; }
+    public bool AcceptPrivacyPolicy { get; set; }
+    public bool AcceptTermsOfUse { get; set; }
+    public bool MarketingEmail { get; set; }
+    public bool MarketingWhatsapp { get; set; }
+    public bool HealthRelatedDataProcessingAcknowledged { get; set; }
 }

@@ -13,13 +13,15 @@ public class TrainerService
 {
     private readonly AppDbContext _db;
     private readonly FeedBuilderService _feedBuilder;
+    private readonly AppointmentService _appointments;
     private readonly IConfiguration _config;
     private readonly ILogger<TrainerService> _logger;
 
-    public TrainerService(AppDbContext db, FeedBuilderService feedBuilder, IConfiguration config, ILogger<TrainerService> logger)
+    public TrainerService(AppDbContext db, FeedBuilderService feedBuilder, AppointmentService appointments, IConfiguration config, ILogger<TrainerService> logger)
     {
         _db = db;
         _feedBuilder = feedBuilder;
+        _appointments = appointments;
         _config = config;
         _logger = logger;
     }
@@ -48,6 +50,7 @@ public class TrainerService
 
             var studentsNeedingAttention = await _db.Students
                 .CountAsync(s => s.TrainerId == trainerId && s.MonitoringStatus == StudentMonitoringStatus.NeedsAttention);
+            var (appointmentsToday, pendingConfirmations) = await _appointments.GetTrainerDashboardSummaryAsync(trainerId);
 
             var subscription = await _db.TrainerSubscriptions
                 .Include(ts => ts.PlatformPlan)
@@ -86,6 +89,8 @@ public class TrainerService
                 CheckInsThisWeekCount = checkInsThisWeek,
                 MissingCheckInsCount = Math.Max(0, missingCheckIns),
                 StudentsNeedingAttentionCount = studentsNeedingAttention,
+                AppointmentsTodayCount = appointmentsToday,
+                PendingAppointmentConfirmationsCount = pendingConfirmations,
                 PublicPageUrl = publicPageUrl,
                 RecentActivities = recentActivities.Data ?? new(),
                 HasActiveSubscription = hasActiveSubscription,
@@ -124,6 +129,9 @@ public class TrainerService
         var trainer = await _db.Trainers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == trainerId);
         if (trainer == null) return ApiResponse<TrainerProfileResponse>.Fail("Trainer não encontrado.");
 
+        if (!string.IsNullOrWhiteSpace(request.ProfilePhotoUrl) || !string.IsNullOrWhiteSpace(request.LogoUrl))
+            return ApiResponse<TrainerProfileResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+
         trainer.User.Name = request.Name;
         trainer.User.UpdatedAt = DateTime.UtcNow;
         trainer.BrandName = request.BrandName;
@@ -134,8 +142,20 @@ public class TrainerService
         trainer.Bio = request.Bio;
         trainer.Specialties = request.Specialties;
         trainer.Instagram = request.Instagram;
-        trainer.ProfilePhotoUrl = request.ProfilePhotoUrl;
-        trainer.LogoUrl = request.LogoUrl;
+        if (request.ProfilePhotoMediaId.HasValue)
+        {
+            var profileMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.ProfilePhotoMediaId.Value);
+            if (profileMedia == null) return ApiResponse<TrainerProfileResponse>.Fail("MÃ­dia de foto de perfil nÃ£o encontrada.");
+            trainer.ProfilePhotoMediaId = profileMedia.Id;
+            trainer.ProfilePhotoUrl = profileMedia.SecureUrl ?? profileMedia.Url;
+        }
+        if (request.LogoMediaId.HasValue)
+        {
+            var logoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.LogoMediaId.Value);
+            if (logoMedia == null) return ApiResponse<TrainerProfileResponse>.Fail("MÃ­dia de logo nÃ£o encontrada.");
+            trainer.LogoMediaId = logoMedia.Id;
+            trainer.LogoUrl = logoMedia.SecureUrl ?? logoMedia.Url;
+        }
         trainer.PrimaryColor = request.PrimaryColor;
         trainer.SecondaryColor = request.SecondaryColor;
         trainer.ZipCode = request.ZipCode;
@@ -175,6 +195,8 @@ public class TrainerService
             StartDate = subscription.StartDate,
             EndDate = subscription.EndDate,
             MercadoPagoSubscriptionId = subscription.MercadoPagoSubscriptionId,
+            AbacatePaySubscriptionId = subscription.AbacatePaySubscriptionId,
+            AbacatePayCheckoutId = subscription.AbacatePayCheckoutId,
             CheckoutUrl = subscription.InitPoint,
             Payments = subscription.Payments.OrderByDescending(p => p.CreatedAt).Select(p => new PaymentHistoryItem
             {
@@ -203,7 +225,9 @@ public class TrainerService
         Specialties = t.Specialties,
         Instagram = t.Instagram,
         ProfilePhotoUrl = t.ProfilePhotoUrl,
+        ProfilePhotoMediaId = t.ProfilePhotoMediaId,
         LogoUrl = t.LogoUrl,
+        LogoMediaId = t.LogoMediaId,
         PrimaryColor = t.PrimaryColor,
         SecondaryColor = t.SecondaryColor,
         ZipCode = t.ZipCode,

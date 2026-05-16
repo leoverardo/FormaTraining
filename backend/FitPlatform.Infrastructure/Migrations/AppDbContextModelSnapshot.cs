@@ -22,11 +22,202 @@ namespace FitPlatform.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.Appointment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ConfirmationAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OnlineMeetingUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RescheduledFromAppointmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RescheduledFromAppointmentId");
+
+                    b.HasIndex("StudentId", "StartAt");
+
+                    b.HasIndex("TrainerId", "StartAt", "EndAt");
+
+                    b.ToTable("Appointments");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.ChatMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AttachmentMediaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SenderRole")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SenderUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttachmentMediaId");
+
+                    b.HasIndex("SenderUserId");
+
+                    b.HasIndex("ConversationId", "CreatedAt");
+
+                    b.HasIndex("ConversationId", "ReadAt");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.ConsentDefinition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("ConsentDefinitions");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastMessageAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LastMessageAt");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TrainerId", "StudentId")
+                        .IsUnique();
+
+                    b.ToTable("Conversations");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.DataPrivacyRequest", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AdminNotes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("datetime2");
@@ -34,7 +225,13 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Notes")
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RejectionReason")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RequestType")
@@ -43,13 +240,17 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<DateTime>("RequestedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("RequesterEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -57,6 +258,153 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("DataPrivacyRequests");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.DataProcessorVendor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContractualBasisNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CountryOrRegion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DataCategories")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasInternationalTransfer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PrivacyPolicyReference")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive", "Name");
+
+                    b.ToTable("DataProcessorVendors");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.DiscountCoupon", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("AppliesToBillingCycle")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("AppliesToPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentUses")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DiscountType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DiscountValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaxUsesPerCustomer")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxUsesTotal")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MinimumPurchaseAmountInCents")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartsAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("DiscountCoupons");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.DiscountCouponRedemption", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CouponId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DiscountAmountInCents")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("RedeemedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("SubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CouponId", "TrainerId", "SubscriptionId")
+                        .IsUnique()
+                        .HasFilter("[TrainerId] IS NOT NULL AND [SubscriptionId] IS NOT NULL");
+
+                    b.ToTable("DiscountCouponRedemptions");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Exercise", b =>
@@ -491,6 +839,51 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.ToTable("PaymentWebhookLogs");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.PlanBillingOption", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AbacatePayProductId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BasePriceInCents")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BillingCycle")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CycleDiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("FinalPriceInCents")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MonthsCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PlatformPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlatformPlanId", "BillingCycle")
+                        .IsUnique();
+
+                    b.ToTable("PlanBillingOptions");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.PlatformFeature", b =>
                 {
                     b.Property<Guid>("Id")
@@ -684,6 +1077,49 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.PrivacyPolicyVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentMarkdown")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DocumentType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentType", "IsActive");
+
+                    b.HasIndex("DocumentType", "Version")
+                        .IsUnique();
+
+                    b.ToTable("PrivacyPolicyVersions");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.ProgressComment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -753,6 +1189,62 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.ToTable("SavedTrainers");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.SecurityIncident", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ConfirmedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DetectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReportedToAuthorityAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ReportedToUsersAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("Status", "Severity", "DetectedAt");
+
+                    b.ToTable("SecurityIncidents");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.Student", b =>
                 {
                     b.Property<Guid>("Id")
@@ -800,6 +1292,40 @@ namespace FitPlatform.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentAchievement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AchievementCode")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MetadataJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UnlockedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId", "AchievementCode")
+                        .IsUnique();
+
+                    b.HasIndex("StudentId", "UnlockedAt");
+
+                    b.ToTable("StudentAchievements");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentAnamnesis", b =>
@@ -865,6 +1391,103 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.ToTable("StudentAnamnesisRecords");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentHabit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Frequency")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("InactivatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TargetUnit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("TargetValue")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerId");
+
+                    b.HasIndex("StudentId", "IsActive", "InactivatedAt");
+
+                    b.ToTable("StudentHabits");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentHabitLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HabitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Value")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HabitId", "Date")
+                        .IsUnique();
+
+                    b.HasIndex("StudentId", "Date");
+
+                    b.ToTable("StudentHabitLogs");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentInvite", b =>
                 {
                     b.Property<Guid>("Id")
@@ -907,6 +1530,84 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("TrainerId");
 
                     b.ToTable("StudentInvites");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentMonthlyGoal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CheckInTarget")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HabitDaysTarget")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WorkoutTarget")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId", "Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("StudentMonthlyGoals");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentNutritionGuidance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GuidanceText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("MediaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StrategicNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MediaId");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.HasIndex("TrainerId");
+
+                    b.ToTable("StudentNutritionGuidances");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentProfile", b =>
@@ -1341,6 +2042,9 @@ namespace FitPlatform.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("AcceptingStudents")
+                        .HasColumnType("bit");
+
                     b.Property<string>("AddressNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -1378,11 +2082,17 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<string>("Instagram")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
                     b.Property<Guid?>("LogoMediaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LogoUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Neighborhood")
                         .HasColumnType("nvarchar(max)");
@@ -1411,10 +2121,16 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<bool>("PublicPageEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("PublicSearchEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PublicSlug")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SecondaryColor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceMode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("ShowInstagram")
@@ -1463,6 +2179,8 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UserId")
                         .IsUnique();
+
+                    b.HasIndex("PublicPageEnabled", "PublicSearchEnabled", "AcceptingStudents");
 
                     b.ToTable("Trainers");
                 });
@@ -1660,6 +2378,9 @@ namespace FitPlatform.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AbacatePayCheckoutId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -1697,11 +2418,164 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AbacatePayCheckoutId");
+
                     b.HasIndex("TrainerId");
 
                     b.HasIndex("TrainerSubscriptionId");
 
                     b.ToTable("TrainerPayments");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerServiceOffer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BillingType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DurationDays")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerId", "IsActive", "IsPublic", "DisplayOrder");
+
+                    b.ToTable("TrainerServiceOffers");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerServiceOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BillingTypeSnapshot")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BuyerEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BuyerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BuyerPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DurationDaysSnapshot")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InternalNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("LeadId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentProvider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProviderPaymentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderPaymentStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProviderPreferenceId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("RequiresManualStudentLinking")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ServiceDescriptionSnapshot")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ServiceOfferId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ServiceTitleSnapshot")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrainerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProviderPaymentId")
+                        .HasFilter("[ProviderPaymentId] IS NOT NULL");
+
+                    b.HasIndex("ProviderPreferenceId")
+                        .IsUnique()
+                        .HasFilter("[ProviderPreferenceId] IS NOT NULL");
+
+                    b.HasIndex("ServiceOfferId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("BuyerEmail", "TrainerId");
+
+                    b.HasIndex("TrainerId", "Status", "CreatedAt");
+
+                    b.ToTable("TrainerServiceOrders");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerStudentNote", b =>
@@ -1748,14 +2622,38 @@ namespace FitPlatform.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AbacatePayCheckoutId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AbacatePayCustomerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AbacatePaySubscriptionId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("BaseAmountInCents")
+                        .HasColumnType("int");
+
                     b.Property<int>("BillingCycle")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CouponCodeApplied")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CouponDiscountAmountInCents")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("CycleDiscountAmountInCents")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("FinalAmountInCents")
+                        .HasColumnType("int");
 
                     b.Property<string>("InitPoint")
                         .HasColumnType("nvarchar(max)");
@@ -1775,6 +2673,10 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<Guid?>("PlatformPlanPriceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -1784,16 +2686,25 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<Guid>("TrainerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("TrainerOnboardingId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AbacatePaySubscriptionId");
+
                     b.HasIndex("PlatformPlanId");
 
                     b.HasIndex("PlatformPlanPriceId");
 
+                    b.HasIndex("Provider");
+
                     b.HasIndex("TrainerId");
+
+                    b.HasIndex("TrainerOnboardingId");
 
                     b.ToTable("TrainerSubscriptions");
                 });
@@ -1879,6 +2790,185 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("UserId", "TermsDocumentId");
 
                     b.ToTable("UserConsents");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.UserConsentHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ConsentDefinitionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetadataJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConsentDefinitionId");
+
+                    b.HasIndex("UserId", "ConsentDefinitionId", "ChangedAt");
+
+                    b.ToTable("UserConsentHistories");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.UserDataExport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("GeneratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PayloadJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "RequestedAt");
+
+                    b.ToTable("UserDataExports");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.UserLegalAcceptance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AcceptedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PrivacyPolicyVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TermsOfUseVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrivacyPolicyVersionId");
+
+                    b.HasIndex("TermsOfUseVersionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLegalAcceptances");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.UserPrivacyConsent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConsentDefinitionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("GrantedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsGranted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastChangedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConsentDefinitionId");
+
+                    b.HasIndex("UserId", "ConsentDefinitionId")
+                        .IsUnique();
+
+                    b.ToTable("UserPrivacyConsents");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Workout", b =>
@@ -2008,6 +3098,8 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("WorkoutId");
 
+                    b.HasIndex("StudentId", "Status", "CompletedAt");
+
                     b.ToTable("WorkoutSessions");
                 });
 
@@ -2016,6 +3108,9 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -2026,11 +3121,32 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<Guid>("ExerciseId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LoadUsed")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PrescribedLoad")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrescribedNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrescribedReps")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PrescribedRestSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrescribedSets")
+                        .HasColumnType("int");
 
                     b.Property<string>("RepsCompleted")
                         .HasColumnType("nvarchar(max)");
@@ -2041,6 +3157,9 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("WorkoutExerciseId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("WorkoutSessionId")
                         .HasColumnType("uniqueidentifier");
 
@@ -2048,9 +3167,65 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasIndex("ExerciseId");
 
-                    b.HasIndex("WorkoutSessionId");
+                    b.HasIndex("WorkoutExerciseId");
+
+                    b.HasIndex("WorkoutSessionId", "ExerciseId");
+
+                    b.HasIndex("WorkoutSessionId", "OrderIndex");
 
                     b.ToTable("WorkoutSessionExercises");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutSessionSet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActualLoad")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ActualReps")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrescribedLoad")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrescribedReps")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PrescribedRestSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SetNumber")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("WorkoutSessionExerciseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkoutSessionExerciseId", "IsCompleted");
+
+                    b.HasIndex("WorkoutSessionExerciseId", "SetNumber")
+                        .IsUnique();
+
+                    b.ToTable("WorkoutSessionSets");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutTemplate", b =>
@@ -2133,15 +3308,95 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.ToTable("WorkoutTemplateExercises");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.Appointment", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.Appointment", "RescheduledFromAppointment")
+                        .WithMany()
+                        .HasForeignKey("RescheduledFromAppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("RescheduledFromAppointment");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.ChatMessage", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.MediaFile", "AttachmentMedia")
+                        .WithMany()
+                        .HasForeignKey("AttachmentMediaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FitPlatform.Domain.Entities.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.User", "SenderUser")
+                        .WithMany()
+                        .HasForeignKey("SenderUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AttachmentMedia");
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("SenderUser");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.Conversation", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Trainer");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.DataPrivacyRequest", b =>
                 {
                     b.HasOne("FitPlatform.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.DiscountCouponRedemption", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.DiscountCoupon", "Coupon")
+                        .WithMany()
+                        .HasForeignKey("CouponId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Coupon");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Exercise", b =>
@@ -2233,6 +3488,17 @@ namespace FitPlatform.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.PlanBillingOption", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.PlatformPlan", "PlatformPlan")
+                        .WithMany()
+                        .HasForeignKey("PlatformPlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PlatformPlan");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.PlatformPlanFeature", b =>
@@ -2342,6 +3608,16 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("Trainer");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.SecurityIncident", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("CreatedByUser");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.Student", b =>
                 {
                     b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
@@ -2359,6 +3635,17 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("Trainer");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentAchievement", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
+                        .WithMany("Achievements")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentAnamnesis", b =>
@@ -2380,6 +3667,44 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("Trainer");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentHabit", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
+                        .WithMany("Habits")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentHabitLog", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.StudentHabit", "Habit")
+                        .WithMany("Logs")
+                        .HasForeignKey("HabitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
+                        .WithMany("HabitLogs")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Habit");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentInvite", b =>
                 {
                     b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
@@ -2393,6 +3718,43 @@ namespace FitPlatform.Infrastructure.Migrations
                         .HasForeignKey("TrainerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentMonthlyGoal", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
+                        .WithMany("MonthlyGoals")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentNutritionGuidance", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.MediaFile", "Media")
+                        .WithMany()
+                        .HasForeignKey("MediaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Media");
 
                     b.Navigation("Student");
 
@@ -2665,6 +4027,43 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("Trainer");
                 });
 
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerServiceOffer", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany("ServiceOffers")
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerServiceOrder", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.TrainerServiceOffer", "ServiceOffer")
+                        .WithMany("Orders")
+                        .HasForeignKey("ServiceOfferId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
+                        .WithMany("ServiceOrders")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FitPlatform.Domain.Entities.Trainer", "Trainer")
+                        .WithMany("ServiceOrders")
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ServiceOffer");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Trainer");
+                });
+
             modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerStudentNote", b =>
                 {
                     b.HasOne("FitPlatform.Domain.Entities.Student", "Student")
@@ -2725,6 +4124,81 @@ namespace FitPlatform.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("TermsDocument");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.UserConsentHistory", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.ConsentDefinition", "ConsentDefinition")
+                        .WithMany()
+                        .HasForeignKey("ConsentDefinitionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ConsentDefinition");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.UserDataExport", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.UserLegalAcceptance", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.PrivacyPolicyVersion", "PrivacyPolicyVersion")
+                        .WithMany()
+                        .HasForeignKey("PrivacyPolicyVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.PrivacyPolicyVersion", "TermsOfUseVersion")
+                        .WithMany()
+                        .HasForeignKey("TermsOfUseVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("PrivacyPolicyVersion");
+
+                    b.Navigation("TermsOfUseVersion");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.UserPrivacyConsent", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.ConsentDefinition", "ConsentDefinition")
+                        .WithMany()
+                        .HasForeignKey("ConsentDefinitionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitPlatform.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ConsentDefinition");
 
                     b.Navigation("User");
                 });
@@ -2794,6 +4268,11 @@ namespace FitPlatform.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("FitPlatform.Domain.Entities.WorkoutExercise", "WorkoutExercise")
+                        .WithMany()
+                        .HasForeignKey("WorkoutExerciseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("FitPlatform.Domain.Entities.WorkoutSession", "WorkoutSession")
                         .WithMany("ExerciseSessions")
                         .HasForeignKey("WorkoutSessionId")
@@ -2802,7 +4281,20 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.Navigation("Exercise");
 
+                    b.Navigation("WorkoutExercise");
+
                     b.Navigation("WorkoutSession");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutSessionSet", b =>
+                {
+                    b.HasOne("FitPlatform.Domain.Entities.WorkoutSessionExercise", "WorkoutSessionExercise")
+                        .WithMany("Sets")
+                        .HasForeignKey("WorkoutSessionExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WorkoutSessionExercise");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutTemplateExercise", b =>
@@ -2822,6 +4314,11 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Navigation("ExerciseLibraryItem");
 
                     b.Navigation("WorkoutTemplate");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.Conversation", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Exercise", b =>
@@ -2853,15 +4350,30 @@ namespace FitPlatform.Infrastructure.Migrations
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.Student", b =>
                 {
+                    b.Navigation("Achievements");
+
                     b.Navigation("CheckIns");
+
+                    b.Navigation("HabitLogs");
+
+                    b.Navigation("Habits");
+
+                    b.Navigation("MonthlyGoals");
 
                     b.Navigation("ProgressPhotos");
 
                     b.Navigation("ProgressRecords");
 
+                    b.Navigation("ServiceOrders");
+
                     b.Navigation("WorkoutSchedules");
 
                     b.Navigation("WorkoutSessions");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.StudentHabit", b =>
+                {
+                    b.Navigation("Logs");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.StudentProfile", b =>
@@ -2887,11 +4399,20 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.Navigation("Posts");
 
+                    b.Navigation("ServiceOffers");
+
+                    b.Navigation("ServiceOrders");
+
                     b.Navigation("Students");
 
                     b.Navigation("Subscriptions");
 
                     b.Navigation("Workouts");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerServiceOffer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.TrainerSubscription", b =>
@@ -2918,6 +4439,11 @@ namespace FitPlatform.Infrastructure.Migrations
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutSession", b =>
                 {
                     b.Navigation("ExerciseSessions");
+                });
+
+            modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutSessionExercise", b =>
+                {
+                    b.Navigation("Sets");
                 });
 
             modelBuilder.Entity("FitPlatform.Domain.Entities.WorkoutTemplate", b =>

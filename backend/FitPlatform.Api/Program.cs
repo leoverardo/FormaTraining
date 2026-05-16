@@ -1,7 +1,8 @@
-using System.Text;
+﻿using System.Text;
 using FitPlatform.Api.Middlewares;
 using FitPlatform.Api.Services;
 using FitPlatform.Application.Configuration;
+using FitPlatform.Application.Common;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using FitPlatform.Infrastructure.Data;
@@ -13,6 +14,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Threading.RateLimiting;
+using FitPlatform.Api.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,28 +25,30 @@ builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
     ["Cloudinary:ApiKey"] = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY"),
     ["Cloudinary:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET"),
     ["Cloudinary:Folder"] = Environment.GetEnvironmentVariable("CLOUDINARY_FOLDER"),
-    ["MercadoPago:AccessToken"] = Environment.GetEnvironmentVariable("MERCADOPAGO_ACCESS_TOKEN"),
-    ["MercadoPago:PublicKey"] = Environment.GetEnvironmentVariable("MERCADOPAGO_PUBLIC_KEY"),
-    ["MercadoPago:WebhookSecret"] = Environment.GetEnvironmentVariable("MERCADOPAGO_WEBHOOK_SECRET"),
-    ["MercadoPago:NotificationUrl"] = Environment.GetEnvironmentVariable("MERCADOPAGO_NOTIFICATION_URL"),
-    ["MercadoPago:SuccessUrl"] = Environment.GetEnvironmentVariable("MERCADOPAGO_SUCCESS_URL"),
-    ["MercadoPago:FailureUrl"] = Environment.GetEnvironmentVariable("MERCADOPAGO_FAILURE_URL"),
-    ["MercadoPago:PendingUrl"] = Environment.GetEnvironmentVariable("MERCADOPAGO_PENDING_URL")
+    ["AbacatePay:BaseUrl"] = Environment.GetEnvironmentVariable("ABACATEPAY_BASE_URL"),
+    ["AbacatePay:ApiKey"] = Environment.GetEnvironmentVariable("ABACATEPAY_API_KEY"),
+    ["AbacatePay:WebhookSecret"] = Environment.GetEnvironmentVariable("ABACATEPAY_WEBHOOK_SECRET"),
+    ["AbacatePay:WebhookPublicKey"] = Environment.GetEnvironmentVariable("ABACATEPAY_WEBHOOK_PUBLIC_KEY"),
+    ["AbacatePay:SuccessUrl"] = Environment.GetEnvironmentVariable("ABACATEPAY_SUCCESS_URL"),
+    ["AbacatePay:ReturnUrl"] = Environment.GetEnvironmentVariable("ABACATEPAY_RETURN_URL"),
+    ["AbacatePay:DevMode"] = Environment.GetEnvironmentVariable("ABACATEPAY_DEV_MODE")
 });
-builder.Services.Configure<MercadoPagoOptions>(builder.Configuration.GetSection(MercadoPagoOptions.SectionName));
+builder.Services.Configure<AbacatePayOptions>(builder.Configuration.GetSection(AbacatePayOptions.SectionName));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IDateTimeProvider, SaoPauloDateTimeProvider>();
 builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddHttpClient<IPaymentProvider, MercadoPagoPaymentProvider>();
-builder.Services.AddScoped<IMercadoPagoWebhookValidator, MercadoPagoWebhookValidator>();
+builder.Services.AddHttpClient<IPaymentProvider, AbacatePayPaymentProvider>();
+builder.Services.AddScoped<IPaymentWebhookValidator, AbacatePayWebhookValidator>();
 builder.Services.AddScoped<IEmailService, ConsoleEmailService>();
 builder.Services.AddScoped<PasswordSetupService>();
 builder.Services.AddScoped<OnboardingService>();
 builder.Services.AddScoped<StudentProgressService>();
+builder.Services.AddScoped<PrivacyLgpdService>();
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TrainerService>();
@@ -70,10 +75,52 @@ builder.Services.AddScoped<FeedBuilderService>();
 builder.Services.AddScoped<FeedSocialService>();
 builder.Services.AddScoped<ExploreService>();
 builder.Services.AddScoped<OwnerDashboardService>();
+builder.Services.AddScoped<ChatService>();
+builder.Services.AddScoped<HabitService>();
+builder.Services.AddScoped<AppointmentService>();
+builder.Services.AddScoped<GamificationService>();
+builder.Services.AddScoped<ServiceSalesService>();
 
 builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<CloudinaryStorageService>();
 builder.Services.AddScoped<ICloudinaryUrlService, CloudinaryUrlService>();
+
+var rateLimitingOptions = builder.Configuration.GetSection(RateLimitingOptions.SectionName).Get<RateLimitingOptions>() ?? new RateLimitingOptions();
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.ContentType = "application/json";
+        var message = ApiResponse.Fail("Limite de requisicoes excedido. Tente novamente em instantes.");
+        await context.HttpContext.Response.WriteAsJsonAsync(message, cancellationToken: token);
+    };
+
+    options.AddPolicy("AuthLogin", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => BuildFixedWindow(rateLimitingOptions.Policies.AuthLogin, 15, 60)));
+
+    options.AddPolicy("StudentRegister", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => BuildFixedWindow(rateLimitingOptions.Policies.StudentRegister, 10, 60)));
+
+    options.AddPolicy("TrainerOnboarding", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => BuildFixedWindow(rateLimitingOptions.Policies.TrainerOnboarding, 20, 60)));
+
+    options.AddPolicy("PublicLead", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => BuildFixedWindow(rateLimitingOptions.Policies.PublicLead, 12, 60)));
+
+    options.AddPolicy("ExplorePublicSearch", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => BuildFixedWindow(rateLimitingOptions.Policies.ExplorePublicSearch, 90, 60)));
+});
 
 var jwtSecret = builder.Configuration["Jwt:Secret"]!;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -131,8 +178,6 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 
-    await EnsureTrainerExploreColumnsAsync(db, logger);
-
     await DatabaseSeeder.SeedAsync(db);
     try
     {
@@ -154,31 +199,21 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 app.UseStaticFiles();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
 
-static async Task EnsureTrainerExploreColumnsAsync(AppDbContext db, ILogger logger)
+static FixedWindowRateLimiterOptions BuildFixedWindow(RateLimitingPolicyOptions? policy, int defaultPermitLimit, int defaultWindowSeconds)
 {
-    try
+    return new FixedWindowRateLimiterOptions
     {
-        await db.Database.ExecuteSqlRawAsync(@"
-IF COL_LENGTH('Trainers', 'AcceptingStudents') IS NULL
-    ALTER TABLE [Trainers] ADD [AcceptingStudents] bit NOT NULL CONSTRAINT [DF_Trainers_AcceptingStudents] DEFAULT(1);
-IF COL_LENGTH('Trainers', 'PublicSearchEnabled') IS NULL
-    ALTER TABLE [Trainers] ADD [PublicSearchEnabled] bit NOT NULL CONSTRAINT [DF_Trainers_PublicSearchEnabled] DEFAULT(0);
-IF COL_LENGTH('Trainers', 'Latitude') IS NULL
-    ALTER TABLE [Trainers] ADD [Latitude] float NULL;
-IF COL_LENGTH('Trainers', 'Longitude') IS NULL
-    ALTER TABLE [Trainers] ADD [Longitude] float NULL;
-IF COL_LENGTH('Trainers', 'ServiceMode') IS NULL
-    ALTER TABLE [Trainers] ADD [ServiceMode] nvarchar(50) NULL;
-");
-    }
-    catch (Exception ex)
-    {
-        logger.LogWarning(ex, "Could not ensure explore columns in Trainers table at startup.");
-    }
+        PermitLimit = policy?.PermitLimit > 0 ? policy.PermitLimit : defaultPermitLimit,
+        Window = TimeSpan.FromSeconds(policy?.WindowSeconds > 0 ? policy.WindowSeconds : defaultWindowSeconds),
+        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+        QueueLimit = policy?.QueueLimit >= 0 ? policy.QueueLimit : 0
+    };
 }
+

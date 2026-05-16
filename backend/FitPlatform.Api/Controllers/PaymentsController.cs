@@ -1,8 +1,9 @@
+using System.Text;
+using System.Text.Json;
+using FitPlatform.Application.Common;
 using FitPlatform.Application.DTOs.Subscription;
 using FitPlatform.Application.Interfaces;
-using FitPlatform.Application.Common;
 using FitPlatform.Infrastructure.Services;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,53 +15,58 @@ public class PaymentsController : ControllerBase
 {
     private readonly PaymentService _service;
     private readonly ICurrentUserService _currentUser;
-    private readonly IMercadoPagoWebhookValidator _webhookValidator;
+    private readonly IPaymentWebhookValidator _webhookValidator;
 
-    public PaymentsController(PaymentService service, ICurrentUserService currentUser, IMercadoPagoWebhookValidator webhookValidator)
+    public PaymentsController(PaymentService service, ICurrentUserService currentUser, IPaymentWebhookValidator webhookValidator)
     {
         _service = service;
         _currentUser = currentUser;
         _webhookValidator = webhookValidator;
     }
 
-    [HttpPost("create-trainer-subscription")]
+    [HttpPost("subscriptions/checkout")]
     [Authorize(Roles = "Trainer")]
-    public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionRequest request)
+    public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionRequest request, CancellationToken cancellationToken)
     {
-        var result = await _service.CreateSubscriptionAsync(_currentUser.TrainerId!.Value, request);
+        var result = await _service.CreateSubscriptionAsync(_currentUser.TrainerId!.Value, request, cancellationToken);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("webhook")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Webhook([FromBody] JsonElement payload, CancellationToken cancellationToken)
+    [HttpGet("plans/{planId:guid}/billing-options")]
+    [Authorize]
+    public async Task<IActionResult> GetBillingOptions(Guid planId, CancellationToken cancellationToken)
     {
-        if (!_webhookValidator.IsValid(Request))
+        var result = await _service.GetBillingOptionsAsync(planId, cancellationToken);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("subscriptions/validate-coupon")]
+    [Authorize]
+    public async Task<IActionResult> ValidateCoupon([FromBody] ValidateCouponRequest request, CancellationToken cancellationToken)
+    {
+        var trainerId = _currentUser.TrainerId ?? Guid.Empty;
+        var result = await _service.ValidateCouponAsync(trainerId, request, cancellationToken);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("webhooks/abacatepay")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Webhook(CancellationToken cancellationToken)
+    {
+        Request.EnableBuffering();
+        using var reader = new StreamReader(Request.Body, Encoding.UTF8, leaveOpen: true);
+        var raw = await reader.ReadToEndAsync(cancellationToken);
+        Request.Body.Position = 0;
+
+        if (!_webhookValidator.IsValid(Request, raw))
         {
             return Unauthorized(ApiResponse.Fail("Assinatura do webhook inválida."));
         }
 
-        var eventId = Request.Query["id"].FirstOrDefault() ?? Request.Headers["x-id"].FirstOrDefault();
-        var eventType = Request.Query["type"].FirstOrDefault() ?? Request.Query["topic"].FirstOrDefault();
-        var resourceId = Request.Query["data.id"].FirstOrDefault();
+        using var doc = JsonDocument.Parse(raw);
+        var payload = doc.RootElement.Clone();
 
-        var result = await _service.HandleWebhookAsync(payload, eventId, eventType, resourceId, cancellationToken);
+        var result = await _service.HandleWebhookAsync(payload, null, null, null, cancellationToken);
         return Ok(result);
-    }
-
-    [HttpPost("simulate-approved")]
-    [Authorize(Roles = "Trainer")]
-    public async Task<IActionResult> SimulateApproved()
-    {
-        var result = await _service.SimulateApprovedAsync(_currentUser.TrainerId!.Value, HttpContext.RequestAborted);
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-
-    [HttpPost("simulate-expired")]
-    [Authorize(Roles = "Trainer")]
-    public async Task<IActionResult> SimulateExpired()
-    {
-        var result = await _service.SimulateExpiredAsync(_currentUser.TrainerId!.Value, HttpContext.RequestAborted);
-        return result.Success ? Ok(result) : BadRequest(result);
     }
 }

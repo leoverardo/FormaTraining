@@ -12,5 +12,17 @@ public enum NotificationType
     System = 8,
     WorkoutCompleted = 9,
     InviteSent = 10,
-    AnamnesisRequest = 11
+    AnamnesisRequest = 11,
+    ChatMessage = 12,
+    HabitUpdated = 13,
+    NutritionGuidanceUpdated = 14,
+    AppointmentCreated = 15,
+    AppointmentRescheduled = 16,
+    AppointmentCancelled = 17,
+    AppointmentConfirmed = 18,
+    AppointmentCompleted = 19,
+    AchievementUnlocked = 20,
+    ServiceOfferPurchased = 21,
+    ServiceOrderPendingAction = 22,
+    BuyerPaymentApproved = 23
 }

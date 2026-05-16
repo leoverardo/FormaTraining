@@ -1,4 +1,4 @@
-using FitPlatform.Application.Common;
+﻿using FitPlatform.Application.Common;
 using FitPlatform.Application.DTOs.Auth;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Domain.Entities;
@@ -13,17 +13,22 @@ public class AuthService
 {
     private readonly AppDbContext _db;
     private readonly IJwtService _jwt;
+    private readonly PrivacyLgpdService _privacyLgpdService;
 
-    public AuthService(AppDbContext db, IJwtService jwt)
+    public AuthService(AppDbContext db, IJwtService jwt, PrivacyLgpdService privacyLgpdService)
     {
         _db = db;
         _jwt = jwt;
+        _privacyLgpdService = privacyLgpdService;
     }
 
     public async Task<ApiResponse<AuthResponse>> RegisterTrainerAsync(RegisterTrainerRequest request)
     {
+        if (!request.AcceptPrivacyPolicy || !request.AcceptTermsOfUse)
+            return ApiResponse<AuthResponse>.Fail("VocÃª precisa aceitar os Termos de Uso e a PolÃ­tica de Privacidade.");
+
         if (await _db.Users.AnyAsync(u => u.Email == request.Email.ToLower()))
-            return ApiResponse<AuthResponse>.Fail("E-mail já está em uso.");
+            return ApiResponse<AuthResponse>.Fail("E-mail jÃ¡ estÃ¡ em uso.");
 
         var user = new User
         {
@@ -44,6 +49,13 @@ public class AuthService
         _db.Trainers.Add(trainer);
 
         await _db.SaveChangesAsync();
+        await _privacyLgpdService.RegisterAcceptanceAsync(new()
+        {
+            AcceptPrivacyPolicy = true,
+            AcceptTermsOfUse = true,
+            Email = user.Email,
+            Source = "Registration"
+        }, null, null, user.Id);
 
         var token = _jwt.GenerateToken(user, trainer.Id, null, null);
         return ApiResponse<AuthResponse>.Ok(new AuthResponse
@@ -55,9 +67,11 @@ public class AuthService
 
     public async Task<ApiResponse<AuthResponse>> RegisterStudentAsync(RegisterStudentRequest request)
     {
+        if (!request.AcceptPrivacyPolicy || !request.AcceptTermsOfUse)
+            return ApiResponse<AuthResponse>.Fail("VocÃª precisa aceitar os Termos de Uso e a PolÃ­tica de Privacidade.");
         var email = request.Email.Trim().ToLower();
         if (await _db.Users.AnyAsync(u => u.Email == email))
-            return ApiResponse<AuthResponse>.Fail("E-mail já está em uso.");
+            return ApiResponse<AuthResponse>.Fail("E-mail jÃ¡ estÃ¡ em uso.");
 
         var user = new User
         {
@@ -84,6 +98,16 @@ public class AuthService
         };
         _db.StudentProfiles.Add(profile);
         await _db.SaveChangesAsync();
+        await _privacyLgpdService.RegisterAcceptanceAsync(new()
+        {
+            AcceptPrivacyPolicy = true,
+            AcceptTermsOfUse = true,
+            Email = user.Email,
+            Source = "Registration"
+        }, null, null, user.Id);
+        await _privacyLgpdService.UpdateConsentAsync("MARKETING_EMAIL", request.MarketingEmail, null, null, user.Id);
+        await _privacyLgpdService.UpdateConsentAsync("MARKETING_WHATSAPP", request.MarketingWhatsapp, null, null, user.Id);
+        await _privacyLgpdService.UpdateConsentAsync("HEALTH_RELATED_DATA_PROCESSING", request.HealthRelatedDataProcessingAcknowledged, null, null, user.Id);
 
         var token = _jwt.GenerateToken(user, null, null, profile.Id);
         return ApiResponse<AuthResponse>.Ok(new AuthResponse
@@ -138,7 +162,7 @@ public class AuthService
         var user = await FindUserByIdSafeAsync(userId);
 
         if (user == null)
-            return ApiResponse<UserDto>.Fail("Usuário não encontrado.");
+            return ApiResponse<UserDto>.Fail("UsuÃ¡rio nÃ£o encontrado.");
 
         Guid? activeTrainerId = user.Student?.Status == StudentStatus.Active ? user.Student.TrainerId : null;
         return ApiResponse<UserDto>.Ok(MapUserDto(user, user.Trainer?.Id, user.Student?.Id, user.StudentProfile?.Id, activeTrainerId));

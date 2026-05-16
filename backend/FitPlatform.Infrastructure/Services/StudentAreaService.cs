@@ -13,11 +13,15 @@ public class StudentAreaService
     private const string ExplorerForbiddenMessage = "Student is not linked to an active trainer.";
     private readonly AppDbContext _db;
     private readonly FeedBuilderService _feedBuilder;
+    private readonly HabitService _habitService;
+    private readonly AppointmentService _appointments;
 
-    public StudentAreaService(AppDbContext db, FeedBuilderService feedBuilder)
+    public StudentAreaService(AppDbContext db, FeedBuilderService feedBuilder, HabitService habitService, AppointmentService appointments)
     {
         _db = db;
         _feedBuilder = feedBuilder;
+        _habitService = habitService;
+        _appointments = appointments;
     }
 
     public async Task<ApiResponse<object>> GetAccessStatusAsync(Guid studentId)
@@ -93,6 +97,9 @@ public class StudentAreaService
 
         var unreadNotifications = await _db.Notifications
             .CountAsync(n => n.UserId == student!.UserId && !n.IsRead);
+        var habitsToday = await _habitService.GetStudentTodayAsync(studentId);
+        var nutritionGuidance = await _habitService.GetStudentGuidanceAsync(studentId);
+        var nextAppointment = await _appointments.GetNextStudentAppointmentAsync(studentId);
 
         // Recent feed items (posts from trainer + student activities)
         var feedResult = await _feedBuilder.GetStudentFeedAsync(studentId, student!.UserId, null, 1, 5);
@@ -154,6 +161,28 @@ public class StudentAreaService
                 currentWeekCheckIn.SleepQuality,
                 currentWeekCheckIn.TrainingAdherence
             } : null,
+            HabitsToday = habitsToday.Data != null ? new
+            {
+                habitsToday.Data.TotalHabits,
+                habitsToday.Data.CompletedHabits
+            } : null,
+            NutritionGuidance = nutritionGuidance.Data != null ? new
+            {
+                nutritionGuidance.Data.GuidanceText,
+                nutritionGuidance.Data.StrategicNotes,
+                nutritionGuidance.Data.UpdatedAt
+            } : null,
+            NextAppointment = nextAppointment == null ? null : new
+            {
+                nextAppointment.Id,
+                nextAppointment.Title,
+                nextAppointment.Type,
+                nextAppointment.Status,
+                nextAppointment.StartAt,
+                nextAppointment.EndAt,
+                nextAppointment.Location,
+                nextAppointment.OnlineMeetingUrl
+            },
             NotificationsCount = unreadNotifications,
             RecentFeedItems = recentFeedItems
         });

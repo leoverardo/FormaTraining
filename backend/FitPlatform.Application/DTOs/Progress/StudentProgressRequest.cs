@@ -19,7 +19,7 @@ public class StudentProgressRequest
 
 public class StudentProgressPhotoRequest
 {
-    public string ImageUrl { get; set; } = string.Empty;
+    public Guid MediaAssetId { get; set; }
     public string? Description { get; set; }
     public DateTime? PhotoDate { get; set; }
 }

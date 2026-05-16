@@ -21,6 +21,9 @@ public class AppDbContext : DbContext
     public DbSet<Post> Posts => Set<Post>();
     public DbSet<PlatformPlan> PlatformPlans => Set<PlatformPlan>();
     public DbSet<PlatformPlanPrice> PlatformPlanPrices => Set<PlatformPlanPrice>();
+    public DbSet<PlanBillingOption> PlanBillingOptions => Set<PlanBillingOption>();
+    public DbSet<DiscountCoupon> DiscountCoupons => Set<DiscountCoupon>();
+    public DbSet<DiscountCouponRedemption> DiscountCouponRedemptions => Set<DiscountCouponRedemption>();
     public DbSet<TrainerSubscription> TrainerSubscriptions => Set<TrainerSubscription>();
     public DbSet<TrainerPayment> TrainerPayments => Set<TrainerPayment>();
     public DbSet<PaymentWebhookLog> PaymentWebhookLogs => Set<PaymentWebhookLog>();
@@ -36,6 +39,7 @@ public class AppDbContext : DbContext
     public DbSet<ProgressComment> ProgressComments => Set<ProgressComment>();
     public DbSet<WorkoutSession> WorkoutSessions => Set<WorkoutSession>();
     public DbSet<WorkoutSessionExercise> WorkoutSessionExercises => Set<WorkoutSessionExercise>();
+    public DbSet<WorkoutSessionSet> WorkoutSessionSets => Set<WorkoutSessionSet>();
     public DbSet<ExerciseLibraryItem> ExerciseLibraryItems => Set<ExerciseLibraryItem>();
     public DbSet<WorkoutTemplate> WorkoutTemplates => Set<WorkoutTemplate>();
     public DbSet<WorkoutTemplateExercise> WorkoutTemplateExercises => Set<WorkoutTemplateExercise>();
@@ -47,9 +51,27 @@ public class AppDbContext : DbContext
     public DbSet<TermsDocument> TermsDocuments => Set<TermsDocument>();
     public DbSet<UserConsent> UserConsents => Set<UserConsent>();
     public DbSet<DataPrivacyRequest> DataPrivacyRequests => Set<DataPrivacyRequest>();
+    public DbSet<PrivacyPolicyVersion> PrivacyPolicyVersions => Set<PrivacyPolicyVersion>();
+    public DbSet<UserLegalAcceptance> UserLegalAcceptances => Set<UserLegalAcceptance>();
+    public DbSet<ConsentDefinition> ConsentDefinitions => Set<ConsentDefinition>();
+    public DbSet<UserPrivacyConsent> UserPrivacyConsents => Set<UserPrivacyConsent>();
+    public DbSet<UserConsentHistory> UserConsentHistories => Set<UserConsentHistory>();
+    public DbSet<UserDataExport> UserDataExports => Set<UserDataExport>();
+    public DbSet<SecurityIncident> SecurityIncidents => Set<SecurityIncident>();
+    public DbSet<DataProcessorVendor> DataProcessorVendors => Set<DataProcessorVendor>();
     public DbSet<FeedReaction> FeedReactions => Set<FeedReaction>();
     public DbSet<FeedSavedItem> FeedSavedItems => Set<FeedSavedItem>();
     public DbSet<FeedComment> FeedComments => Set<FeedComment>();
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+    public DbSet<StudentHabit> StudentHabits => Set<StudentHabit>();
+    public DbSet<StudentHabitLog> StudentHabitLogs => Set<StudentHabitLog>();
+    public DbSet<StudentNutritionGuidance> StudentNutritionGuidances => Set<StudentNutritionGuidance>();
+    public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<StudentAchievement> StudentAchievements => Set<StudentAchievement>();
+    public DbSet<StudentMonthlyGoal> StudentMonthlyGoals => Set<StudentMonthlyGoal>();
+    public DbSet<TrainerServiceOffer> TrainerServiceOffers => Set<TrainerServiceOffer>();
+    public DbSet<TrainerServiceOrder> TrainerServiceOrders => Set<TrainerServiceOrder>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -169,11 +191,21 @@ public class AppDbContext : DbContext
             e.Property(p => p.BillingCycle).HasConversion<int>();
             e.HasOne(p => p.PlatformPlan).WithMany(pl => pl.Prices).HasForeignKey(p => p.PlatformPlanId).OnDelete(DeleteBehavior.Restrict);
         });
+        modelBuilder.Entity<PlanBillingOption>(e =>
+        {
+            e.HasIndex(x => new { x.PlatformPlanId, x.BillingCycle }).IsUnique();
+            e.Property(x => x.BillingCycle).HasConversion<int>();
+            e.Property(x => x.CycleDiscountPercent).HasPrecision(5, 2);
+            e.HasOne(x => x.PlatformPlan).WithMany().HasForeignKey(x => x.PlatformPlanId).OnDelete(DeleteBehavior.Restrict);
+        });
 
         modelBuilder.Entity<TrainerSubscription>(e =>
         {
             e.HasIndex(ts => ts.TrainerId);
+            e.HasIndex(ts => ts.TrainerOnboardingId);
             e.HasIndex(ts => ts.PlatformPlanId);
+            e.HasIndex(ts => ts.Provider);
+            e.HasIndex(ts => ts.AbacatePaySubscriptionId);
             e.Property(ts => ts.Status).HasConversion<int>();
             e.Property(ts => ts.BillingCycle).HasConversion<int>();
             e.HasOne(ts => ts.Trainer).WithMany(t => t.Subscriptions).HasForeignKey(ts => ts.TrainerId).OnDelete(DeleteBehavior.Restrict);
@@ -184,6 +216,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TrainerPayment>(e =>
         {
             e.HasIndex(tp => tp.TrainerSubscriptionId);
+            e.HasIndex(tp => tp.AbacatePayCheckoutId);
             e.Property(tp => tp.Amount).HasPrecision(18, 2);
             e.Property(tp => tp.Status).HasConversion<int>();
             e.HasOne(tp => tp.Trainer).WithMany().HasForeignKey(tp => tp.TrainerId).OnDelete(DeleteBehavior.Restrict);
@@ -194,6 +227,19 @@ public class AppDbContext : DbContext
         {
             e.HasIndex(w => new { w.Provider, w.EventId }).IsUnique();
             e.HasIndex(w => w.ResourceId);
+        });
+        modelBuilder.Entity<DiscountCoupon>(e =>
+        {
+            e.HasIndex(x => x.Code).IsUnique();
+            e.Property(x => x.DiscountType).HasConversion<int>();
+            e.Property(x => x.AppliesToBillingCycle).HasConversion<int>();
+            e.Property(x => x.DiscountValue).HasPrecision(18, 2);
+        });
+
+        modelBuilder.Entity<DiscountCouponRedemption>(e =>
+        {
+            e.HasIndex(x => new { x.CouponId, x.TrainerId, x.SubscriptionId }).IsUnique();
+            e.HasOne(x => x.Coupon).WithMany().HasForeignKey(x => x.CouponId).OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<TrainerOnboarding>(e =>
@@ -246,6 +292,7 @@ public class AppDbContext : DbContext
         {
             e.HasIndex(ws => ws.StudentId);
             e.HasIndex(ws => ws.TrainerId);
+            e.HasIndex(ws => new { ws.StudentId, ws.Status, ws.CompletedAt });
             e.Property(ws => ws.Status).HasConversion<int>();
             e.HasOne(ws => ws.Student).WithMany(s => s.WorkoutSessions).HasForeignKey(ws => ws.StudentId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(ws => ws.Trainer).WithMany().HasForeignKey(ws => ws.TrainerId).OnDelete(DeleteBehavior.Restrict);
@@ -254,8 +301,18 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<WorkoutSessionExercise>(e =>
         {
+            e.HasIndex(wse => new { wse.WorkoutSessionId, wse.OrderIndex });
+            e.HasIndex(wse => new { wse.WorkoutSessionId, wse.ExerciseId });
             e.HasOne(wse => wse.WorkoutSession).WithMany(ws => ws.ExerciseSessions).HasForeignKey(wse => wse.WorkoutSessionId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(wse => wse.WorkoutExercise).WithMany().HasForeignKey(wse => wse.WorkoutExerciseId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(wse => wse.Exercise).WithMany().HasForeignKey(wse => wse.ExerciseId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<WorkoutSessionSet>(e =>
+        {
+            e.HasIndex(s => new { s.WorkoutSessionExerciseId, s.SetNumber }).IsUnique();
+            e.HasIndex(s => new { s.WorkoutSessionExerciseId, s.IsCompleted });
+            e.HasOne(s => s.WorkoutSessionExercise).WithMany(wse => wse.Sets).HasForeignKey(s => s.WorkoutSessionExerciseId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ExerciseLibraryItem>(e =>
@@ -359,7 +416,62 @@ public class AppDbContext : DbContext
             e.HasIndex(r => r.UserId);
             e.Property(r => r.RequestType).HasConversion<int>();
             e.Property(r => r.Status).HasConversion<int>();
-            e.HasOne(r => r.User).WithMany().HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(r => r.User).WithMany().HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<PrivacyPolicyVersion>(e =>
+        {
+            e.Property(p => p.DocumentType).HasConversion<int>();
+            e.HasIndex(p => new { p.DocumentType, p.IsActive });
+            e.HasIndex(p => new { p.DocumentType, p.Version }).IsUnique();
+        });
+
+        modelBuilder.Entity<UserLegalAcceptance>(e =>
+        {
+            e.Property(p => p.Source).HasConversion<int>();
+            e.HasIndex(p => p.UserId);
+            e.HasOne(p => p.User).WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(p => p.PrivacyPolicyVersion).WithMany().HasForeignKey(p => p.PrivacyPolicyVersionId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(p => p.TermsOfUseVersion).WithMany().HasForeignKey(p => p.TermsOfUseVersionId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ConsentDefinition>(e =>
+        {
+            e.HasIndex(c => c.Code).IsUnique();
+        });
+
+        modelBuilder.Entity<UserPrivacyConsent>(e =>
+        {
+            e.HasIndex(c => new { c.UserId, c.ConsentDefinitionId }).IsUnique();
+            e.HasOne(c => c.User).WithMany().HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(c => c.ConsentDefinition).WithMany().HasForeignKey(c => c.ConsentDefinitionId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<UserConsentHistory>(e =>
+        {
+            e.Property(c => c.Action).HasConversion<int>();
+            e.HasIndex(c => new { c.UserId, c.ConsentDefinitionId, c.ChangedAt });
+            e.HasOne(c => c.User).WithMany().HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(c => c.ConsentDefinition).WithMany().HasForeignKey(c => c.ConsentDefinitionId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<UserDataExport>(e =>
+        {
+            e.HasIndex(x => new { x.UserId, x.RequestedAt });
+            e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SecurityIncident>(e =>
+        {
+            e.Property(x => x.Severity).HasConversion<int>();
+            e.Property(x => x.Status).HasConversion<int>();
+            e.HasIndex(x => new { x.Status, x.Severity, x.DetectedAt });
+            e.HasOne(x => x.CreatedByUser).WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<DataProcessorVendor>(e =>
+        {
+            e.HasIndex(x => new { x.IsActive, x.Name });
         });
 
         modelBuilder.Entity<StudentInvite>(e =>
@@ -390,6 +502,98 @@ public class AppDbContext : DbContext
             e.HasIndex(c => c.FeedItemKey);
             e.HasIndex(c => c.UserId);
             e.HasOne(c => c.User).WithMany().HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Conversation>(e =>
+        {
+            e.HasIndex(c => new { c.TrainerId, c.StudentId }).IsUnique();
+            e.HasIndex(c => c.LastMessageAt);
+            e.HasOne(c => c.Trainer).WithMany().HasForeignKey(c => c.TrainerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(c => c.Student).WithMany().HasForeignKey(c => c.StudentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ChatMessage>(e =>
+        {
+            e.HasIndex(m => new { m.ConversationId, m.CreatedAt });
+            e.HasIndex(m => new { m.ConversationId, m.ReadAt });
+            e.Property(m => m.SenderRole).HasConversion<int>();
+            e.HasOne(m => m.Conversation).WithMany(c => c.Messages).HasForeignKey(m => m.ConversationId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(m => m.SenderUser).WithMany().HasForeignKey(m => m.SenderUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(m => m.AttachmentMedia).WithMany().HasForeignKey(m => m.AttachmentMediaId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+        });
+
+        modelBuilder.Entity<StudentHabit>(e =>
+        {
+            e.HasIndex(h => new { h.StudentId, h.IsActive, h.InactivatedAt });
+            e.Property(h => h.Category).HasConversion<int>();
+            e.Property(h => h.Frequency).HasConversion<int>();
+            e.Property(h => h.TargetValue).HasPrecision(10, 2);
+            e.HasOne(h => h.Student).WithMany(s => s.Habits).HasForeignKey(h => h.StudentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(h => h.Trainer).WithMany().HasForeignKey(h => h.TrainerId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<StudentHabitLog>(e =>
+        {
+            e.HasIndex(l => new { l.HabitId, l.Date }).IsUnique();
+            e.HasIndex(l => new { l.StudentId, l.Date });
+            e.Property(l => l.Value).HasPrecision(10, 2);
+            e.HasOne(l => l.Habit).WithMany(h => h.Logs).HasForeignKey(l => l.HabitId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(l => l.Student).WithMany(s => s.HabitLogs).HasForeignKey(l => l.StudentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<StudentNutritionGuidance>(e =>
+        {
+            e.HasIndex(n => n.StudentId).IsUnique();
+            e.HasOne(n => n.Student).WithMany().HasForeignKey(n => n.StudentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(n => n.Trainer).WithMany().HasForeignKey(n => n.TrainerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(n => n.Media).WithMany().HasForeignKey(n => n.MediaId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+        });
+
+        modelBuilder.Entity<Appointment>(e =>
+        {
+            e.HasIndex(a => new { a.TrainerId, a.StartAt, a.EndAt });
+            e.HasIndex(a => new { a.StudentId, a.StartAt });
+            e.Property(a => a.Type).HasConversion<int>();
+            e.Property(a => a.Status).HasConversion<int>();
+            e.HasOne(a => a.Trainer).WithMany().HasForeignKey(a => a.TrainerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(a => a.Student).WithMany().HasForeignKey(a => a.StudentId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+            e.HasOne(a => a.RescheduledFromAppointment).WithMany().HasForeignKey(a => a.RescheduledFromAppointmentId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+        });
+
+        modelBuilder.Entity<StudentAchievement>(e =>
+        {
+            e.HasIndex(a => new { a.StudentId, a.AchievementCode }).IsUnique();
+            e.HasIndex(a => new { a.StudentId, a.UnlockedAt });
+            e.Property(a => a.AchievementCode).HasConversion<int>();
+            e.HasOne(a => a.Student).WithMany(s => s.Achievements).HasForeignKey(a => a.StudentId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<StudentMonthlyGoal>(e =>
+        {
+            e.HasIndex(g => new { g.StudentId, g.Year, g.Month }).IsUnique();
+            e.HasOne(g => g.Student).WithMany(s => s.MonthlyGoals).HasForeignKey(g => g.StudentId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<TrainerServiceOffer>(e =>
+        {
+            e.HasIndex(o => new { o.TrainerId, o.IsActive, o.IsPublic, o.DisplayOrder });
+            e.Property(o => o.Price).HasPrecision(18, 2);
+            e.Property(o => o.BillingType).HasConversion<int>();
+            e.HasOne(o => o.Trainer).WithMany(t => t.ServiceOffers).HasForeignKey(o => o.TrainerId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TrainerServiceOrder>(e =>
+        {
+            e.HasIndex(o => new { o.TrainerId, o.Status, o.CreatedAt });
+            e.HasIndex(o => o.ProviderPreferenceId).IsUnique().HasFilter("[ProviderPreferenceId] IS NOT NULL");
+            e.HasIndex(o => o.ProviderPaymentId).HasFilter("[ProviderPaymentId] IS NOT NULL");
+            e.HasIndex(o => new { o.BuyerEmail, o.TrainerId });
+            e.Property(o => o.Amount).HasPrecision(18, 2);
+            e.Property(o => o.Status).HasConversion<int>();
+            e.Property(o => o.BillingTypeSnapshot).HasConversion<int>();
+            e.HasOne(o => o.Trainer).WithMany(t => t.ServiceOrders).HasForeignKey(o => o.TrainerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(o => o.ServiceOffer).WithMany(s => s.Orders).HasForeignKey(o => o.ServiceOfferId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(o => o.Student).WithMany(s => s.ServiceOrders).HasForeignKey(o => o.StudentId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
         });
     }
 }

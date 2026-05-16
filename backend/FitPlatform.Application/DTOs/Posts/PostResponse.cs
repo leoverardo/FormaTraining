@@ -8,7 +8,9 @@ public class PostResponse
     public string? Description { get; set; }
     public string? Content { get; set; }
     public string? ImageUrl { get; set; }
+    public Guid? CoverMediaId { get; set; }
     public string? VideoUrl { get; set; }
+    public Guid? VideoMediaId { get; set; }
     public string Status { get; set; } = string.Empty;
     public string Visibility { get; set; } = string.Empty;
     public List<string> Tags { get; set; } = new();

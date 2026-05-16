@@ -28,6 +28,24 @@ public class PostService
 
     public async Task<ApiResponse<PostResponse>> CreateAsync(PostRequest request, Guid trainerId)
     {
+        if (!string.IsNullOrWhiteSpace(request.ImageUrl) || !string.IsNullOrWhiteSpace(request.VideoUrl))
+            return ApiResponse<PostResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+
+        string? imageUrl = null;
+        string? videoUrl = null;
+        if (request.CoverMediaId.HasValue)
+        {
+            var coverMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.CoverMediaId.Value);
+            if (coverMedia == null) return ApiResponse<PostResponse>.Fail("MÃ­dia de capa nÃ£o encontrada.");
+            imageUrl = coverMedia.SecureUrl ?? coverMedia.Url;
+        }
+        if (request.VideoMediaId.HasValue)
+        {
+            var videoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.VideoMediaId.Value);
+            if (videoMedia == null) return ApiResponse<PostResponse>.Fail("MÃ­dia de vÃ­deo nÃ£o encontrada.");
+            videoUrl = videoMedia.SecureUrl ?? videoMedia.Url;
+        }
+
         var isPublishing = request.Status == PostStatus.Published;
         var post = new Post
         {
@@ -35,8 +53,10 @@ public class PostService
             Title = request.Title,
             Description = request.Description,
             Content = request.Content,
-            ImageUrl = request.ImageUrl,
-            VideoUrl = request.VideoUrl,
+            ImageUrl = imageUrl,
+            CoverMediaId = request.CoverMediaId,
+            VideoUrl = videoUrl,
+            VideoMediaId = request.VideoMediaId,
             Status = request.Status,
             Visibility = request.Visibility,
             Tags = request.Tags,
@@ -57,14 +77,29 @@ public class PostService
         var post = await _db.Posts.FirstOrDefaultAsync(p => p.Id == id && p.TrainerId == trainerId);
         if (post == null) return ApiResponse<PostResponse>.Fail("Post não encontrado.");
 
+        if (!string.IsNullOrWhiteSpace(request.ImageUrl) || !string.IsNullOrWhiteSpace(request.VideoUrl))
+            return ApiResponse<PostResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+
         var wasNotPublished = post.Status != PostStatus.Published;
         var isNowPublishing = request.Status == PostStatus.Published;
 
         post.Title = request.Title;
         post.Description = request.Description;
         post.Content = request.Content;
-        post.ImageUrl = request.ImageUrl;
-        post.VideoUrl = request.VideoUrl;
+        if (request.CoverMediaId.HasValue)
+        {
+            var coverMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.CoverMediaId.Value);
+            if (coverMedia == null) return ApiResponse<PostResponse>.Fail("MÃ­dia de capa nÃ£o encontrada.");
+            post.CoverMediaId = coverMedia.Id;
+            post.ImageUrl = coverMedia.SecureUrl ?? coverMedia.Url;
+        }
+        if (request.VideoMediaId.HasValue)
+        {
+            var videoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.VideoMediaId.Value);
+            if (videoMedia == null) return ApiResponse<PostResponse>.Fail("MÃ­dia de vÃ­deo nÃ£o encontrada.");
+            post.VideoMediaId = videoMedia.Id;
+            post.VideoUrl = videoMedia.SecureUrl ?? videoMedia.Url;
+        }
         post.Status = request.Status;
         post.Visibility = request.Visibility;
         post.Tags = request.Tags;
@@ -98,7 +133,9 @@ public class PostService
         Description = p.Description,
         Content = p.Content,
         ImageUrl = p.ImageUrl,
+        CoverMediaId = p.CoverMediaId,
         VideoUrl = p.VideoUrl,
+        VideoMediaId = p.VideoMediaId,
         Status = p.Status.ToString(),
         Visibility = p.Visibility.ToString(),
         Tags = FeedBuilderService.ParseTags(p.Tags),

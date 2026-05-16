@@ -20,8 +20,8 @@ public class TestimonialResponse
 
 public class TransformationRequest
 {
-    public string? BeforePhotoUrl { get; set; }
-    public string? AfterPhotoUrl { get; set; }
+    public Guid? BeforeMediaId { get; set; }
+    public Guid? AfterMediaId { get; set; }
     public string? Description { get; set; }
 }
 
@@ -32,6 +32,8 @@ public class TransformationResponse
     public string StudentName { get; set; } = string.Empty;
     public string? BeforePhotoUrl { get; set; }
     public string? AfterPhotoUrl { get; set; }
+    public Guid? BeforeMediaId { get; set; }
+    public Guid? AfterMediaId { get; set; }
     public string? Description { get; set; }
     public bool ApprovedByStudent { get; set; }
     public bool Published { get; set; }

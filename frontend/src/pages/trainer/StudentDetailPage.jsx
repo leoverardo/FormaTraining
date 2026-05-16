@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { studentService } from '../../services/studentService';
 import { scheduleService } from '../../services/scheduleService';
 import { progressService } from '../../services/progressService';
+import { habitService } from '../../services/habitService';
+import { gamificationService } from '../../services/gamificationService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -12,7 +14,7 @@ import { LoadingState } from '../../components/ui/LoadingState';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { ChevronLeft, Plus, Trash2, TrendingUp, Camera } from 'lucide-react';
 
-const TABS = ['Dados', 'Rotina', 'Progresso', 'Fotos'];
+const TABS = ['Dados', 'Rotina', 'Progresso', 'Fotos', 'Habitos'];
 const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 const emptyProgress = { weight: '', height: '', chest: '', waist: '', abdomen: '', hip: '', rightArm: '', leftArm: '', rightThigh: '', leftThigh: '', bodyFatPercentage: '', notes: '', progressDate: new Date().toISOString().split('T')[0] };
@@ -35,6 +37,15 @@ export function StudentDetailPage() {
   const [saving, setSaving] = useState(false);
   const [compareA, setCompareA] = useState(null);
   const [compareB, setCompareB] = useState(null);
+  const [habits, setHabits] = useState([]);
+  const [adherenceDays, setAdherenceDays] = useState(7);
+  const [adherence, setAdherence] = useState(null);
+  const [guidance, setGuidance] = useState({ guidanceText: '', strategicNotes: '' });
+  const [habitForm, setHabitForm] = useState({ title: '', description: '', category: 'Custom', targetValue: '', targetUnit: '' });
+  const [editingHabitId, setEditingHabitId] = useState(null);
+  const [habitModal, setHabitModal] = useState(false);
+  const [gamification, setGamification] = useState(null);
+  const [goalForm, setGoalForm] = useState({ workoutTarget: 8, habitDaysTarget: 20, checkInTarget: 4 });
 
   useEffect(() => {
     Promise.all([
@@ -47,8 +58,29 @@ export function StudentDetailPage() {
       setSchedules(sc.data.data || []);
       setProgress(pr.data.data || []);
       setPhotos(ph.data.data || []);
+      habitService.getTrainerHabits(id).then((r) => setHabits(r.data.data || []));
+      habitService.getAdherence(id, adherenceDays).then((r) => setAdherence(r.data.data || null));
+      habitService.getTrainerGuidance(id).then((r) => {
+        const g = r.data.data;
+        if (g) setGuidance({ guidanceText: g.guidanceText || '', strategicNotes: g.strategicNotes || '' });
+      });
+      gamificationService.getTrainerSummary(id).then((r) => setGamification(r.data.data || null));
+      gamificationService.getTrainerMonthlyGoals(id).then((r) => {
+        const g = r.data.data;
+        if (!g) return;
+        setGoalForm({
+          workoutTarget: g.workoutTarget ?? 8,
+          habitDaysTarget: g.habitDaysTarget ?? 20,
+          checkInTarget: g.checkInTarget ?? 4,
+        });
+      });
     }).finally(() => setLoading(false));
-  }, [id]);
+  }, [id, adherenceDays]);
+
+  const reloadHabits = () => {
+    habitService.getTrainerHabits(id).then((r) => setHabits(r.data.data || []));
+    habitService.getAdherence(id, adherenceDays).then((r) => setAdherence(r.data.data || null));
+  };
 
   const handleAddProgress = async (e) => {
     e.preventDefault();
@@ -87,6 +119,93 @@ export function StudentDetailPage() {
   const deletePhoto = async (pid) => {
     try { await progressService.deletePhotoForStudent(id, pid); toast('Foto removida.'); setPhotos(prev => prev.filter(p => p.id !== pid)); }
     catch { toast('Erro', 'error'); }
+  };
+
+  const openCreateHabit = () => {
+    setEditingHabitId(null);
+    setHabitForm({ title: '', description: '', category: 'Custom', targetValue: '', targetUnit: '' });
+    setHabitModal(true);
+  };
+
+  const openEditHabit = (habit) => {
+    setEditingHabitId(habit.id);
+    setHabitForm({
+      title: habit.title || '',
+      description: habit.description || '',
+      category: habit.category || 'Custom',
+      targetValue: habit.targetValue ?? '',
+      targetUnit: habit.targetUnit || '',
+    });
+    setHabitModal(true);
+  };
+
+  const saveHabit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const payload = {
+        title: habitForm.title,
+        description: habitForm.description || null,
+        category: habitForm.category || 'Custom',
+        targetValue: habitForm.targetValue === '' ? null : Number(habitForm.targetValue),
+        targetUnit: habitForm.targetUnit || null,
+      };
+      if (editingHabitId) await habitService.updateHabit(id, editingHabitId, payload);
+      else await habitService.createHabit(id, payload);
+      toast('Habito salvo com sucesso!');
+      setHabitModal(false);
+      reloadHabits();
+    } catch (err) {
+      toast(err.response?.data?.message || 'Erro ao salvar habito', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleHabitStatus = async (habit) => {
+    try {
+      await habitService.updateHabitStatus(id, habit.id, { isActive: !habit.isActive });
+      reloadHabits();
+    } catch {
+      toast('Erro ao atualizar status do habito', 'error');
+    }
+  };
+
+  const removeHabit = async (habitId) => {
+    try {
+      await habitService.deleteHabit(id, habitId);
+      toast('Habito arquivado.');
+      reloadHabits();
+    } catch {
+      toast('Erro ao remover habito', 'error');
+    }
+  };
+
+  const saveGuidance = async () => {
+    setSaving(true);
+    try {
+      await habitService.upsertTrainerGuidance(id, guidance);
+      toast('Orientacao alimentar salva!');
+    } catch (err) {
+      toast(err.response?.data?.message || 'Erro ao salvar orientacao', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const saveGoals = async () => {
+    setSaving(true);
+    try {
+      const now = new Date();
+      await gamificationService.updateTrainerMonthlyGoals(id, now.getFullYear(), now.getMonth() + 1, goalForm);
+      const summary = await gamificationService.getTrainerSummary(id);
+      setGamification(summary.data.data || null);
+      toast('Metas mensais atualizadas!');
+    } catch (err) {
+      toast(err.response?.data?.message || 'Erro ao salvar metas', 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <LoadingState />;
@@ -233,6 +352,102 @@ export function StudentDetailPage() {
         </div>
       )}
 
+      {activeTab === 'Habitos' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-500">{habits.length} habitos cadastrados</p>
+            <Button size="sm" onClick={openCreateHabit}><Plus size={14} />Novo habito</Button>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="bg-white rounded-2xl border border-gray-200 p-4">
+              <p className="text-xs text-gray-400">Aderencia ({adherenceDays} dias)</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">{adherence?.completionRate ?? 0}%</p>
+              <p className="text-xs text-gray-500 mt-1">{adherence?.totalCompleted ?? 0} de {adherence?.totalExpected ?? 0} marcacoes concluidas</p>
+              <div className="mt-3 flex gap-2">
+                <button onClick={() => setAdherenceDays(7)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 7 ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>7 dias</button>
+                <button onClick={() => setAdherenceDays(30)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 30 ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>30 dias</button>
+              </div>
+              {adherence?.lowestHabitTitle && (
+                <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-2 py-1 mt-3">
+                  Menor taxa: {adherence.lowestHabitTitle} ({adherence.lowestHabitRate}%)
+                </p>
+              )}
+            </div>
+            <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
+              <p className="text-sm font-semibold text-gray-900">Orientacao alimentar</p>
+              <textarea
+                value={guidance.guidanceText}
+                onChange={(e) => setGuidance((p) => ({ ...p, guidanceText: e.target.value }))}
+                rows={4}
+                className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm"
+                placeholder="Ex.: priorizar alimentos in natura, manter hidratacao..."
+              />
+              <textarea
+                value={guidance.strategicNotes}
+                onChange={(e) => setGuidance((p) => ({ ...p, strategicNotes: e.target.value }))}
+                rows={2}
+                className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm"
+                placeholder="Observacoes estrategicas opcionais"
+              />
+              <Button size="sm" onClick={saveGuidance} loading={saving}>Salvar orientacao</Button>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="bg-white rounded-2xl border border-gray-200 p-4">
+              <p className="text-sm font-semibold text-gray-900">Resumo de gamificacao</p>
+              {!gamification ? (
+                <p className="text-xs text-gray-500 mt-2">Sem dados suficientes.</p>
+              ) : (
+                <div className="grid grid-cols-3 gap-2 mt-3">
+                  {[
+                    { label: 'Treino', value: gamification.trainingStreak?.current ?? 0 },
+                    { label: 'Habitos', value: gamification.habitStreak?.current ?? 0 },
+                    { label: 'Check-ins', value: gamification.checkInStreak?.current ?? 0 },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-lg bg-gray-50 border border-gray-200 px-2 py-2 text-center">
+                      <p className="text-[11px] text-gray-500">{item.label}</p>
+                      <p className="text-base font-bold text-gray-900">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
+              <p className="text-sm font-semibold text-gray-900">Metas do mes</p>
+              <div className="grid grid-cols-3 gap-2">
+                <Input label="Treinos" type="number" min="1" value={goalForm.workoutTarget} onChange={(e) => setGoalForm((p) => ({ ...p, workoutTarget: Number(e.target.value || 1) }))} />
+                <Input label="Habitos" type="number" min="1" value={goalForm.habitDaysTarget} onChange={(e) => setGoalForm((p) => ({ ...p, habitDaysTarget: Number(e.target.value || 1) }))} />
+                <Input label="Check-ins" type="number" min="1" value={goalForm.checkInTarget} onChange={(e) => setGoalForm((p) => ({ ...p, checkInTarget: Number(e.target.value || 1) }))} />
+              </div>
+              <Button size="sm" onClick={saveGoals} loading={saving}>Salvar metas</Button>
+            </div>
+          </div>
+
+          {habits.length === 0 ? (
+            <EmptyState title="Nenhum habito configurado" description="Crie habitos diarios para acompanhar disciplina e rotina do aluno." />
+          ) : (
+            <div className="space-y-2">
+              {habits.map((habit) => (
+                <div key={habit.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">{habit.title}</p>
+                    <p className="text-xs text-gray-500">{habit.category} {habit.targetValue ? `• ${habit.targetValue} ${habit.targetUnit || ''}` : ''}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={habit.isActive ? 'success' : 'gray'}>{habit.isActive ? 'Ativo' : 'Inativo'}</Badge>
+                    <Button size="sm" variant="secondary" onClick={() => openEditHabit(habit)}>Editar</Button>
+                    <Button size="sm" variant="secondary" onClick={() => toggleHabitStatus(habit)}>{habit.isActive ? 'Inativar' : 'Ativar'}</Button>
+                    <button title="Arquivar habito" onClick={() => removeHabit(habit.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Progress Modal */}
       <Modal open={progressModal} onClose={() => setProgressModal(false)} title="Registrar progresso" size="lg">
         <form onSubmit={handleAddProgress} className="space-y-4">
@@ -264,6 +479,27 @@ export function StudentDetailPage() {
           <div className="flex gap-3">
             <Button variant="secondary" type="button" onClick={() => setPhotoModal(false)} className="flex-1">Cancelar</Button>
             <Button type="submit" loading={saving} className="flex-1">Adicionar</Button>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal open={habitModal} onClose={() => setHabitModal(false)} title={editingHabitId ? 'Editar habito' : 'Novo habito'}>
+        <form onSubmit={saveHabit} className="space-y-3">
+          <Input label="Titulo" value={habitForm.title} onChange={(e) => setHabitForm((p) => ({ ...p, title: e.target.value }))} required />
+          <Input label="Descricao (opcional)" value={habitForm.description} onChange={(e) => setHabitForm((p) => ({ ...p, description: e.target.value }))} />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+              <select className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" value={habitForm.category} onChange={(e) => setHabitForm((p) => ({ ...p, category: e.target.value }))}>
+                {['Custom', 'Water', 'Sleep', 'Nutrition', 'Cardio', 'Steps'].map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <Input label="Meta numerica (opcional)" type="number" step="0.01" value={habitForm.targetValue} onChange={(e) => setHabitForm((p) => ({ ...p, targetValue: e.target.value }))} />
+          </div>
+          <Input label="Unidade da meta (opcional)" value={habitForm.targetUnit} onChange={(e) => setHabitForm((p) => ({ ...p, targetUnit: e.target.value }))} placeholder="litros, horas, passos..." />
+          <div className="flex gap-3">
+            <Button type="button" variant="secondary" className="flex-1" onClick={() => setHabitModal(false)}>Cancelar</Button>
+            <Button type="submit" className="flex-1" loading={saving}>Salvar</Button>
           </div>
         </form>
       </Modal>

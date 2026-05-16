@@ -17,6 +17,11 @@ const empty = {
   interests: '',
   trainingLevel: '',
   preferredTrainingMode: 'online',
+  acceptPrivacyPolicy: false,
+  acceptTermsOfUse: false,
+  marketingEmail: false,
+  marketingWhatsapp: false,
+  healthRelatedDataProcessingAcknowledged: false,
 };
 
 export function StudentRegisterPage() {
@@ -67,6 +72,11 @@ export function StudentRegisterPage() {
             </select>
           </div>
           <div className="sm:col-span-2 mt-2">
+            <label className="text-xs block"><input type="checkbox" checked={form.acceptTermsOfUse} onChange={(e) => setForm((p) => ({ ...p, acceptTermsOfUse: e.target.checked }))} /> Li e concordo com os <Link to="/terms-of-use" className="text-indigo-600">Termos de Uso</Link>.</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.acceptPrivacyPolicy} onChange={(e) => setForm((p) => ({ ...p, acceptPrivacyPolicy: e.target.checked }))} /> Li e concordo com a <Link to="/privacy-policy" className="text-indigo-600">Politica de Privacidade</Link>.</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.healthRelatedDataProcessingAcknowledged} onChange={(e) => setForm((p) => ({ ...p, healthRelatedDataProcessingAcknowledged: e.target.checked }))} /> Aviso sobre tratamento de dados de treino, habitos e evolucao (texto sujeito a revisao juridica).</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.marketingEmail} onChange={(e) => setForm((p) => ({ ...p, marketingEmail: e.target.checked }))} /> Aceito marketing por e-mail (opcional).</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.marketingWhatsapp} onChange={(e) => setForm((p) => ({ ...p, marketingWhatsapp: e.target.checked }))} /> Aceito marketing por WhatsApp (opcional).</label>
             <Button type="submit" className="w-full" loading={loading}>Criar conta</Button>
           </div>
         </form>

@@ -12,6 +12,7 @@ public class TrainerPayment : BaseEntity
     public string Provider { get; set; } = "MercadoPago";
     public string? ProviderPaymentId { get; set; }
     public string? ProviderSubscriptionId { get; set; }
+    public string? AbacatePayCheckoutId { get; set; }
     public string? RawPayload { get; set; }
     public DateTime? PaidAt { get; set; }
 

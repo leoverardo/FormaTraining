@@ -7,4 +7,6 @@ public class RegisterTrainerRequest
     public string Password { get; set; } = string.Empty;
     public string BrandName { get; set; } = string.Empty;
     public string? Phone { get; set; }
+    public bool AcceptPrivacyPolicy { get; set; }
+    public bool AcceptTermsOfUse { get; set; }
 }

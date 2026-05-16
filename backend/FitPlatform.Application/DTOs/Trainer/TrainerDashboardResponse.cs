@@ -21,6 +21,8 @@ public class TrainerDashboardResponse
     public int CheckInsThisWeekCount { get; set; }
     public int MissingCheckInsCount { get; set; }
     public int StudentsNeedingAttentionCount { get; set; }
+    public int AppointmentsTodayCount { get; set; }
+    public int PendingAppointmentConfirmationsCount { get; set; }
     public string? PublicPageUrl { get; set; }
     public List<TrainerActivityDto> RecentActivities { get; set; } = new();
     public bool HasActiveSubscription { get; set; }

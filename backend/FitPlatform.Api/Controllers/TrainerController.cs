@@ -66,21 +66,7 @@ public class TrainerController : ControllerBase
     [HttpPost("subscription/create")]
     public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionRequest request, [FromServices] PaymentService paymentService)
     {
-        var result = await paymentService.CreateSubscriptionAsync(_currentUser.TrainerId!.Value, request);
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-
-    [HttpPost("subscription/simulate-approved")]
-    public async Task<IActionResult> SimulateApproved([FromServices] PaymentService paymentService)
-    {
-        var result = await paymentService.SimulateApprovedAsync(_currentUser.TrainerId!.Value);
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-
-    [HttpPost("subscription/simulate-expired")]
-    public async Task<IActionResult> SimulateExpired([FromServices] PaymentService paymentService)
-    {
-        var result = await paymentService.SimulateExpiredAsync(_currentUser.TrainerId!.Value);
+        var result = await paymentService.CreateSubscriptionAsync(_currentUser.TrainerId!.Value, request, HttpContext.RequestAborted);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

@@ -5,6 +5,7 @@ using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FitPlatform.Api.Controllers;
 
@@ -33,6 +34,7 @@ public class PublicTrainerPageController : ControllerBase
     }
 
     [HttpPost("{slug}/lead")]
+    [EnableRateLimiting("PublicLead")]
     public async Task<IActionResult> CreateLeadBySlug(string slug, [FromBody] CreateTrainerLeadRequest request)
     {
         var studentProfileId = User.Identity?.IsAuthenticated == true ? _currentUser.StudentProfileId : null;
@@ -41,6 +43,7 @@ public class PublicTrainerPageController : ControllerBase
     }
 
     [HttpPost("{trainerId:guid}/lead")]
+    [EnableRateLimiting("PublicLead")]
     public async Task<IActionResult> CreateLeadByTrainerId(Guid trainerId, [FromBody] CreateTrainerLeadRequest request)
     {
         var studentProfileId = User.Identity?.IsAuthenticated == true ? _currentUser.StudentProfileId : null;

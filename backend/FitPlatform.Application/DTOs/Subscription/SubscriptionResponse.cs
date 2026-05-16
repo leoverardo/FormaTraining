@@ -12,6 +12,8 @@ public class SubscriptionResponse
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public string? MercadoPagoSubscriptionId { get; set; }
+    public string? AbacatePaySubscriptionId { get; set; }
+    public string? AbacatePayCheckoutId { get; set; }
     public string? CheckoutUrl { get; set; }
     public List<PaymentHistoryItem> Payments { get; set; } = new();
 }
