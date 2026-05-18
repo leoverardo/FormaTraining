@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Habits;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ namespace FitPlatform.Api.Controllers;
 [ApiController]
 [Route("api/trainer/students/{studentId:guid}")]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class TrainerHabitsController : ControllerBase
 {
     private readonly HabitService _service;

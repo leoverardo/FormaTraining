@@ -17,6 +17,20 @@
   --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.06);
 }
 
+:root[data-theme='dark'] {
+  --bg: #020617;
+  --surface: #0f172a;
+  --surface-muted: #111827;
+  --border: #1e293b;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --primary: #818cf8;
+  --primary-strong: #6366f1;
+  --focus-ring: #818cf8;
+  --shadow-soft: 0 18px 40px rgba(2, 6, 23, 0.45);
+}
+
 *,
 *::before,
 *::after {
@@ -41,6 +55,13 @@ body {
   color: var(--text);
 }
 
+:root[data-theme='dark'] body {
+  background:
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.16), transparent 45%),
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 30%),
+    var(--bg);
+}
+
 button,
 input,
 select,
@@ -60,5 +81,58 @@ a {
 :focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+:root[data-theme='dark'] .bg-white,
+:root[data-theme='dark'] .bg-white\/95 {
+  background-color: #0f172a !important;
+}
+
+:root[data-theme='dark'] .bg-slate-50 {
+  background-color: #020617 !important;
+}
+
+:root[data-theme='dark'] .bg-slate-100 {
+  background-color: #111827 !important;
+}
+
+:root[data-theme='dark'] .hover\:bg-slate-50:hover,
+:root[data-theme='dark'] .hover\:bg-slate-100:hover {
+  background-color: #1f2937 !important;
+}
+
+:root[data-theme='dark'] .bg-indigo-50 {
+  background-color: rgba(99, 102, 241, 0.18) !important;
+}
+
+:root[data-theme='dark'] .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+:root[data-theme='dark'] .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+:root[data-theme='dark'] .text-slate-600,
+:root[data-theme='dark'] .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+:root[data-theme='dark'] .text-slate-400 {
+  color: #64748b !important;
+}
+
+:root[data-theme='dark'] .text-indigo-700,
+:root[data-theme='dark'] .text-indigo-600 {
+  color: #a5b4fc !important;
+}
+
+:root[data-theme='dark'] .border-slate-200 {
+  border-color: #1e293b !important;
+}
+
+:root[data-theme='dark'] .shadow-sm,
+:root[data-theme='dark'] .shadow {
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35) !important;
 }
 

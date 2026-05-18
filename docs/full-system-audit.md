@@ -34,6 +34,17 @@ Pendência operacional:
 Atualização complementar:
 - Scripts SQL em `database/scripts` agora existem com conteúdo real para criação completa e atualização idempotente.
 
+## Atualização pós-auditoria — Round 2 (2026-05-16)
+- Gate premium centralizado implementado com policy/handler:
+  - policy `ActiveTrainerSubscription`
+  - handler `ActiveTrainerSubscriptionHandler`
+  - resposta `403` padronizada para bloqueio premium (`ACTIVE_SUBSCRIPTION_REQUIRED`).
+- Endpoints premium de trainer protegidos em blocos críticos (alunos, treinos, posts, chat trainer, agenda trainer, hábitos/nutrição trainer, gamificação trainer, check-ins trainer, service sales trainer, feed trainer, página pública do trainer).
+- Fluxos públicos (explore/página pública/leads) passaram a exigir também assinatura ativa para exposição/entrada pública do trainer.
+- Hardening de mídia: categorias sensíveis (`ProgressPhoto`, `TransformationBefore`, `TransformationAfter`) não podem ser públicas no upload.
+- Webhook/onboarding reforçado com logs estruturados e transição monotônica do onboarding em confirmação de pagamento.
+- Validação de cupom em `/api/payments/subscriptions/validate-coupon` restringida para `Trainer` autenticado.
+
 ---
 
 ## 1) Mapa Geral do Sistema

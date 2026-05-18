@@ -15,7 +15,11 @@ public class TrainerLeadService
 
     public async Task<ApiResponse<TrainerLeadResponse>> CreateByTrainerIdAsync(Guid trainerId, CreateTrainerLeadRequest request, Guid? studentProfileId)
     {
-        var trainer = await _db.Trainers.FirstOrDefaultAsync(t => t.Id == trainerId && t.PublicPageEnabled);
+        var trainer = await _db.Trainers.FirstOrDefaultAsync(t => t.Id == trainerId
+                                                               && t.PublicPageEnabled
+                                                               && _db.TrainerSubscriptions.Any(s => s.TrainerId == t.Id
+                                                                                                     && s.Status == TrainerSubscriptionStatus.Active
+                                                                                                     && s.EndDate >= DateTime.UtcNow));
         if (trainer == null) return ApiResponse<TrainerLeadResponse>.Fail("Trainer não encontrado.");
 
         var lead = new TrainerLead
@@ -37,7 +41,11 @@ public class TrainerLeadService
 
     public async Task<ApiResponse<TrainerLeadResponse>> CreateBySlugAsync(string slug, CreateTrainerLeadRequest request, Guid? studentProfileId)
     {
-        var trainer = await _db.Trainers.FirstOrDefaultAsync(t => t.PublicSlug == slug && t.PublicPageEnabled);
+        var trainer = await _db.Trainers.FirstOrDefaultAsync(t => t.PublicSlug == slug
+                                                                  && t.PublicPageEnabled
+                                                                  && _db.TrainerSubscriptions.Any(s => s.TrainerId == t.Id
+                                                                                                        && s.Status == TrainerSubscriptionStatus.Active
+                                                                                                        && s.EndDate >= DateTime.UtcNow));
         if (trainer == null) return ApiResponse<TrainerLeadResponse>.Fail("Trainer não encontrado.");
         return await CreateByTrainerIdAsync(trainer.Id, request, studentProfileId);
     }

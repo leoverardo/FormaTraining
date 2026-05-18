@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Library;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +50,7 @@ public class ExerciseLibraryController : ControllerBase
 
     [HttpPost("{id:guid}/duplicate-to-my-library")]
     [Authorize(Roles = "Trainer")]
+    [RequireActiveTrainerSubscription]
     public async Task<IActionResult> Duplicate(Guid id)
     {
         var result = await _service.DuplicateToTrainerLibraryAsync(id, _currentUser.TrainerId!.Value);
@@ -85,6 +87,7 @@ public class WorkoutTemplatesController : ControllerBase
 
     [HttpPost("{id:guid}/duplicate-to-my-workouts")]
     [Authorize(Roles = "Trainer")]
+    [RequireActiveTrainerSubscription]
     public async Task<IActionResult> Duplicate(Guid id)
     {
         var result = await _service.DuplicateTemplateToWorkoutsAsync(id, _currentUser.TrainerId!.Value);

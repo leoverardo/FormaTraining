@@ -33,7 +33,7 @@ public class MediaService : IMediaService
             return ApiResponse<MediaAssetDto>.Fail("Aluno pode enviar apenas foto de progresso.");
 
         if (role == "Student") studentId = requesterStudentId;
-        if (category == MediaCategory.ProgressPhoto) isPublic = false;
+        if (IsSensitiveCategory(category)) isPublic = false;
 
         var mediaType = ResolveMediaType(file.ContentType);
         if (mediaType is null) return ApiResponse<MediaAssetDto>.Fail("Content-Type invalido para upload.");
@@ -175,6 +175,11 @@ public class MediaService : IMediaService
         if (role == "Trainer" && trainerId.HasValue && media.TrainerId == trainerId) return true;
         return false;
     }
+
+    private static bool IsSensitiveCategory(MediaCategory category) =>
+        category is MediaCategory.ProgressPhoto
+            or MediaCategory.TransformationBefore
+            or MediaCategory.TransformationAfter;
 
     private static MediaAssetDto ToDto(MediaFile media) => new()
     {

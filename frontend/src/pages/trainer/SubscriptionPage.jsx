@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { trainerService } from '../../services/trainerService';
 import { platformPlanService } from '../../services/platformPlanService';
 import { paymentService } from '../../services/paymentService';
@@ -15,6 +15,7 @@ export function SubscriptionPage() {
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [billingCycle, setBillingCycle] = useState(1);
   const [couponCode, setCouponCode] = useState('');
+  const [premiumBlockMessage, setPremiumBlockMessage] = useState('');
 
   const load = () => {
     setLoading(true);
@@ -27,6 +28,13 @@ export function SubscriptionPage() {
   };
 
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    const message = sessionStorage.getItem('premiumBlockMessage');
+    if (!message) return;
+    setPremiumBlockMessage(message);
+    sessionStorage.removeItem('premiumBlockMessage');
+  }, []);
 
   const handleChoosePlan = async (planId) => {
     try {
@@ -47,6 +55,11 @@ export function SubscriptionPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Minha Assinatura</h1>
         <p className="text-gray-500 text-sm mt-1">Aguardando confirmação da assinatura quando aplicável.</p>
+        {premiumBlockMessage ? (
+          <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            {premiumBlockMessage}
+          </p>
+        ) : null}
       </div>
 
       {!sub ? (
@@ -85,3 +98,5 @@ export function SubscriptionPage() {
     </div>
   );
 }
+
+

@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Feed;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -55,6 +56,7 @@ public class StudentFeedController : ControllerBase
 [ApiController]
 [Route("api/trainer")]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class TrainerFeedController : ControllerBase
 {
     private readonly FeedBuilderService _feedBuilder;

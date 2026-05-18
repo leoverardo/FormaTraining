@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, LogOut } from 'lucide-react';
+import { Menu, LogOut, Moon, Sun } from 'lucide-react';
 import { NotificationBell } from '../components/ui/NotificationBell';
+import { useTheme } from '../contexts/ThemeContext';
 
 function SidebarItems({ groups, onNavigate }) {
   return (
@@ -41,7 +42,7 @@ function SidebarItems({ groups, onNavigate }) {
 
 function DesktopSidebar({ groups, onLogout, user, roleLabel }) {
   return (
-    <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-slate-200 shrink-0">
+    <aside className="hidden md:sticky md:top-0 md:flex md:h-screen md:flex-col w-64 bg-white border-r border-slate-200 shrink-0">
       <div className="px-4 py-5 border-b border-slate-200">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">FP</div>
@@ -54,7 +55,7 @@ function DesktopSidebar({ groups, onLogout, user, roleLabel }) {
       <div className="flex-1 min-h-0">
         <SidebarItems groups={groups} />
       </div>
-      <div className="px-3 py-3 border-t border-slate-200">
+      <div className="px-3 py-3 border-t border-slate-200 mt-auto shrink-0">
         <button onClick={onLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:bg-slate-50 w-full transition-colors">
           <LogOut size={18} />
           Sair
@@ -96,6 +97,7 @@ function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel }) {
 export function AppShell({ children, user, groups, onLogout, roleLabel, contentClassName = '', useBottomNav = false }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const primaryItems = groups.flatMap(group => group.items);
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-slate-50 md:flex">
@@ -115,6 +117,14 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-slate-600 hidden md:block">{user?.name}</span>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-slate-100 text-slate-500"
+              aria-label={isDark ? 'Ativar tema claro' : 'Ativar tema escuro'}
+              title={isDark ? 'Tema claro' : 'Tema escuro'}
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <NotificationBell />
             <button onClick={onLogout} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 md:hidden" aria-label="Sair">
               <LogOut size={18} />

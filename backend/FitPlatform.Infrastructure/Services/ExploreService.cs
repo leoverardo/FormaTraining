@@ -31,7 +31,10 @@ public class ExploreService
                         && p.Visibility == Domain.Enums.PostVisibility.Public
                         && p.Trainer.PublicPageEnabled
                         && p.Trainer.PublicSearchEnabled
-                        && p.Trainer.User.IsActive)
+                        && p.Trainer.User.IsActive
+                        && _db.TrainerSubscriptions.Any(s => s.TrainerId == p.TrainerId
+                                                              && s.Status == Domain.Enums.TrainerSubscriptionStatus.Active
+                                                              && s.EndDate >= DateTime.UtcNow))
             .OrderByDescending(p => p.PublishedAt ?? p.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -68,7 +71,10 @@ public class ExploreService
         var trainerQuery = _db.Trainers
             .AsNoTracking()
             .Include(t => t.User)
-            .Where(t => t.User.IsActive && t.PublicPageEnabled && t.PublicSearchEnabled && t.AcceptingStudents);
+            .Where(t => t.User.IsActive && t.PublicPageEnabled && t.PublicSearchEnabled && t.AcceptingStudents
+                        && _db.TrainerSubscriptions.Any(s => s.TrainerId == t.Id
+                                                              && s.Status == Domain.Enums.TrainerSubscriptionStatus.Active
+                                                              && s.EndDate >= DateTime.UtcNow));
 
         if (!string.IsNullOrWhiteSpace(normalizedSearch))
             trainerQuery = trainerQuery.Where(t => t.User.Name.Contains(normalizedSearch) || t.BrandName.Contains(normalizedSearch));
@@ -216,7 +222,10 @@ public class ExploreService
         var trainerQuery = _db.Trainers
             .AsNoTracking()
             .Include(t => t.User)
-            .Where(t => t.User.IsActive && t.PublicPageEnabled);
+            .Where(t => t.User.IsActive && t.PublicPageEnabled
+                        && _db.TrainerSubscriptions.Any(s => s.TrainerId == t.Id
+                                                              && s.Status == Domain.Enums.TrainerSubscriptionStatus.Active
+                                                              && s.EndDate >= DateTime.UtcNow));
 
         if (!string.IsNullOrWhiteSpace(normalizedSearch))
             trainerQuery = trainerQuery.Where(t => t.User.Name.Contains(normalizedSearch) || t.BrandName.Contains(normalizedSearch));

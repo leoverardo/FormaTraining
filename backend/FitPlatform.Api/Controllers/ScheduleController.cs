@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Schedule;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +9,7 @@ namespace FitPlatform.Api.Controllers;
 
 [ApiController]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class ScheduleController : ControllerBase
 {
     private readonly ScheduleService _service;

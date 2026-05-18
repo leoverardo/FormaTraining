@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.CheckIn;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ namespace FitPlatform.Api.Controllers;
 // ─── Trainer routes ──────────────────────────────────────────────────────────
 [ApiController]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class CheckInTrainerController : ControllerBase
 {
     private readonly CheckInService _service;

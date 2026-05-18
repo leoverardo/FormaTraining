@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Students;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ namespace FitPlatform.Api.Controllers;
 [ApiController]
 [Route("api/students")]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class StudentsController : ControllerBase
 {
     private readonly StudentService _service;

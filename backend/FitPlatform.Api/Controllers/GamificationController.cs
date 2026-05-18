@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Gamification;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -45,6 +46,7 @@ public class StudentGamificationController : ControllerBase
 [ApiController]
 [Route("api/trainer/students/{studentId:guid}/gamification")]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class TrainerGamificationController : ControllerBase
 {
     private readonly GamificationService _service;

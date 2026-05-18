@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Anamnesis;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,7 @@ public class AnamnesisController : ControllerBase
 
     [HttpGet("api/students/{studentId:guid}/anamnesis")]
     [Authorize(Roles = "Trainer")]
+    [RequireActiveTrainerSubscription]
     public async Task<IActionResult> GetByStudent(Guid studentId)
     {
         var result = await _service.GetByStudentAsync(studentId, _currentUser.TrainerId!.Value);

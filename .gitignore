@@ -4,21 +4,28 @@ Thumbs.db
 *.swp
 *.swo
 *.tmp
+.history/
 .idea/
 .vscode/
+.vs/
 
 # Logs
 *.log
 logs/
+*.pid
 
 # .NET
 **/bin/
 **/obj/
 **/TestResults/
+**/artifacts/
+**/publish/
 *.user
 *.suo
 *.userosscache
 *.rsuser
+*.nupkg
+*.snupkg
 
 # EF / tooling artifacts
 *.dbmdl
@@ -27,7 +34,10 @@ logs/
 # Node / Frontend
 **/node_modules/
 **/dist/
+**/build/
 **/.vite/
+**/.next/
+**/.nuxt/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -39,10 +49,12 @@ pnpm-debug.log*
 !.env.example
 **/appsettings.Local.json
 **/appsettings.*.local.json
+**/appsettings.Development.json
+**/secrets.json
 
 # Coverage
 coverage/
 **/coverage/
 *.coverage
 *.coveragexml
-
+.nyc_output/

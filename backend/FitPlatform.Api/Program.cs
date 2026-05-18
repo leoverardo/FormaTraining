@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using FitPlatform.Api.Middlewares;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Api.Services;
 using FitPlatform.Application.Configuration;
 using FitPlatform.Application.Common;
@@ -11,6 +12,8 @@ using FitPlatform.Infrastructure.PaymentProviders;
 using FitPlatform.Infrastructure.Seed;
 using FitPlatform.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -138,7 +141,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(ActiveTrainerSubscriptionRequirement.PolicyName, policy =>
+        policy.Requirements.Add(new ActiveTrainerSubscriptionRequirement()));
+});
+builder.Services.AddScoped<IAuthorizationHandler, ActiveTrainerSubscriptionHandler>();
+builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, SubscriptionAuthorizationMiddlewareResultHandler>();
 builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>

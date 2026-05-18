@@ -26,7 +26,11 @@ public class PublicPageService
     public async Task<ApiResponse<PublicPageResponse>> GetBySlugAsync(string slug)
     {
         var trainer = await _db.Trainers.Include(t => t.User)
-            .FirstOrDefaultAsync(t => t.PublicSlug == slug && t.PublicPageEnabled);
+            .FirstOrDefaultAsync(t => t.PublicSlug == slug
+                                      && t.PublicPageEnabled
+                                      && _db.TrainerSubscriptions.Any(s => s.TrainerId == t.Id
+                                                                            && s.Status == TrainerSubscriptionStatus.Active
+                                                                            && s.EndDate >= DateTime.UtcNow));
         if (trainer == null) return ApiResponse<PublicPageResponse>.Fail("Página não encontrada.");
 
         var testimonials = await _db.StudentTestimonials

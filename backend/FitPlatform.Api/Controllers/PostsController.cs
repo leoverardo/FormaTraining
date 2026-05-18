@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Posts;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ namespace FitPlatform.Api.Controllers;
 [ApiController]
 [Route("api/posts")]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class PostsController : ControllerBase
 {
     private readonly PostService _service;

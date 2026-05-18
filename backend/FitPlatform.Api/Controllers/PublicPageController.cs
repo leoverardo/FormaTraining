@@ -1,6 +1,7 @@
 using FitPlatform.Application.DTOs.PublicPage;
 using FitPlatform.Application.DTOs.Testimonials;
 using FitPlatform.Application.DTOs.Leads;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -55,6 +56,7 @@ public class PublicTrainerPageController : ControllerBase
 // ─── Trainer management ───────────────────────────────────────────────────────
 [ApiController]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class TrainerPublicPageController : ControllerBase
 {
     private readonly PublicPageService _service;

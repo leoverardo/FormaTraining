@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
 import { ProtectedRoute, ProtectedStudentAreaRoute } from './routes/ProtectedRoute';
 
@@ -71,9 +72,10 @@ const SL = ({ children }) => <ProtectedStudentAreaRoute><StudentLayout>{children
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <ToastProvider>
-          <Routes>
+      <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <Routes>
             <Route path="/" element={<HomeRedirect />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -132,9 +134,10 @@ export default function App() {
             <Route path="/explore/following" element={<S><ExploreFollowingPage /></S>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </ToastProvider>
-      </AuthProvider>
+            </Routes>
+          </ToastProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

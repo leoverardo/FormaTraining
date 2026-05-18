@@ -1,5 +1,6 @@
 using System;
 using FitPlatform.Application.DTOs.Subscription;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.DTOs.Trainer;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
@@ -23,6 +24,7 @@ public class TrainerController : ControllerBase
     }
 
     [HttpGet("dashboard")]
+    [RequireActiveTrainerSubscription]
     public async Task<IActionResult> Dashboard()
     {
         var trainerId = _currentUser.TrainerId;

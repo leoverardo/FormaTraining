@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ClipboardCheck } from 'lucide-react';
+import { ClipboardCheck, ShieldAlert, Sparkles, CheckCircle2 } from 'lucide-react';
 import { anamnesisService } from '../../services/anamnesisService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
@@ -20,8 +20,8 @@ const empty = {
   additionalNotes: '',
 };
 
-const mainGoalOptions = ['Emagrecimento', 'Hipertrofia', 'Ganho de força', 'Condicionamento físico', 'Saúde e qualidade de vida', 'Outro'];
-const trainingExperienceOptions = ['Nunca treinei', 'Iniciante', 'Intermediário', 'Avançado'];
+const mainGoalOptions = ['Emagrecimento', 'Hipertrofia', 'Ganho de forca', 'Condicionamento fisico', 'Saude e qualidade de vida', 'Outro'];
+const trainingExperienceOptions = ['Nunca treinei', 'Iniciante', 'Intermediario', 'Avancado'];
 const trainingLocationOptions = ['Academia', 'Casa', 'Ao ar livre', 'Academia e casa', 'Outro'];
 
 const sleepLabels = {
@@ -110,7 +110,7 @@ export function StudentAnamnesisPage() {
         stressLevel: form.stressLevel ? parseInt(form.stressLevel, 10) : null,
       };
       await anamnesisService.save(payload);
-      toast('Informações salvas com sucesso!');
+      toast('Informacoes salvas com sucesso!');
       setHasExisting(true);
     } catch (err) {
       toast(err.response?.data?.message || 'Erro ao salvar', 'error');
@@ -122,216 +122,312 @@ export function StudentAnamnesisPage() {
   if (loading) return <LoadingState />;
 
   return (
-    <div className="space-y-5 pb-20 sm:pb-0 max-w-4xl">
-      <div className="flex items-start gap-3">
-        <ClipboardCheck size={22} className="text-indigo-600 mt-0.5" />
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Meu Perfil de Treino</h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Essas informações ajudam seu personal a montar treinos mais adequados para você. Atualize sempre que algo mudar.
-          </p>
-          {hasExisting && <p className="text-xs text-slate-400 mt-1">Dados salvos anteriormente carregados com sucesso.</p>}
+    <div className="mx-auto w-full max-w-7xl space-y-6 pb-20 sm:pb-0">
+      <header className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-indigo-50 p-6 shadow-sm sm:p-7">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="mt-0.5 rounded-2xl bg-indigo-600 p-2.5 text-white shadow-lg shadow-indigo-200">
+              <ClipboardCheck size={22} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Meu Perfil de Treino</h1>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+                Essas informacoes ajudam seu personal a montar treinos mais seguros, personalizados e alinhados aos seus objetivos.
+              </p>
+              {hasExisting ? (
+                <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                  <CheckCircle2 size={14} /> Informacoes carregadas com sucesso
+                </p>
+              ) : (
+                <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+                  <Sparkles size={14} /> Perfil pronto para ser atualizado
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
+      </header>
 
-      <form onSubmit={handleSave} className="space-y-4">
-        <section className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
-          <h2 className="font-semibold text-slate-900">Objetivos do treino</h2>
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-slate-700">Objetivo principal</label>
-            <select
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
-              value={mainGoalSelectValue}
-              onChange={(e) => {
-                const v = e.target.value;
-                if (!v) return setForm((p) => ({ ...p, mainGoal: '' }));
-                if (v === 'Outro') return setForm((p) => ({ ...p, mainGoal: customMainGoal || '' }));
-                setForm((p) => ({ ...p, mainGoal: v }));
-              }}
-            >
-              <option value="">Selecione seu principal objetivo</option>
-              {mainGoalOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
-            </select>
-          </div>
-          {mainGoalSelectValue === 'Outro' && (
-            <Input
-              label="Qual é seu objetivo?"
-              placeholder="Descreva seu objetivo"
-              value={customMainGoal}
-              onChange={(e) => {
-                const v = e.target.value;
-                setCustomMainGoal(v);
-                setForm((p) => ({ ...p, mainGoal: v }));
-              }}
-            />
-          )}
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-slate-700">Experiência com treino</label>
-            <select
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
-              value={experienceSelectValue}
-              onChange={(e) => {
-                const v = e.target.value;
-                if (!v) return setForm((p) => ({ ...p, trainingExperience: '' }));
-                if (v === 'Outro') return setForm((p) => ({ ...p, trainingExperience: customTrainingExperience || '' }));
-                setForm((p) => ({ ...p, trainingExperience: v }));
-              }}
-            >
-              <option value="">Selecione sua experiência</option>
-              {trainingExperienceOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
-              {experienceSelectValue === 'Outro' && <option value="Outro">Outro</option>}
-            </select>
-          </div>
-          {experienceSelectValue === 'Outro' && (
-            <Input
-              label="Descreva sua experiência"
-              placeholder="Conte um pouco do seu histórico"
-              value={customTrainingExperience}
-              onChange={(e) => {
-                const v = e.target.value;
-                setCustomTrainingExperience(v);
-                setForm((p) => ({ ...p, trainingExperience: v }));
-              }}
-            />
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">Dias disponíveis por semana</label>
-              <select
-                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
-                value={form.availableDaysPerWeek}
-                onChange={(e) => setForm((p) => ({ ...p, availableDaysPerWeek: e.target.value }))}
-              >
-                <option value="">Selecione</option>
-                {[1, 2, 3, 4, 5, 6, 7].map((n) => <option key={n} value={String(n)}>{n}</option>)}
-              </select>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <form onSubmit={handleSave} className="space-y-5 xl:col-span-2">
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="mb-5">
+              <h2 className="text-lg font-semibold text-slate-900">Objetivos do treino</h2>
+              <p className="mt-1 text-sm text-slate-500">Conte um pouco sobre seus objetivos e sua rotina para que os treinos facam mais sentido para voce.</p>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">Local de treino</label>
-              <select
-                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
-                value={locationSelectValue}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  if (!v) return setForm((p) => ({ ...p, trainingLocation: '' }));
-                  if (v === 'Outro') return setForm((p) => ({ ...p, trainingLocation: customTrainingLocation || '' }));
-                  setForm((p) => ({ ...p, trainingLocation: v }));
-                }}
-              >
-                <option value="">Selecione</option>
-                {trainingLocationOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
-              </select>
+            <div className="space-y-5">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+                <h3 className="text-sm font-semibold text-slate-900">Objetivo e experiencia</h3>
+                <div className="mt-4 space-y-4">
+                  <SelectField
+                    label="Objetivo principal"
+                    value={mainGoalSelectValue}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (!v) return setForm((p) => ({ ...p, mainGoal: '' }));
+                      if (v === 'Outro') return setForm((p) => ({ ...p, mainGoal: customMainGoal || '' }));
+                      setForm((p) => ({ ...p, mainGoal: v }));
+                    }}
+                    options={mainGoalOptions}
+                    placeholder="Selecione seu principal objetivo"
+                  />
+                  {mainGoalSelectValue === 'Outro' && (
+                    <Input
+                      label="Qual e seu objetivo?"
+                      placeholder="Descreva seu objetivo"
+                      value={customMainGoal}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setCustomMainGoal(v);
+                        setForm((p) => ({ ...p, mainGoal: v }));
+                      }}
+                    />
+                  )}
+
+                  <SelectField
+                    label="Experiencia com treino"
+                    value={experienceSelectValue}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (!v) return setForm((p) => ({ ...p, trainingExperience: '' }));
+                      if (v === 'Outro') return setForm((p) => ({ ...p, trainingExperience: customTrainingExperience || '' }));
+                      setForm((p) => ({ ...p, trainingExperience: v }));
+                    }}
+                    options={[...trainingExperienceOptions, ...(experienceSelectValue === 'Outro' ? ['Outro'] : [])]}
+                    placeholder="Selecione sua experiencia"
+                  />
+                  {experienceSelectValue === 'Outro' && (
+                    <Input
+                      label="Descreva sua experiencia"
+                      placeholder="Conte um pouco do seu historico"
+                      value={customTrainingExperience}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setCustomTrainingExperience(v);
+                        setForm((p) => ({ ...p, trainingExperience: v }));
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+                <h3 className="text-sm font-semibold text-slate-900">Disponibilidade e estrutura</h3>
+                <div className="mt-4 space-y-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <SelectField
+                      label="Dias disponiveis por semana"
+                      value={form.availableDaysPerWeek}
+                      onChange={(e) => setForm((p) => ({ ...p, availableDaysPerWeek: e.target.value }))}
+                      options={['1', '2', '3', '4', '5', '6', '7']}
+                      placeholder="Selecione"
+                    />
+
+                    <SelectField
+                      label="Local de treino"
+                      value={locationSelectValue}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (!v) return setForm((p) => ({ ...p, trainingLocation: '' }));
+                        if (v === 'Outro') return setForm((p) => ({ ...p, trainingLocation: customTrainingLocation || '' }));
+                        setForm((p) => ({ ...p, trainingLocation: v }));
+                      }}
+                      options={trainingLocationOptions}
+                      placeholder="Selecione"
+                    />
+                  </div>
+
+                  {locationSelectValue === 'Outro' && (
+                    <Input
+                      label="Qual local?"
+                      placeholder="Descreva seu local de treino"
+                      value={customTrainingLocation}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setCustomTrainingLocation(v);
+                        setForm((p) => ({ ...p, trainingLocation: v }));
+                      }}
+                    />
+                  )}
+
+                  <Input
+                    label="Equipamentos disponiveis"
+                    placeholder="Ex.: academia completa, halteres, elasticos, banco, barra..."
+                    hint="Se nao tiver equipamentos, pode escrever 'nenhum'."
+                    value={form.availableEquipment}
+                    onChange={(e) => setForm((p) => ({ ...p, availableEquipment: e.target.value }))}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-          {locationSelectValue === 'Outro' && (
-            <Input
-              label="Qual local?"
-              placeholder="Descreva seu local de treino"
-              value={customTrainingLocation}
-              onChange={(e) => {
-                const v = e.target.value;
-                setCustomTrainingLocation(v);
-                setForm((p) => ({ ...p, trainingLocation: v }));
-              }}
-            />
-          )}
+          </section>
 
-          <Input
-            label="Equipamentos disponíveis"
-            placeholder="Ex.: academia completa, halteres, elásticos, banco, barra..."
-            hint="Se não tiver equipamentos, pode escrever “nenhum”."
-            value={form.availableEquipment}
-            onChange={(e) => setForm((p) => ({ ...p, availableEquipment: e.target.value }))}
-          />
-        </section>
-
-        <section className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
-          <h2 className="font-semibold text-slate-900">Saúde e cuidados</h2>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-slate-700">Possui alguma lesão anterior ou atual?</label>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => setForm((p) => ({ ...p, injuries: '' }))} className={`px-3 py-2 rounded-xl text-sm border ${!hasInjuries ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-slate-300 text-slate-700'}`}>Não</button>
-              <button type="button" onClick={() => setForm((p) => ({ ...p, injuries: p.injuries || '' }))} className={`px-3 py-2 rounded-xl text-sm border ${hasInjuries ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-slate-300 text-slate-700'}`}>Sim</button>
+          <section className="rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50/80 via-white to-white p-5 shadow-sm sm:p-6">
+            <div className="mb-5 flex items-start gap-3">
+              <div className="rounded-xl bg-amber-100 p-2 text-amber-700">
+                <ShieldAlert size={18} />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">Saude e cuidados</h2>
+                <p className="mt-1 text-sm text-slate-600">Essas informacoes ajudam seu personal a respeitar seus limites e adaptar os exercicios quando necessario.</p>
+              </div>
             </div>
-            {hasInjuries && (
-              <textarea
-                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
-                rows={3}
-                placeholder="Conte quais lesões já teve ou ainda possui e se algo incomoda durante o treino."
+
+            <div className="space-y-4">
+              <HealthQuestionCard
+                title="Possui alguma lesao anterior ou atual?"
+                active={hasInjuries}
+                onNo={() => setForm((p) => ({ ...p, injuries: '' }))}
+                onYes={() => setForm((p) => ({ ...p, injuries: p.injuries || '' }))}
+                placeholder="Conte quais lesoes ja teve ou ainda possui e se algo incomoda durante o treino."
                 value={form.injuries}
-                onChange={(e) => setForm((p) => ({ ...p, injuries: e.target.value }))}
+                onChange={(v) => setForm((p) => ({ ...p, injuries: v }))}
               />
-            )}
-          </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-slate-700">Possui alguma restrição de saúde relevante para o treino?</label>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => setForm((p) => ({ ...p, healthRestrictions: '' }))} className={`px-3 py-2 rounded-xl text-sm border ${!hasHealthRestrictions ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-slate-300 text-slate-700'}`}>Não</button>
-              <button type="button" onClick={() => setForm((p) => ({ ...p, healthRestrictions: p.healthRestrictions || '' }))} className={`px-3 py-2 rounded-xl text-sm border ${hasHealthRestrictions ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-slate-300 text-slate-700'}`}>Sim</button>
-            </div>
-            {hasHealthRestrictions && (
-              <textarea
-                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
-                rows={3}
-                placeholder="Ex.: pressão alta, limitação médica, cirurgia recente ou outra informação importante."
+              <HealthQuestionCard
+                title="Possui alguma restricao de saude relevante para o treino?"
+                active={hasHealthRestrictions}
+                onNo={() => setForm((p) => ({ ...p, healthRestrictions: '' }))}
+                onYes={() => setForm((p) => ({ ...p, healthRestrictions: p.healthRestrictions || '' }))}
+                placeholder="Ex.: pressao alta, limitacao medica, cirurgia recente ou outra informacao importante."
                 value={form.healthRestrictions}
-                onChange={(e) => setForm((p) => ({ ...p, healthRestrictions: e.target.value }))}
+                onChange={(v) => setForm((p) => ({ ...p, healthRestrictions: v }))}
               />
-            )}
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <h2 className="text-lg font-semibold text-slate-900">Rotina e bem-estar</h2>
+
+            <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ScaleInput
+                label="Qualidade do sono"
+                value={form.sleepQuality}
+                labels={sleepLabels}
+                onChange={(v) => setForm((p) => ({ ...p, sleepQuality: String(v) }))}
+              />
+              <ScaleInput
+                label="Nivel de estresse"
+                value={form.stressLevel}
+                labels={stressLabels}
+                onChange={(v) => setForm((p) => ({ ...p, stressLevel: String(v) }))}
+              />
+            </div>
+
+            <div className="mt-4 space-y-4">
+              <TextAreaField
+                label="Rotina alimentar"
+                placeholder="Conte brevemente como costuma ser sua alimentacao no dia a dia."
+                value={form.foodRoutineNotes}
+                onChange={(e) => setForm((p) => ({ ...p, foodRoutineNotes: e.target.value }))}
+              />
+
+              <TextAreaField
+                label="Observacoes adicionais"
+                placeholder="Compartilhe qualquer informacao que possa ajudar seu personal."
+                value={form.additionalNotes}
+                onChange={(e) => setForm((p) => ({ ...p, additionalNotes: e.target.value }))}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-slate-500">Revise os dados e salve para manter seu perfil sempre atualizado.</p>
+              <Button type="submit" loading={saving} className="w-full sm:w-auto">
+                Salvar alteracoes
+              </Button>
+            </div>
+          </section>
+        </form>
+
+        <aside className="xl:col-span-1">
+          <div className="space-y-4 xl:sticky xl:top-24">
+            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="text-sm font-semibold text-slate-900">Como essas informacoes ajudam seu personal</h3>
+              <ul className="mt-3 space-y-2 text-sm text-slate-600">
+                <li className="rounded-xl bg-slate-50 px-3 py-2">Treino mais alinhado ao seu objetivo.</li>
+                <li className="rounded-xl bg-slate-50 px-3 py-2">Adaptacoes seguras para restricoes e lesoes.</li>
+                <li className="rounded-xl bg-slate-50 px-3 py-2">Melhor escolha de intensidade e progressao.</li>
+              </ul>
+            </section>
+
+            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="text-sm font-semibold text-slate-900">Status do perfil</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                {hasExisting ? 'Perfil com informacoes carregadas e pronto para ajustes.' : 'Preencha seus dados para receber treinos mais personalizados.'}
+              </p>
+            </section>
           </div>
-        </section>
+        </aside>
+      </div>
+    </div>
+  );
+}
 
-        <section className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
-          <h2 className="font-semibold text-slate-900">Rotina e bem-estar</h2>
+function SelectField({ label, value, onChange, options, placeholder }) {
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-sm font-semibold text-slate-700">{label}</label>
+      <select
+        className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+        value={value}
+        onChange={onChange}
+      >
+        <option value="">{placeholder}</option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ScaleInput
-              label="Qualidade do sono"
-              value={form.sleepQuality}
-              labels={sleepLabels}
-              onChange={(v) => setForm((p) => ({ ...p, sleepQuality: String(v) }))}
-            />
-            <ScaleInput
-              label="Nível de estresse"
-              value={form.stressLevel}
-              labels={stressLabels}
-              onChange={(v) => setForm((p) => ({ ...p, stressLevel: String(v) }))}
-            />
-          </div>
+function TextAreaField({ label, placeholder, value, onChange }) {
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-sm font-semibold text-slate-700">{label}</label>
+      <textarea
+        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+        rows={3}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
+  );
+}
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-slate-700">Rotina alimentar</label>
-            <textarea
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
-              rows={3}
-              placeholder="Conte brevemente como costuma ser sua alimentação no dia a dia."
-              value={form.foodRoutineNotes}
-              onChange={(e) => setForm((p) => ({ ...p, foodRoutineNotes: e.target.value }))}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-slate-700">Observações adicionais</label>
-            <textarea
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
-              rows={3}
-              placeholder="Compartilhe qualquer informação que possa ajudar seu personal."
-              value={form.additionalNotes}
-              onChange={(e) => setForm((p) => ({ ...p, additionalNotes: e.target.value }))}
-            />
-          </div>
-        </section>
-
-        <Button type="submit" loading={saving} className="w-full md:w-auto">
-          Salvar informações
-        </Button>
-      </form>
+function HealthQuestionCard({ title, active, onNo, onYes, placeholder, value, onChange }) {
+  return (
+    <div className="rounded-2xl border border-amber-200/70 bg-white p-4">
+      <p className="text-sm font-semibold text-slate-800">{title}</p>
+      <div className="mt-3 inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+        <button
+          type="button"
+          onClick={onNo}
+          className={`min-w-20 rounded-lg px-3 py-2 text-sm font-medium transition ${!active ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+        >
+          Nao
+        </button>
+        <button
+          type="button"
+          onClick={onYes}
+          className={`min-w-20 rounded-lg px-3 py-2 text-sm font-medium transition ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+        >
+          Sim
+        </button>
+      </div>
+      {active && (
+        <textarea
+          className="mt-3 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+          rows={3}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
     </div>
   );
 }
@@ -339,23 +435,25 @@ export function StudentAnamnesisPage() {
 function ScaleInput({ label, value, labels, onChange }) {
   const selected = Number(value) || 0;
   return (
-    <div className="space-y-2">
+    <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
       <label className="block text-sm font-semibold text-slate-700">{label}</label>
-      <div className="grid grid-cols-5 gap-2">
+      <div className="mt-3 grid grid-cols-5 gap-2">
         {[1, 2, 3, 4, 5].map((n) => (
           <button
             key={n}
             type="button"
             onClick={() => onChange(n)}
-            className={`px-2 py-2 rounded-xl text-sm border transition ${
-              selected === n ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400'
+            className={`rounded-xl border px-2 py-2 text-sm font-medium transition ${
+              selected === n
+                ? 'border-indigo-600 bg-indigo-600 text-white'
+                : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400'
             }`}
           >
             {n}
           </button>
         ))}
       </div>
-      <p className="text-xs text-slate-500 min-h-4">{selected ? `${selected} - ${labels[selected]}` : 'Selecione de 1 a 5'}</p>
+      <p className="mt-2 min-h-4 text-xs text-slate-500">{selected ? `${selected} - ${labels[selected]}` : 'Selecione de 1 a 5'}</p>
     </div>
   );
 }

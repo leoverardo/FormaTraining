@@ -41,7 +41,7 @@ public class PaymentsController : ControllerBase
     }
 
     [HttpPost("subscriptions/validate-coupon")]
-    [Authorize]
+    [Authorize(Roles = "Trainer")]
     public async Task<IActionResult> ValidateCoupon([FromBody] ValidateCouponRequest request, CancellationToken cancellationToken)
     {
         var trainerId = _currentUser.TrainerId ?? Guid.Empty;

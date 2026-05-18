@@ -1,4 +1,5 @@
 using FitPlatform.Application.DTOs.Exercises;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ namespace FitPlatform.Api.Controllers;
 [ApiController]
 [Route("api/exercises")]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class ExercisesController : ControllerBase
 {
     private readonly ExerciseService _service;

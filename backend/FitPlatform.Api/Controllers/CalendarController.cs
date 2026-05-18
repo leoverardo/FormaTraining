@@ -1,4 +1,5 @@
 using FitPlatform.Application.Common;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Domain.Enums;
 using FitPlatform.Infrastructure.Data;
@@ -53,6 +54,7 @@ public class CalendarController : ControllerBase
 
     [HttpGet("api/students/{studentId:guid}/calendar")]
     [Authorize(Roles = "Trainer")]
+    [RequireActiveTrainerSubscription]
     public async Task<IActionResult> GetStudentCalendarForTrainer(Guid studentId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
     {
         if (!await _db.Students.AnyAsync(s => s.Id == studentId && s.TrainerId == _currentUser.TrainerId!.Value))

@@ -1,4 +1,5 @@
 using FitPlatform.Application.Interfaces;
+using FitPlatform.Api.Authorization;
 using FitPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace FitPlatform.Api.Controllers;
 [ApiController]
 [Route("api/trainer")]
 [Authorize(Roles = "Trainer")]
+[RequireActiveTrainerSubscription]
 public class StudentMonitoringController : ControllerBase
 {
     private readonly StudentMonitoringService _service;
