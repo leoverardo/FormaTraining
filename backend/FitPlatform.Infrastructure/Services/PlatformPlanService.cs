@@ -30,13 +30,22 @@ public class PlatformPlanService
 
     public async Task<ApiResponse<PlatformPlanResponse>> CreateAsync(PlatformPlanRequest request)
     {
+        var planCode = string.IsNullOrWhiteSpace(request.Code)
+            ? request.Name.Trim().ToUpperInvariant()
+            : request.Code.Trim().ToUpperInvariant();
+
         var plan = new PlatformPlan
         {
+            Code = planCode,
             Name = request.Name,
             Description = request.Description,
             MonthlyPrice = request.MonthlyPrice,
             MaxActiveStudents = request.MaxActiveStudents,
-            Active = request.Active
+            HasUnlimitedStudents = request.HasUnlimitedStudents,
+            Active = request.Active,
+            IsPublic = request.IsPublic,
+            IsComingSoon = request.IsComingSoon,
+            IsAvailableForPurchase = request.IsAvailableForPurchase
         };
         _db.PlatformPlans.Add(plan);
         await _db.SaveChangesAsync();
@@ -49,11 +58,18 @@ public class PlatformPlanService
         var plan = await _db.PlatformPlans.Include(p => p.Prices).FirstOrDefaultAsync(p => p.Id == id);
         if (plan == null) return ApiResponse<PlatformPlanResponse>.Fail("Plano não encontrado.");
 
+        plan.Code = string.IsNullOrWhiteSpace(request.Code)
+            ? request.Name.Trim().ToUpperInvariant()
+            : request.Code.Trim().ToUpperInvariant();
         plan.Name = request.Name;
         plan.Description = request.Description;
         plan.MonthlyPrice = request.MonthlyPrice;
         plan.MaxActiveStudents = request.MaxActiveStudents;
+        plan.HasUnlimitedStudents = request.HasUnlimitedStudents;
         plan.Active = request.Active;
+        plan.IsPublic = request.IsPublic;
+        plan.IsComingSoon = request.IsComingSoon;
+        plan.IsAvailableForPurchase = request.IsAvailableForPurchase;
         plan.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
@@ -72,11 +88,16 @@ public class PlatformPlanService
     private static PlatformPlanResponse MapResponse(PlatformPlan p) => new()
     {
         Id = p.Id,
+        Code = p.Code,
         Name = p.Name,
         Description = p.Description,
         MonthlyPrice = p.MonthlyPrice,
         MaxActiveStudents = p.MaxActiveStudents,
+        HasUnlimitedStudents = p.HasUnlimitedStudents,
         Active = p.Active,
+        IsPublic = p.IsPublic,
+        IsComingSoon = p.IsComingSoon,
+        IsAvailableForPurchase = p.IsAvailableForPurchase,
         CreatedAt = p.CreatedAt,
         Prices = p.Prices.Where(pr => pr.Active).OrderBy(pr => pr.BillingCycle).Select(pr => new PlanPriceResponse
         {

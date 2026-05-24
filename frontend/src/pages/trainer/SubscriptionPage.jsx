@@ -16,7 +16,6 @@ export function SubscriptionPage() {
   const [billingCycle, setBillingCycle] = useState(1);
   const [couponCode, setCouponCode] = useState('');
   const [premiumBlockMessage, setPremiumBlockMessage] = useState('');
-
   const load = () => {
     setLoading(true);
     Promise.allSettled([trainerService.getSubscription(), platformPlanService.getAll()])
@@ -86,11 +85,23 @@ export function SubscriptionPage() {
           <input value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="Cupom de desconto (opcional)" className="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {plans.filter(p => p.active).map(p => (
-            <div key={p.id} className="border border-gray-200 rounded-2xl p-5">
-              <h3 className="font-bold text-gray-900">{p.name}</h3>
-              <p className="text-sm text-gray-500 mt-2">A partir de R$ {p.monthlyPrice?.toFixed(2)}/mês</p>
-              <Button className="w-full mt-4" size="sm" onClick={() => handleChoosePlan(p.id)}>Assinar</Button>
+          {plans.filter(p => p.active && p.isPublic).map(p => (
+            <div key={p.id} className={`border rounded-2xl p-5 ${p.code === 'BASIC' ? 'border-indigo-300 bg-indigo-50/40' : 'border-gray-200'}`}>
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="font-bold text-gray-900">{p.name}</h3>
+                {p.isComingSoon ? <span className="text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">Em breve</span> : null}
+              </div>
+              <p className="text-sm text-gray-500 mt-1">{p.code === 'BASIC' ? 'Para organizar alunos e treinos' : p.code === 'PRO' ? 'Para automatizar atendimento e retenção' : 'Para captar alunos e crescer o negócio'}</p>
+              <p className="text-sm text-gray-500 mt-2">R$ {p.monthlyPrice?.toFixed(2)}/mês</p>
+              <p className="text-xs text-gray-500 mt-1">{p.hasUnlimitedStudents ? 'Alunos ilimitados' : `Até ${p.maxActiveStudents} alunos ativos`}</p>
+              <Button
+                className="w-full mt-4"
+                size="sm"
+                disabled={!p.isAvailableForPurchase}
+                onClick={() => handleChoosePlan(p.id)}
+              >
+                {p.isAvailableForPurchase ? `Assinar ${p.name}` : 'Em breve'}
+              </Button>
             </div>
           ))}
         </div>

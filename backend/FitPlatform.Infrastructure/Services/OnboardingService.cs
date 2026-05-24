@@ -123,6 +123,8 @@ public class OnboardingService
             .Include(p => p.PlatformPlan)
             .FirstOrDefaultAsync(p => p.Id == request.PlatformPlanPriceId && p.PlatformPlanId == request.PlatformPlanId && p.Active);
         if (price == null) return ApiResponse<TrainerOnboardingResponse>.Fail("Plano ou preço não encontrado.");
+        if (!price.PlatformPlan.IsAvailableForPurchase)
+            return ApiResponse<TrainerOnboardingResponse>.Fail("Este plano ainda não está disponível para contratação.");
 
         onboarding.SelectedPlatformPlanId = request.PlatformPlanId;
         onboarding.SelectedPlatformPlanPriceId = request.PlatformPlanPriceId;
@@ -213,6 +215,14 @@ public class OnboardingService
             return ApiResponse<SubscriptionResponse>.Fail("Selecione um plano/ciclo antes do checkout.");
         if (onboarding.Status == OnboardingStatus.Completed)
             return ApiResponse<SubscriptionResponse>.Fail("Onboarding já concluído.");
+
+        var selectedPlan = await _db.PlatformPlans.FirstOrDefaultAsync(
+            x => x.Id == onboarding.SelectedPlatformPlanId.Value && x.Active,
+            cancellationToken);
+        if (selectedPlan == null)
+            return ApiResponse<SubscriptionResponse>.Fail("Plano não encontrado.");
+        if (!selectedPlan.IsAvailableForPurchase)
+            return ApiResponse<SubscriptionResponse>.Fail("Este plano ainda não está disponível para contratação.");
 
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == onboarding.Email, cancellationToken);
         if (user == null)

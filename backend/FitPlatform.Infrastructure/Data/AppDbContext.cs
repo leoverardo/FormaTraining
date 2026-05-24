@@ -182,6 +182,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<PlatformPlan>(e =>
         {
             e.HasIndex(p => p.Active);
+            e.HasIndex(p => p.Code).IsUnique();
             e.Property(p => p.MonthlyPrice).HasPrecision(18, 2);
         });
 

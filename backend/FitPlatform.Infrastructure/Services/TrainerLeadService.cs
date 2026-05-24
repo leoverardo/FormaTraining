@@ -102,7 +102,7 @@ public class TrainerLeadService
         if (sub == null) return ApiResponse<object>.Fail("Nenhuma assinatura ativa para vincular aluno.");
 
         var activeCount = await _db.Students.CountAsync(s => s.TrainerId == trainerId && s.Status == StudentStatus.Active);
-        if (activeCount >= sub.PlatformPlan.MaxActiveStudents)
+        if (!sub.PlatformPlan.HasUnlimitedStudents && activeCount >= sub.PlatformPlan.MaxActiveStudents)
             return ApiResponse<object>.Fail($"Limite do plano atingido ({sub.PlatformPlan.MaxActiveStudents} alunos ativos).");
 
         var student = new Student

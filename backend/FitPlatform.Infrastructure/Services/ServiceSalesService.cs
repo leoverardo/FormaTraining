@@ -347,7 +347,7 @@ public class ServiceSalesService
             .OrderByDescending(s => s.CreatedAt)
             .FirstOrDefaultAsync();
         var activeStudents = await _db.Students.CountAsync(s => s.TrainerId == order.TrainerId && s.Status == StudentStatus.Active);
-        var canAutoLink = activeSub != null && activeStudents < activeSub.PlatformPlan.MaxActiveStudents;
+        var canAutoLink = activeSub != null && (activeSub.PlatformPlan.HasUnlimitedStudents || activeStudents < activeSub.PlatformPlan.MaxActiveStudents);
 
         order.RequiresManualStudentLinking = !order.StudentId.HasValue || !canAutoLink;
         if (order.RequiresManualStudentLinking)

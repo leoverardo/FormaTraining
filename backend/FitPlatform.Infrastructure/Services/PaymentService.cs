@@ -31,6 +31,8 @@ public class PaymentService
     {
         var plan = await _db.PlatformPlans.FirstOrDefaultAsync(x => x.Id == planId && x.Active, cancellationToken);
         if (plan == null) return ApiResponse<List<PlanBillingOptionResponse>>.Fail("Plano nÃ£o encontrado.");
+        if (!plan.IsAvailableForPurchase)
+            return ApiResponse<List<PlanBillingOptionResponse>>.Fail("Este plano ainda nÃ£o estÃ¡ disponÃ­vel para contrataÃ§Ã£o.");
 
         var list = Enum.GetValues<BillingFrequency>().Select(c => Calculate(plan.MonthlyPrice, c)).ToList();
         return ApiResponse<List<PlanBillingOptionResponse>>.Ok(list.Select(x => new PlanBillingOptionResponse
@@ -48,6 +50,8 @@ public class PaymentService
     {
         var plan = await _db.PlatformPlans.FirstOrDefaultAsync(x => x.Id == request.PlanId && x.Active, cancellationToken);
         if (plan == null) return ApiResponse<ValidateCouponResponse>.Fail("Plano nÃ£o encontrado.");
+        if (!plan.IsAvailableForPurchase)
+            return ApiResponse<ValidateCouponResponse>.Fail("Este plano ainda nÃ£o estÃ¡ disponÃ­vel para contrataÃ§Ã£o.");
 
         var calc = await CalculateWithCouponAsync(plan, request.BillingCycle, request.CouponCode, trainerId, cancellationToken);
         return ApiResponse<ValidateCouponResponse>.Ok(ToCouponResponse(calc, calc.CouponError ?? "Cupom vÃ¡lido."));
@@ -60,6 +64,8 @@ public class PaymentService
 
         var plan = await _db.PlatformPlans.FirstOrDefaultAsync(x => x.Id == request.PlatformPlanId && x.Active, cancellationToken);
         if (plan == null) return ApiResponse<SubscriptionResponse>.Fail("Plano nÃ£o encontrado.");
+        if (!plan.IsAvailableForPurchase)
+            return ApiResponse<SubscriptionResponse>.Fail("Este plano ainda nÃ£o estÃ¡ disponÃ­vel para contrataÃ§Ã£o.");
 
         var active = await _db.TrainerSubscriptions.FirstOrDefaultAsync(
             ts => ts.TrainerId == trainerId && ts.Status == TrainerSubscriptionStatus.Active,
@@ -166,6 +172,7 @@ public class PaymentService
                 PlanName = plan.Name,
                 MonthlyPrice = plan.MonthlyPrice,
                 MaxActiveStudents = plan.MaxActiveStudents,
+                HasUnlimitedStudents = plan.HasUnlimitedStudents,
                 Status = subscription.Status.ToString(),
                 BillingCycle = subscription.BillingCycle.ToString(),
                 CheckoutUrl = subscription.InitPoint,

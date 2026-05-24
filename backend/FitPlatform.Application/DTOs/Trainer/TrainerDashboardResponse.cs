@@ -14,6 +14,7 @@ public class TrainerDashboardResponse
     public int TotalPublishedPosts { get; set; }
     public string PlanName { get; set; } = string.Empty;
     public int MaxActiveStudents { get; set; }
+    public bool HasUnlimitedStudents { get; set; }
     public double StudentsUsagePercentage { get; set; }
     public string BillingCycle { get; set; } = string.Empty;
     public string SubscriptionStatus { get; set; } = string.Empty;

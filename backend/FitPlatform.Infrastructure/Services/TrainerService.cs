@@ -59,7 +59,8 @@ public class TrainerService
                 .OrderByDescending(ts => ts.CreatedAt)
                 .FirstOrDefaultAsync();
 
-            var maxStudents = subscription?.PlatformPlan?.MaxActiveStudents ?? 0;
+            var hasUnlimitedStudents = subscription?.PlatformPlan?.HasUnlimitedStudents ?? false;
+            var maxStudents = hasUnlimitedStudents ? 0 : (subscription?.PlatformPlan?.MaxActiveStudents ?? 0);
             var usagePct = maxStudents > 0 ? (double)activeStudents / maxStudents * 100 : 0;
             var hasActiveSubscription = subscription?.Status == TrainerSubscriptionStatus.Active;
 
@@ -82,6 +83,7 @@ public class TrainerService
                 TotalPublishedPosts = totalPosts,
                 PlanName = subscription?.PlatformPlan?.Name ?? "Sem plano",
                 MaxActiveStudents = maxStudents,
+                HasUnlimitedStudents = hasUnlimitedStudents,
                 StudentsUsagePercentage = Math.Round(usagePct, 1),
                 BillingCycle = subscription?.BillingCycle.ToString() ?? string.Empty,
                 SubscriptionStatus = subscription?.Status.ToString() ?? "None",
@@ -189,6 +191,7 @@ public class TrainerService
             PlanName = subscription.PlatformPlan.Name,
             MonthlyPrice = subscription.PlatformPlan.MonthlyPrice,
             MaxActiveStudents = subscription.PlatformPlan.MaxActiveStudents,
+            HasUnlimitedStudents = subscription.PlatformPlan.HasUnlimitedStudents,
             Status = subscription.Status.ToString(),
             BillingCycle = subscription.BillingCycle.ToString(),
             CurrentCyclePrice = subscription.PlatformPlanPrice?.Price,

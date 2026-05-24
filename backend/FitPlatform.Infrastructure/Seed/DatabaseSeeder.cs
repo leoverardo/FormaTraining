@@ -13,18 +13,31 @@ public static class DatabaseSeeder
         if (await context.Users.AnyAsync()) return;
 
         // Plans
-        var starterPlan = new PlatformPlan { Id = Guid.NewGuid(), Name = "Starter", Description = "Ideal para personal trainers iniciantes", MonthlyPrice = 97.00m, MaxActiveStudents = 20, Active = true };
-        var proPlan = new PlatformPlan { Id = Guid.NewGuid(), Name = "Pro", Description = "Para personal trainers em crescimento", MonthlyPrice = 197.00m, MaxActiveStudents = 50, Active = true };
-        var growthPlan = new PlatformPlan { Id = Guid.NewGuid(), Name = "Growth", Description = "Para personal trainers estabelecidos", MonthlyPrice = 297.00m, MaxActiveStudents = 100, Active = true };
-        await context.PlatformPlans.AddRangeAsync(starterPlan, proPlan, growthPlan);
+        var basicPlan = new PlatformPlan
+        {
+            Id = Guid.NewGuid(),
+            Code = "BASIC",
+            Name = "Basic",
+            Description = "Tudo que o personal precisa para gerenciar alunos, montar treinos e acompanhar a evolução em uma plataforma profissional.",
+            MonthlyPrice = 59.90m,
+            MaxActiveStudents = 0,
+            HasUnlimitedStudents = true,
+            Active = true,
+            IsPublic = true,
+            IsComingSoon = false,
+            IsAvailableForPurchase = true
+        };
+        var proPlan = new PlatformPlan { Id = Guid.NewGuid(), Code = "PRO", Name = "Pro", Description = "Para automatizar atendimento e retenção", MonthlyPrice = 197.00m, MaxActiveStudents = 50, HasUnlimitedStudents = false, Active = true, IsPublic = true, IsComingSoon = true, IsAvailableForPurchase = false };
+        var growthPlan = new PlatformPlan { Id = Guid.NewGuid(), Code = "GROWTH", Name = "Growth", Description = "Para captar alunos e crescer o negócio", MonthlyPrice = 297.00m, MaxActiveStudents = 100, HasUnlimitedStudents = false, Active = true, IsPublic = true, IsComingSoon = true, IsAvailableForPurchase = false };
+        await context.PlatformPlans.AddRangeAsync(basicPlan, proPlan, growthPlan);
 
         // Plan prices per billing cycle
         var prices = new List<PlatformPlanPrice>
         {
-            new() { Id = Guid.NewGuid(), PlatformPlanId = starterPlan.Id, BillingCycle = BillingFrequency.Monthly,   Price = 97.00m,   Active = true },
-            new() { Id = Guid.NewGuid(), PlatformPlanId = starterPlan.Id, BillingCycle = BillingFrequency.Quarterly, Price = 267.00m,  Active = true },
-            new() { Id = Guid.NewGuid(), PlatformPlanId = starterPlan.Id, BillingCycle = BillingFrequency.Semiannual, Price = 494.70m, Active = true },
-            new() { Id = Guid.NewGuid(), PlatformPlanId = starterPlan.Id, BillingCycle = BillingFrequency.Yearly,    Price = 997.00m,  Active = true },
+            new() { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Monthly,   Price = 59.90m, Active = true },
+            new() { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Quarterly, Price = 161.73m, Active = true },
+            new() { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Semiannual, Price = 305.49m, Active = true },
+            new() { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Yearly,    Price = 575.04m, Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = proPlan.Id,     BillingCycle = BillingFrequency.Monthly,   Price = 197.00m,  Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = proPlan.Id,     BillingCycle = BillingFrequency.Quarterly, Price = 547.00m,  Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = proPlan.Id,     BillingCycle = BillingFrequency.Semiannual, Price = 1004.70m, Active = true },
@@ -53,11 +66,11 @@ public static class DatabaseSeeder
         var student = new Student { Id = Guid.NewGuid(), UserId = studentUser.Id, TrainerId = trainer.Id, Phone = "(11) 88888-8888", Goal = "Hipertrofia", Notes = "Sem lesÃµes", Status = StudentStatus.Active };
         await context.Students.AddAsync(student);
 
-        var starterMonthlyPrice = prices.First(p => p.PlatformPlanId == starterPlan.Id && p.BillingCycle == BillingFrequency.Monthly);
+        var basicMonthlyPrice = prices.First(p => p.PlatformPlanId == basicPlan.Id && p.BillingCycle == BillingFrequency.Monthly);
         var subscription = new TrainerSubscription
         {
-            Id = Guid.NewGuid(), TrainerId = trainer.Id, PlatformPlanId = starterPlan.Id,
-            PlatformPlanPriceId = starterMonthlyPrice.Id, BillingCycle = BillingFrequency.Monthly,
+            Id = Guid.NewGuid(), TrainerId = trainer.Id, PlatformPlanId = basicPlan.Id,
+            PlatformPlanPriceId = basicMonthlyPrice.Id, BillingCycle = BillingFrequency.Monthly,
             Status = TrainerSubscriptionStatus.Active, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddMonths(1)
         };
         await context.TrainerSubscriptions.AddAsync(subscription);
@@ -248,7 +261,7 @@ public static class DatabaseSeeder
 
         // Enable all features on all plans by default
         var planFeatures = new List<PlatformPlanFeature>();
-        foreach (var plan in new[] { starterPlan, proPlan, growthPlan })
+        foreach (var plan in new[] { basicPlan, proPlan, growthPlan })
             foreach (var feature in featureEntities)
                 planFeatures.Add(new PlatformPlanFeature { Id = Guid.NewGuid(), PlatformPlanId = plan.Id, PlatformFeatureId = feature.Id, Enabled = true });
         await context.PlatformPlanFeatures.AddRangeAsync(planFeatures);

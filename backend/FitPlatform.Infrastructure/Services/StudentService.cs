@@ -167,7 +167,7 @@ public class StudentService
             return ApiResponse.Fail("Nenhuma assinatura ativa encontrada. Assine um plano para gerenciar alunos.");
 
         var activeCount = await _db.Students.CountAsync(s => s.TrainerId == trainerId && s.Status == StudentStatus.Active);
-        if (activeCount >= subscription.PlatformPlan.MaxActiveStudents)
+        if (!subscription.PlatformPlan.HasUnlimitedStudents && activeCount >= subscription.PlatformPlan.MaxActiveStudents)
             return ApiResponse.Fail($"Seu plano atual permite até {subscription.PlatformPlan.MaxActiveStudents} alunos ativos. Para adicionar mais alunos, faça upgrade do plano.");
 
         return ApiResponse.Ok();

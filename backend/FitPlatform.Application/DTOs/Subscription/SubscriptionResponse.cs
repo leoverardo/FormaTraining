@@ -6,6 +6,7 @@ public class SubscriptionResponse
     public string PlanName { get; set; } = string.Empty;
     public decimal MonthlyPrice { get; set; }
     public int MaxActiveStudents { get; set; }
+    public bool HasUnlimitedStudents { get; set; }
     public string Status { get; set; } = string.Empty;
     public string BillingCycle { get; set; } = string.Empty;
     public decimal? CurrentCyclePrice { get; set; }
