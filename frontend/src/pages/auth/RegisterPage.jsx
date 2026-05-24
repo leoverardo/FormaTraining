@@ -39,7 +39,7 @@ export function RegisterPage() {
   const [address, setAddress] = useState({ zipCode: '', street: '', addressNumber: '', complement: '', neighborhood: '', city: '', state: '' });
 
   useEffect(() => {
-    platformPlanService.getAll().then(r => setPlans(r.data.data?.filter(p => p.active) || []));
+    platformPlanService.getAll().then(r => setPlans(r.data.data?.filter(p => p.active && p.isPublic) || []));
   }, []);
 
   useEffect(() => {
@@ -112,8 +112,8 @@ export function RegisterPage() {
   };
 
   const handleSelectPlan = async () => {
-    if (!selectedPlan || !selectedPrice) {
-      toast('Selecione um plano e ciclo', 'error');
+    if (!selectedPlan || !selectedPrice || !selectedPlan.isAvailableForPurchase) {
+      toast('Selecione um plano disponivel para contratacao.', 'error');
       return;
     }
     setLoading(true);
@@ -147,10 +147,10 @@ export function RegisterPage() {
       } else {
         setPricing(baseBreakdown);
         setAppliedCouponCode(null);
-        toast(data?.message || 'Cupom inválido.', 'error');
+        toast(data?.message || 'Cupom invalido.', 'error');
       }
     } catch (err) {
-      const msg = err.response?.data?.message || 'Cupom inválido.';
+      const msg = err.response?.data?.message || 'Cupom invalido.';
       setAppliedCouponCode(null);
       setPricing(baseBreakdown);
       toast(msg, 'error');
@@ -226,7 +226,7 @@ export function RegisterPage() {
               <label className="block text-xs"><input type="checkbox" checked={personal.acceptTermsOfUse} onChange={e => setPersonal(p => ({ ...p, acceptTermsOfUse: e.target.checked }))} /> Li e concordo com os <Link to="/terms-of-use" className="text-indigo-600">Termos de Uso</Link>.</label>
               <label className="block text-xs"><input type="checkbox" checked={personal.acceptPrivacyPolicy} onChange={e => setPersonal(p => ({ ...p, acceptPrivacyPolicy: e.target.checked }))} /> Li e concordo com a <Link to="/privacy-policy" className="text-indigo-600">Politica de Privacidade</Link>.</label>
               <Button type="submit" loading={loading} className="w-full">Continuar</Button>
-              <p className="text-center text-sm text-gray-500">Já tem conta? <Link to="/login" className="text-indigo-600 font-medium">Entrar</Link></p>
+              <p className="text-center text-sm text-gray-500">Ja tem conta? <Link to="/login" className="text-indigo-600 font-medium">Entrar</Link></p>
             </form>
           )}
 
@@ -247,7 +247,7 @@ export function RegisterPage() {
 
           {step === 3 && (
             <form onSubmit={handleAddress} className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Endereço (opcional)</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Endereco (opcional)</h2>
               <div className="grid grid-cols-2 gap-4">
                 <Input label="CEP" value={address.zipCode} onChange={e => setAddress(p => ({ ...p, zipCode: e.target.value }))} />
                 <Input label="Estado" value={address.state} onChange={e => setAddress(p => ({ ...p, state: e.target.value }))} maxLength={2} />
@@ -276,23 +276,35 @@ export function RegisterPage() {
                 {plans.map(plan => {
                   const price = plan?.prices?.find(p => p.billingCycle === billingCycle);
                   const isSelected = selectedPlan?.id === plan.id;
-                  const monthlyEquivalent = price ? (price.price / (billingCycle === 'Quarterly' ? 3 : billingCycle === 'Semiannual' ? 6 : billingCycle === 'Yearly' ? 12 : 1)) : null;
+                  const months = billingCycle === 'Quarterly' ? 3 : billingCycle === 'Semiannual' ? 6 : billingCycle === 'Yearly' ? 12 : 1;
+                  const monthlyEquivalent = price ? (price.price / months) : null;
+
                   return (
-                    <button key={plan.id} onClick={() => { setSelectedPlan(plan); setSelectedPrice(price || null); setPricing(null); setAppliedCouponCode(null); setCouponCode(''); }}
-                      className={`w-full text-left border-2 rounded-2xl p-4 transition-all ${isSelected ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}`}>
+                    <button
+                      key={plan.id}
+                      type="button"
+                      disabled={!plan.isAvailableForPurchase}
+                      onClick={() => { setSelectedPlan(plan); setSelectedPrice(price || null); setPricing(null); setAppliedCouponCode(null); setCouponCode(''); }}
+                      className={`w-full text-left border-2 rounded-2xl p-4 transition-all ${isSelected ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'} ${!plan.isAvailableForPurchase ? 'opacity-90 cursor-not-allowed' : ''}`}
+                    >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-bold text-gray-900">{plan.name}</p>
-                          <p className="text-xs text-gray-500 mt-0.5">Até {plan.maxActiveStudents} alunos ativos</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold text-gray-900">{plan.name}</p>
+                            {plan.code === 'BASIC' ? <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">Mais indicado para comecar</span> : null}
+                            {plan.isComingSoon ? <span className="text-[10px] font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">Em breve</span> : null}
+                          </div>
+                          <p className="text-xs text-gray-500 mt-0.5">{plan.code === 'BASIC' ? 'O personal gerencia' : plan.code === 'PRO' ? 'O personal automatiza' : 'O personal cresce'}</p>
+                          <p className="text-xs text-gray-500 mt-1">{plan.hasUnlimitedStudents ? 'Alunos ilimitados' : `Ate ${plan.maxActiveStudents} alunos ativos`}</p>
                         </div>
                         <div className="text-right">
                           {price ? (
                             <>
-                              <p className="text-xl font-bold text-indigo-600">R$ {price.price.toFixed(2)}</p>
+                              <p className="text-xl font-bold text-indigo-600">R$ {price.price.toFixed(2).replace('.', ',')}</p>
                               <p className="text-xs text-gray-400">/{cycleLabels[billingCycle].toLowerCase()}</p>
-                              {billingCycle !== 'Monthly' && <p className="text-xs text-emerald-600">equivale a R$ {monthlyEquivalent?.toFixed(2)}/mês</p>}
+                              {billingCycle !== 'Monthly' && <p className="text-xs text-emerald-600">equivale a R$ {monthlyEquivalent?.toFixed(2).replace('.', ',')}/mes</p>}
                             </>
-                          ) : <p className="text-sm text-gray-400">Indisponível</p>}
+                          ) : <p className="text-sm text-gray-400">Indisponivel</p>}
                         </div>
                       </div>
                     </button>
@@ -302,17 +314,17 @@ export function RegisterPage() {
 
               <div className="flex gap-3">
                 <Button variant="secondary" type="button" onClick={() => setStep(3)} className="flex-1">Voltar</Button>
-                <Button onClick={handleSelectPlan} loading={loading} disabled={!selectedPlan || !selectedPrice} className="flex-1">Continuar</Button>
+                <Button onClick={handleSelectPlan} loading={loading} disabled={!selectedPlan || !selectedPrice || !selectedPlan?.isAvailableForPurchase} className="flex-1">Continuar</Button>
               </div>
             </div>
           )}
 
           {step === 5 && (
             <div className="space-y-5">
-              <h2 className="text-lg font-semibold text-gray-900">Finalizar contratação</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Finalizar contratacao</h2>
 
               <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 text-sm space-y-2">
-                <div className="flex justify-between"><span>Preço cheio do ciclo</span><span>{formatMoney(effectivePricing?.cycleBaseAmountInCents || 0)}</span></div>
+                <div className="flex justify-between"><span>Preco cheio do ciclo</span><span>{formatMoney(effectivePricing?.cycleBaseAmountInCents || 0)}</span></div>
                 <div className="flex justify-between text-emerald-700"><span>Desconto do ciclo</span><span>- {formatMoney(effectivePricing?.cycleDiscountAmountInCents || 0)}</span></div>
                 <div className="flex justify-between"><span>Subtotal</span><span>{formatMoney(effectivePricing?.subtotalAfterCycleDiscountInCents || 0)}</span></div>
                 <div className="flex justify-between text-emerald-700"><span>Desconto do cupom</span><span>- {formatMoney(effectivePricing?.couponDiscountAmountInCents || 0)}</span></div>
@@ -328,7 +340,7 @@ export function RegisterPage() {
                 {appliedCouponCode && <p className="text-xs text-emerald-700">Cupom aplicado com sucesso.</p>}
               </div>
 
-              <p className="text-xs text-gray-500">Você será redirecionado para pagamento seguro. A conta será liberada após confirmação do pagamento.</p>
+              <p className="text-xs text-gray-500">Voce sera redirecionado para pagamento seguro. A conta sera liberada apos confirmacao do pagamento.</p>
 
               <div className="flex gap-3">
                 <Button variant="secondary" type="button" onClick={() => setStep(4)} className="flex-1">Voltar</Button>

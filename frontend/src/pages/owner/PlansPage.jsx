@@ -10,7 +10,18 @@ import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { Tag, Plus, Pencil, Trash2 } from 'lucide-react';
 
-const empty = { name: '', description: '', monthlyPrice: '', maxActiveStudents: '', active: true };
+const empty = {
+  code: '',
+  name: '',
+  description: '',
+  monthlyPrice: '',
+  maxActiveStudents: '',
+  hasUnlimitedStudents: false,
+  active: true,
+  isPublic: true,
+  isComingSoon: false,
+  isAvailableForPurchase: true
+};
 
 export function PlansPage() {
   const { toast } = useToast();
@@ -32,7 +43,18 @@ export function PlansPage() {
 
   const openEdit = (p) => {
     setEditPlan(p);
-    setForm({ name: p.name, description: p.description || '', monthlyPrice: p.monthlyPrice, maxActiveStudents: p.maxActiveStudents, active: p.active });
+    setForm({
+      code: p.code || '',
+      name: p.name,
+      description: p.description || '',
+      monthlyPrice: p.monthlyPrice,
+      maxActiveStudents: p.maxActiveStudents,
+      hasUnlimitedStudents: !!p.hasUnlimitedStudents,
+      active: p.active,
+      isPublic: p.isPublic ?? true,
+      isComingSoon: p.isComingSoon ?? false,
+      isAvailableForPurchase: p.isAvailableForPurchase ?? true
+    });
     setModalOpen(true);
   };
 
@@ -40,7 +62,12 @@ export function PlansPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const data = { ...form, monthlyPrice: parseFloat(form.monthlyPrice), maxActiveStudents: parseInt(form.maxActiveStudents) };
+      const data = {
+        ...form,
+        code: (form.code || form.name).toUpperCase(),
+        monthlyPrice: parseFloat(form.monthlyPrice),
+        maxActiveStudents: form.hasUnlimitedStudents ? 0 : parseInt(form.maxActiveStudents),
+      };
       if (editPlan) { await platformPlanService.update(editPlan.id, data); toast('Plano atualizado!'); }
       else { await platformPlanService.create(data); toast('Plano criado!'); }
       setModalOpen(false); load();
@@ -77,8 +104,9 @@ export function PlansPage() {
                 <h3 className="font-bold text-gray-900 text-lg">{p.name}</h3>
                 <Badge variant={p.active ? 'success' : 'gray'}>{p.active ? 'Ativo' : 'Inativo'}</Badge>
               </div>
-              <p className="text-3xl font-bold text-purple-600 mb-1">R$ {p.monthlyPrice?.toFixed(2)}<span className="text-sm text-gray-400 font-normal">/mês</span></p>
-              <p className="text-sm text-gray-500 mb-1">Até <span className="font-semibold text-gray-700">{p.maxActiveStudents}</span> alunos ativos</p>
+              {p.isComingSoon ? <p className="text-xs font-semibold text-amber-700 mb-2">Em breve</p> : null}
+              <p className="text-3xl font-bold text-purple-600 mb-1">R$ {p.monthlyPrice?.toFixed(2).replace('.', ',')}<span className="text-sm text-gray-400 font-normal">/mes</span></p>
+              <p className="text-sm text-gray-500 mb-1">{p.hasUnlimitedStudents ? 'Alunos ilimitados' : <>Ate <span className="font-semibold text-gray-700">{p.maxActiveStudents}</span> alunos ativos</>}</p>
               {p.description && <p className="text-xs text-gray-400 mt-2">{p.description}</p>}
               <div className="flex gap-2 mt-5 pt-4 border-t border-gray-100">
                 <button onClick={() => openEdit(p)} className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Pencil size={14} />Editar</button>
@@ -91,15 +119,32 @@ export function PlansPage() {
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editPlan ? 'Editar plano' : 'Novo plano'}>
         <form onSubmit={handleSave} className="space-y-4">
+          <Input label="Codigo" value={form.code} onChange={e => setForm(p => ({ ...p, code: e.target.value.toUpperCase() }))} required />
           <Input label="Nome do plano" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
-          <Input label="Descrição" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
+          <Input label="Descricao" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Preço mensal (R$)" type="number" step="0.01" value={form.monthlyPrice} onChange={e => setForm(p => ({ ...p, monthlyPrice: e.target.value }))} required />
-            <Input label="Limite de alunos ativos" type="number" value={form.maxActiveStudents} onChange={e => setForm(p => ({ ...p, maxActiveStudents: e.target.value }))} required />
+            <Input label="Preco mensal (R$)" type="number" step="0.01" value={form.monthlyPrice} onChange={e => setForm(p => ({ ...p, monthlyPrice: e.target.value }))} required />
+            <Input label="Limite de alunos ativos" type="number" value={form.maxActiveStudents} onChange={e => setForm(p => ({ ...p, maxActiveStudents: e.target.value }))} disabled={form.hasUnlimitedStudents} required={!form.hasUnlimitedStudents} />
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="hasUnlimitedStudents" checked={form.hasUnlimitedStudents} onChange={e => setForm(p => ({ ...p, hasUnlimitedStudents: e.target.checked }))} className="rounded" />
+            <label htmlFor="hasUnlimitedStudents" className="text-sm text-gray-700">Alunos ilimitados</label>
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="active" checked={form.active} onChange={e => setForm(p => ({ ...p, active: e.target.checked }))} className="rounded" />
             <label htmlFor="active" className="text-sm text-gray-700">Plano ativo</label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="isPublic" checked={form.isPublic} onChange={e => setForm(p => ({ ...p, isPublic: e.target.checked }))} className="rounded" />
+            <label htmlFor="isPublic" className="text-sm text-gray-700">Plano publico</label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="isComingSoon" checked={form.isComingSoon} onChange={e => setForm(p => ({ ...p, isComingSoon: e.target.checked }))} className="rounded" />
+            <label htmlFor="isComingSoon" className="text-sm text-gray-700">Em breve</label>
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="isAvailableForPurchase" checked={form.isAvailableForPurchase} onChange={e => setForm(p => ({ ...p, isAvailableForPurchase: e.target.checked }))} className="rounded" />
+            <label htmlFor="isAvailableForPurchase" className="text-sm text-gray-700">Disponivel para contratacao</label>
           </div>
           <div className="flex gap-3 pt-2">
             <Button variant="secondary" type="button" onClick={() => setModalOpen(false)} className="flex-1">Cancelar</Button>
@@ -112,4 +157,3 @@ export function PlansPage() {
     </div>
   );
 }
-

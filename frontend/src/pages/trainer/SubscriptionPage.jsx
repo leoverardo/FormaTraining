@@ -16,6 +16,7 @@ export function SubscriptionPage() {
   const [billingCycle, setBillingCycle] = useState(1);
   const [couponCode, setCouponCode] = useState('');
   const [premiumBlockMessage, setPremiumBlockMessage] = useState('');
+  const monthsByCycle = { 1: 1, 2: 3, 3: 6, 4: 12 };
   const load = () => {
     setLoading(true);
     Promise.allSettled([trainerService.getSubscription(), platformPlanService.getAll()])
@@ -92,7 +93,17 @@ export function SubscriptionPage() {
                 {p.isComingSoon ? <span className="text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">Em breve</span> : null}
               </div>
               <p className="text-sm text-gray-500 mt-1">{p.code === 'BASIC' ? 'Para organizar alunos e treinos' : p.code === 'PRO' ? 'Para automatizar atendimento e retenção' : 'Para captar alunos e crescer o negócio'}</p>
-              <p className="text-sm text-gray-500 mt-2">R$ {p.monthlyPrice?.toFixed(2)}/mês</p>
+              {(() => {
+                const cycleName = billingCycle === 1 ? 'mês' : billingCycle === 2 ? 'trimestre' : billingCycle === 3 ? 'semestre' : 'ano';
+                const cyclePrice = p.prices?.find(x => (x.billingCycle === 'Monthly' && billingCycle === 1) || (x.billingCycle === 'Quarterly' && billingCycle === 2) || (x.billingCycle === 'Semiannual' && billingCycle === 3) || (x.billingCycle === 'Yearly' && billingCycle === 4))?.price;
+                const monthlyEquivalent = cyclePrice ? cyclePrice / monthsByCycle[billingCycle] : p.monthlyPrice;
+                return (
+                  <>
+                    <p className="text-sm text-gray-500 mt-2">R$ {(cyclePrice ?? p.monthlyPrice)?.toFixed(2).replace('.', ',')}/{cycleName}</p>
+                    {billingCycle !== 1 ? <p className="text-xs text-emerald-600 mt-1">equivale a R$ {monthlyEquivalent?.toFixed(2).replace('.', ',')}/mês</p> : null}
+                  </>
+                );
+              })()}
               <p className="text-xs text-gray-500 mt-1">{p.hasUnlimitedStudents ? 'Alunos ilimitados' : `Até ${p.maxActiveStudents} alunos ativos`}</p>
               <Button
                 className="w-full mt-4"
