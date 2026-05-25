@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { exerciseService } from '../../services/exerciseService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
@@ -185,22 +185,22 @@ export function ExercisesPage() {
           {filtered.map((exercise) => {
             const level = levelFromApi(exercise.level);
             return (
-              <article key={exercise.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)]">
+              <article key={exercise.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-slate-900 dark:shadow-[0_14px_30px_rgba(2,6,23,0.45)]">
                 <CardMedia imageUrl={exercise.imageUrl} name={exercise.name} />
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className={`truncate text-sm font-semibold ${themeClasses.cardTitle}`}>{exercise.name}</h3>
-                      <p className="mt-0.5 text-xs text-slate-500">{exercise.muscleGroup || t('trainer.exerciseLibrary.groupNotInformed')}</p>
+                      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{exercise.muscleGroup || t('trainer.exerciseLibrary.groupNotInformed')}</p>
                     </div>
                     <Badge variant={level.badge}>{levelLabel(level.apiValue)}</Badge>
                   </div>
-                  <p className="mt-2 line-clamp-2 text-xs text-slate-600">{exercise.description || t('trainer.exercises.noDescription')}</p>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                  <p className="mt-2 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">{exercise.description || t('trainer.exercises.noDescription')}</p>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                     <PlayCircle size={14} className={exercise.videoUrl ? 'text-emerald-600' : 'text-slate-400'} />
                     {exercise.videoUrl ? t('trainer.exercises.videoAvailable') : t('trainer.exercises.noVideo')}
                   </div>
-                  <div className="mt-4 flex gap-2 border-t border-slate-100 pt-3">
+                  <div className="mt-4 flex gap-2 border-t border-slate-100 dark:border-white/10 pt-3">
                     <button onClick={() => openEdit(exercise)} className="flex-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"><Pencil size={13} className="mr-1 inline" />{t('common.edit')}</button>
                     <button onClick={() => setDeleteTarget(exercise)} className="flex-1 rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"><Trash2 size={13} className="mr-1 inline" />{t('common.delete')}</button>
                   </div>
@@ -263,8 +263,8 @@ export function ExercisesPage() {
                   <CardMedia imageUrl={form.imageUrl} name={form.name || 'Exercicio'} />
                   <div className="p-3">
                     <p className="text-sm font-semibold text-slate-900">{form.name || 'Nome do exercicio'}</p>
-                    <p className="text-xs text-slate-500">{form.muscleGroup || 'Grupo muscular'}</p>
-                    <p className="mt-2 line-clamp-3 text-xs text-slate-600">{form.description || 'Descricao do exercicio.'}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{form.muscleGroup || 'Grupo muscular'}</p>
+                    <p className="mt-2 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">{form.description || 'Descricao do exercicio.'}</p>
                   </div>
                 </div>
               </PreviewCard>
@@ -285,3 +285,5 @@ export function ExercisesPage() {
     </FormPage>
   );
 }
+
+

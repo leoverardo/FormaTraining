@@ -102,16 +102,16 @@ export function StudentsPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50 dark:bg-slate-950">
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Aluno</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Objetivo</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
+                <tr className="border-b border-slate-100 bg-slate-50 dark:border-white/10 dark:bg-slate-950">
+                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Aluno</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase hidden md:table-cell">Objetivo</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Status</th>
                   <th className="px-6 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-white/10">
                 {students.map(s => (
-                  <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                  <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-medium text-slate-900 dark:text-white text-sm">{s.name}</p>
@@ -133,7 +133,7 @@ export function StudentsPage() {
                         </button>
                         <button onClick={() => openEdit(s)} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"><Pencil size={16} /></button>
                         <button onClick={() => setDeleteTarget(s)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors"><Trash2 size={16} /></button>
-                        <button onClick={() => navigate(`/trainer/students/${s.id}`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors" title="Ver detalhes"><ChevronRight size={16} /></button>
+                        <button onClick={() => navigate(`/trainer/students/${s.id}`)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400 dark:text-slate-500 transition-colors" title="Ver detalhes"><ChevronRight size={16} /></button>
                       </div>
                     </td>
                   </tr>
@@ -181,3 +181,5 @@ export function StudentsPage() {
     </div>
   );
 }
+
+

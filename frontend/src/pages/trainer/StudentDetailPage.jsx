@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { studentService } from '../../services/studentService';
 import { scheduleService } from '../../services/scheduleService';
@@ -16,7 +16,7 @@ import { ChevronLeft, Plus, Trash2, TrendingUp, Camera } from 'lucide-react';
 import { useI18n } from '../../i18n';
 
 const TABS = ['Dados', 'Rotina', 'Progresso', 'Fotos', 'Habitos'];
-const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+const days = ['Domingo', 'Segunda', 'TerÃ§a', 'Quarta', 'Quinta', 'Sexta', 'SÃ¡bado'];
 
 const emptyProgress = { weight: '', height: '', chest: '', waist: '', abdomen: '', hip: '', rightArm: '', leftArm: '', rightThigh: '', leftThigh: '', bodyFatPercentage: '', notes: '', progressDate: new Date().toISOString().split('T')[0] };
 
@@ -218,18 +218,18 @@ export function StudentDetailPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate('/trainer/students')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"><ChevronLeft size={20} /></button>
+        <button onClick={() => navigate('/trainer/students')} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400"><ChevronLeft size={20} /></button>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">{student.name}</h1>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">{student.name}</h1>
           <Badge variant={student.status === 'Active' ? 'success' : 'gray'}>{student.status === 'Active' ? 'Ativo' : 'Inativo'}</Badge>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-950 rounded-xl p-1">
         {TABS.map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}>
             {tab}
           </button>
         ))}
@@ -237,14 +237,14 @@ export function StudentDetailPage() {
 
       {/* Tab: Dados */}
       {activeTab === 'Dados' && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-3">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 space-y-3">
           <Row label="E-mail" value={student.email} />
           <Row label="Telefone" value={student.phone} />
           <Row label="Objetivo" value={student.goal} />
           <Row label="Data de nasc." value={student.birthDate ? new Date(student.birthDate).toLocaleDateString('pt-BR') : null} />
-          <Row label="Observações" value={student.notes} />
+          <Row label="ObservaÃ§Ãµes" value={student.notes} />
           <Row label="Cadastrado em" value={new Date(student.createdAt).toLocaleDateString('pt-BR')} />
-          <div className="pt-4 border-t border-gray-100 flex gap-2">
+          <div className="pt-4 border-t border-slate-100 dark:border-white/10 flex gap-2">
             <Button size="sm" variant="secondary" onClick={() => studentService.resendAccessEmail(id).then(() => toast('E-mail reenviado!')).catch(() => toast('Erro', 'error'))}>
               Reenviar acesso
             </Button>
@@ -258,10 +258,10 @@ export function StudentDetailPage() {
           {days.map((day, idx) => {
             const items = schedules.filter(s => s.dayOfWeek === idx);
             return (
-              <div key={idx} className="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700 w-28">{day}</span>
+              <div key={idx} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10 px-4 py-3 flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-200 w-28">{day}</span>
                 <div className="flex flex-wrap gap-2 flex-1">
-                  {items.length === 0 ? <span className="text-xs text-gray-300">Descanso</span> : items.map(s => (
+                  {items.length === 0 ? <span className="text-xs text-slate-300 dark:text-slate-500">Descanso</span> : items.map(s => (
                     <span key={s.id} className="bg-indigo-50 text-indigo-700 text-xs font-medium px-2.5 py-1 rounded-lg">{s.workoutName}</span>
                   ))}
                 </div>
@@ -275,32 +275,32 @@ export function StudentDetailPage() {
       {activeTab === 'Progresso' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-500">{progress.length} registros</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{progress.length} registros</p>
             <Button size="sm" onClick={() => setProgressModal(true)}><Plus size={14} />Registrar</Button>
           </div>
 
           {progress.length === 0 ? (
-            <EmptyState icon={TrendingUp} title="Nenhum registro de progresso" description="Registre o progresso físico deste aluno." action={<Button size="sm" onClick={() => setProgressModal(true)}><Plus size={14} />Registrar</Button>} />
+            <EmptyState icon={TrendingUp} title="Nenhum registro de progresso" description="Registre o progresso fÃ­sico deste aluno." action={<Button size="sm" onClick={() => setProgressModal(true)}><Plus size={14} />Registrar</Button>} />
           ) : (
             <div className="space-y-3">
               {progress.map(p => (
-                <div key={p.id} className="bg-white rounded-2xl border border-gray-200 p-4">
+                <div key={p.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <p className="font-semibold text-gray-900 text-sm">{new Date(p.progressDate).toLocaleDateString('pt-BR')}</p>
-                      <p className="text-xs text-gray-400">Por: {p.createdByRole}</p>
+                      <p className="font-semibold text-slate-900 dark:text-white text-sm">{new Date(p.progressDate).toLocaleDateString('pt-BR')}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500">Por: {p.createdByRole}</p>
                     </div>
                     <button onClick={() => deleteProgress(p.id)} className="p-1 rounded-lg hover:bg-red-50 text-red-400 transition-colors"><Trash2 size={14} /></button>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                    {[['Peso', p.weight, 'kg'], ['Altura', p.height, 'cm'], ['Peito', p.chest, 'cm'], ['Cintura', p.waist, 'cm'], ['Abdômen', p.abdomen, 'cm'], ['Quadril', p.hip, 'cm'], ['Braço D', p.rightArm, 'cm'], ['Braço E', p.leftArm, 'cm'], ['Coxa D', p.rightThigh, 'cm'], ['% Gordura', p.bodyFatPercentage, '%']].filter(([, v]) => v != null).map(([label, value, unit]) => (
-                      <div key={label} className="bg-gray-50 rounded-xl px-3 py-2 text-center">
-                        <p className="text-xs text-gray-400">{label}</p>
-                        <p className="font-bold text-gray-800 text-sm">{value}{unit}</p>
+                    {[['Peso', p.weight, 'kg'], ['Altura', p.height, 'cm'], ['Peito', p.chest, 'cm'], ['Cintura', p.waist, 'cm'], ['AbdÃ´men', p.abdomen, 'cm'], ['Quadril', p.hip, 'cm'], ['BraÃ§o D', p.rightArm, 'cm'], ['BraÃ§o E', p.leftArm, 'cm'], ['Coxa D', p.rightThigh, 'cm'], ['% Gordura', p.bodyFatPercentage, '%']].filter(([, v]) => v != null).map(([label, value, unit]) => (
+                      <div key={label} className="bg-slate-50 dark:bg-slate-950 rounded-xl px-3 py-2 text-center">
+                        <p className="text-xs text-slate-400 dark:text-slate-500">{label}</p>
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{value}{unit}</p>
                       </div>
                     ))}
                   </div>
-                  {p.notes && <p className="text-xs text-gray-500 mt-2 bg-amber-50 rounded-lg px-3 py-1.5">{p.notes}</p>}
+                  {p.notes && <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 bg-amber-50 rounded-lg px-3 py-1.5">{p.notes}</p>}
                 </div>
               ))}
             </div>
@@ -312,18 +312,18 @@ export function StudentDetailPage() {
       {activeTab === 'Fotos' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-400">{photos.length} fotos · Conteúdo privado</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">{photos.length} fotos Â· ConteÃºdo privado</p>
             <Button size="sm" onClick={() => setPhotoModal(true)}><Plus size={14} />Adicionar</Button>
           </div>
 
           {photos.length >= 2 && (
-            <div className="bg-white rounded-2xl border border-gray-200 p-4">
-              <p className="text-sm font-semibold text-gray-900 mb-3">Comparação</p>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-4">
+              <p className="text-sm font-semibold text-slate-900 dark:text-white mb-3">ComparaÃ§Ã£o</p>
               <div className="grid grid-cols-2 gap-4">
                 {[['Foto inicial', compareA, setCompareA], ['Foto atual', compareB, setCompareB]].map(([label, val, setter]) => (
                   <div key={label}>
-                    <p className="text-xs text-gray-400 mb-1">{label}</p>
-                    <select className="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 mb-2 bg-white" value={val?.id || ''} onChange={e => setter(photos.find(p => p.id === e.target.value) || null)}>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{label}</p>
+                    <select className="mb-2 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs dark:border-white/10 dark:bg-slate-950 dark:text-white" value={val?.id || ''} onChange={e => setter(photos.find(p => p.id === e.target.value) || null)}>
                       <option value="">{t('common.search')}...</option>
                       {photos.map(p => <option key={p.id} value={p.id}>{new Date(p.photoDate).toLocaleDateString('pt-BR')}</option>)}
                     </select>
@@ -339,7 +339,7 @@ export function StudentDetailPage() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {photos.map(p => (
-                <div key={p.id} className="relative group rounded-2xl overflow-hidden border border-gray-200">
+                <div key={p.id} className="relative group overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10">
                   <img src={p.imageUrl} alt={p.description} className="w-full h-36 object-cover" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-end">
                     <div className="p-2 w-full opacity-0 group-hover:opacity-100 transition-all flex justify-between items-end">
@@ -357,18 +357,18 @@ export function StudentDetailPage() {
       {activeTab === 'Habitos' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">{habits.length} habitos cadastrados</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{habits.length} habitos cadastrados</p>
             <Button size="sm" onClick={openCreateHabit}><Plus size={14} />Novo habito</Button>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
-            <div className="bg-white rounded-2xl border border-gray-200 p-4">
-              <p className="text-xs text-gray-400">Aderencia ({adherenceDays} dias)</p>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-4">
+              <p className="text-xs text-slate-400 dark:text-slate-500">Aderencia ({adherenceDays} dias)</p>
               <p className="text-2xl font-bold text-slate-900 mt-1">{adherence?.completionRate ?? 0}%</p>
-              <p className="text-xs text-gray-500 mt-1">{adherence?.totalCompleted ?? 0} de {adherence?.totalExpected ?? 0} marcacoes concluidas</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{adherence?.totalCompleted ?? 0} de {adherence?.totalExpected ?? 0} marcacoes concluidas</p>
               <div className="mt-3 flex gap-2">
-                <button onClick={() => setAdherenceDays(7)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 7 ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>7 dias</button>
-                <button onClick={() => setAdherenceDays(30)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 30 ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>30 dias</button>
+                <button onClick={() => setAdherenceDays(7)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 7 ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'}`}>7 dias</button>
+                <button onClick={() => setAdherenceDays(30)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 30 ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'}`}>30 dias</button>
               </div>
               {adherence?.lowestHabitTitle && (
                 <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-2 py-1 mt-3">
@@ -376,20 +376,20 @@ export function StudentDetailPage() {
                 </p>
               )}
             </div>
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
-              <p className="text-sm font-semibold text-gray-900">Orientacao alimentar</p>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-4 space-y-2">
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">Orientacao alimentar</p>
               <textarea
                 value={guidance.guidanceText}
                 onChange={(e) => setGuidance((p) => ({ ...p, guidanceText: e.target.value }))}
                 rows={4}
-                className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-slate-300 dark:border-white/10 px-3 py-2 text-sm"
                 placeholder="Ex.: priorizar alimentos in natura, manter hidratacao..."
               />
               <textarea
                 value={guidance.strategicNotes}
                 onChange={(e) => setGuidance((p) => ({ ...p, strategicNotes: e.target.value }))}
                 rows={2}
-                className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-slate-300 dark:border-white/10 px-3 py-2 text-sm"
                 placeholder="Observacoes estrategicas opcionais"
               />
               <Button size="sm" onClick={saveGuidance} loading={saving}>Salvar orientacao</Button>
@@ -397,10 +397,10 @@ export function StudentDetailPage() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
-            <div className="bg-white rounded-2xl border border-gray-200 p-4">
-              <p className="text-sm font-semibold text-gray-900">Resumo de gamificacao</p>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-4">
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">Resumo de gamificacao</p>
               {!gamification ? (
-                <p className="text-xs text-gray-500 mt-2">Sem dados suficientes.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Sem dados suficientes.</p>
               ) : (
                 <div className="grid grid-cols-3 gap-2 mt-3">
                   {[
@@ -408,16 +408,16 @@ export function StudentDetailPage() {
                     { label: 'Habitos', value: gamification.habitStreak?.current ?? 0 },
                     { label: 'Check-ins', value: gamification.checkInStreak?.current ?? 0 },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-lg bg-gray-50 border border-gray-200 px-2 py-2 text-center">
-                      <p className="text-[11px] text-gray-500">{item.label}</p>
-                      <p className="text-base font-bold text-gray-900">{item.value}</p>
+                    <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-center dark:border-white/10 dark:bg-slate-950">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{item.label}</p>
+                      <p className="text-base font-bold text-slate-900 dark:text-white">{item.value}</p>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
-              <p className="text-sm font-semibold text-gray-900">Metas do mes</p>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-4 space-y-2">
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">Metas do mes</p>
               <div className="grid grid-cols-3 gap-2">
                 <Input label="Treinos" type="number" min="1" value={goalForm.workoutTarget} onChange={(e) => setGoalForm((p) => ({ ...p, workoutTarget: Number(e.target.value || 1) }))} />
                 <Input label="Habitos" type="number" min="1" value={goalForm.habitDaysTarget} onChange={(e) => setGoalForm((p) => ({ ...p, habitDaysTarget: Number(e.target.value || 1) }))} />
@@ -432,10 +432,10 @@ export function StudentDetailPage() {
           ) : (
             <div className="space-y-2">
               {habits.map((habit) => (
-                <div key={habit.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+                <div key={habit.id} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10 p-4 flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{habit.title}</p>
-                    <p className="text-xs text-gray-500">{habit.category} {habit.targetValue ? `• ${habit.targetValue} ${habit.targetUnit || ''}` : ''}</p>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">{habit.title}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{habit.category} {habit.targetValue ? `â€¢ ${habit.targetValue} ${habit.targetUnit || ''}` : ''}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant={habit.isActive ? 'success' : 'gray'}>{habit.isActive ? 'Ativo' : 'Inativo'}</Badge>
@@ -455,13 +455,13 @@ export function StudentDetailPage() {
         <form onSubmit={handleAddProgress} className="space-y-4">
           <Input label="Data" type="date" {...pf('progressDate')} />
           <div className="grid grid-cols-2 gap-3">
-            {[['weight', 'Peso (kg)'], ['height', 'Altura (cm)'], ['chest', 'Peito (cm)'], ['waist', 'Cintura (cm)'], ['abdomen', 'Abdômen (cm)'], ['hip', 'Quadril (cm)'], ['rightArm', 'Braço Direito (cm)'], ['leftArm', 'Braço Esquerdo (cm)'], ['rightThigh', 'Coxa Direita (cm)'], ['leftThigh', 'Coxa Esquerda (cm)'], ['bodyFatPercentage', '% Gordura']].map(([field, label]) => (
+            {[['weight', 'Peso (kg)'], ['height', 'Altura (cm)'], ['chest', 'Peito (cm)'], ['waist', 'Cintura (cm)'], ['abdomen', 'AbdÃ´men (cm)'], ['hip', 'Quadril (cm)'], ['rightArm', 'BraÃ§o Direito (cm)'], ['leftArm', 'BraÃ§o Esquerdo (cm)'], ['rightThigh', 'Coxa Direita (cm)'], ['leftThigh', 'Coxa Esquerda (cm)'], ['bodyFatPercentage', '% Gordura']].map(([field, label]) => (
               <Input key={field} label={label} type="number" step="0.01" {...pf(field)} />
             ))}
           </div>
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Observações</label>
-            <textarea className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" rows={2} {...pf('notes')} />
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">ObservaÃ§Ãµes</label>
+            <textarea className="w-full px-3 py-2 border border-slate-300 dark:border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" rows={2} {...pf('notes')} />
           </div>
           <div className="flex gap-3">
             <Button variant="secondary" type="button" onClick={() => setProgressModal(false)} className="flex-1">Cancelar</Button>
@@ -476,8 +476,8 @@ export function StudentDetailPage() {
           <Input label="URL da imagem" value={photoForm.imageUrl} onChange={e => setPhotoForm(p => ({ ...p, imageUrl: e.target.value }))} placeholder="https://..." required />
           {photoForm.imageUrl && <img src={photoForm.imageUrl} className="w-full h-40 object-cover rounded-xl" alt="preview" />}
           <Input label="Data da foto" type="date" value={photoForm.photoDate} onChange={e => setPhotoForm(p => ({ ...p, photoDate: e.target.value }))} />
-          <Input label="Descrição (opcional)" value={photoForm.description} onChange={e => setPhotoForm(p => ({ ...p, description: e.target.value }))} />
-          <p className="text-xs text-gray-400 bg-gray-50 rounded-xl p-3">Fotos são privadas e visíveis apenas para o aluno e seu personal trainer.</p>
+          <Input label="DescriÃ§Ã£o (opcional)" value={photoForm.description} onChange={e => setPhotoForm(p => ({ ...p, description: e.target.value }))} />
+          <p className="text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 rounded-xl p-3">Fotos sÃ£o privadas e visÃ­veis apenas para o aluno e seu personal trainer.</p>
           <div className="flex gap-3">
             <Button variant="secondary" type="button" onClick={() => setPhotoModal(false)} className="flex-1">Cancelar</Button>
             <Button type="submit" loading={saving} className="flex-1">Adicionar</Button>
@@ -491,8 +491,8 @@ export function StudentDetailPage() {
           <Input label="Descricao (opcional)" value={habitForm.description} onChange={(e) => setHabitForm((p) => ({ ...p, description: e.target.value }))} />
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
-              <select className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" value={habitForm.category} onChange={(e) => setHabitForm((p) => ({ ...p, category: e.target.value }))}>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Categoria</label>
+              <select className="w-full rounded-xl border border-slate-300 dark:border-white/10 px-3 py-2 text-sm" value={habitForm.category} onChange={(e) => setHabitForm((p) => ({ ...p, category: e.target.value }))}>
                 {['Custom', 'Water', 'Sleep', 'Nutrition', 'Cardio', 'Steps'].map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
@@ -513,9 +513,11 @@ function Row({ label, value }) {
   if (!value) return null;
   return (
     <div className="flex justify-between gap-4">
-      <span className="text-sm text-gray-400">{label}</span>
-      <span className="text-sm text-gray-900 text-right">{value}</span>
+      <span className="text-sm text-slate-400 dark:text-slate-500">{label}</span>
+      <span className="text-sm text-slate-900 dark:text-white text-right">{value}</span>
     </div>
   );
 }
+
+
 

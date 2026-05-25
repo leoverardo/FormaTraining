@@ -144,7 +144,7 @@ export function StudentDashboard() {
               <p className="text-sm text-slate-500">Seu personal ainda nao agendou um compromisso.</p>
             ) : (
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-slate-900">{data.nextAppointment.title}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{data.nextAppointment.title}</p>
                 <p className="text-xs text-slate-500">{data.nextAppointment.type} • {data.nextAppointment.status}</p>
                 {data.nextAppointment.location && <p className="text-xs text-slate-500">Local: {data.nextAppointment.location}</p>}
                 <button onClick={() => navigate('/student/appointments')} className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
@@ -164,7 +164,7 @@ export function StudentDashboard() {
                     key={item.habitId}
                     onClick={() => toggleHabit(item)}
                     disabled={updatingHabitId === item.habitId}
-                    className={`w-full rounded-xl border px-3 py-2 text-left transition ${item.isCompleted ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'}`}
+                    className={`w-full rounded-xl border px-3 py-2 text-left transition ${item.isCompleted ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10' : 'border-slate-200 bg-white dark:border-white/10 dark:bg-slate-900'}`}
                   >
                     <p className="text-sm font-medium text-slate-800">{item.title}</p>
                     <p className="text-xs text-slate-500">{item.targetValue ? `${item.targetValue} ${item.targetUnit || ''}` : item.category}</p>
@@ -179,8 +179,8 @@ export function StudentDashboard() {
               <p className="text-sm text-slate-500">Seu personal ainda nao registrou orientacoes.</p>
             ) : (
               <div className="space-y-2">
-                <p className="text-sm text-slate-700 whitespace-pre-wrap">{nutrition.guidanceText}</p>
-                {nutrition.strategicNotes && <p className="text-xs text-amber-700 bg-amber-50 rounded-lg p-2">{nutrition.strategicNotes}</p>}
+                <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-200">{nutrition.guidanceText}</p>
+                {nutrition.strategicNotes && <p className="rounded-lg bg-amber-50 p-2 text-xs text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">{nutrition.strategicNotes}</p>}
               </div>
             )}
           </SectionCard>
@@ -195,10 +195,10 @@ export function StudentDashboard() {
                   { label: 'Habitos', value: gamification.habitStreak?.current ?? 0, unit: 'dias' },
                   { label: 'Check-in', value: gamification.checkInStreak?.current ?? 0, unit: 'sem' },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-3 text-center">
+                  <div key={item.label} className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-3 text-center dark:border-white/10 dark:bg-slate-950">
                     <p className="text-[11px] uppercase tracking-wide text-slate-500">{item.label}</p>
-                    <p className="text-lg font-bold text-slate-900">{item.value}</p>
-                    <p className="text-[11px] text-slate-500">{item.unit}</p>
+                    <p className="text-lg font-bold text-slate-900 dark:text-white">{item.value}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{item.unit}</p>
                   </div>
                 ))}
               </div>
@@ -251,3 +251,4 @@ export function StudentDashboard() {
     </PageContainer>
   );
 }
+

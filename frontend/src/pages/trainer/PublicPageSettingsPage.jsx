@@ -152,8 +152,8 @@ export function PublicPageSettingsPage() {
 
       <div className="grid gap-4 lg:hidden">
         <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1">
-          <button onClick={() => setTab('edit')} className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium ${tab === 'edit' ? 'bg-slate-900 text-white' : 'text-slate-600'}`}>Editar</button>
-          <button onClick={() => setTab('preview')} className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium ${tab === 'preview' ? 'bg-slate-900 text-white' : 'text-slate-600'}`}>Preview</button>
+          <button onClick={() => setTab('edit')} className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium ${tab === 'edit' ? 'bg-slate-900 text-white' : 'text-slate-600 dark:text-slate-300'}`}>Editar</button>
+          <button onClick={() => setTab('preview')} className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium ${tab === 'preview' ? 'bg-slate-900 text-white' : 'text-slate-600 dark:text-slate-300'}`}>Preview</button>
         </div>
       </div>
 
@@ -215,13 +215,13 @@ export function PublicPageSettingsPage() {
                 </div>
                 <div className="p-4">
                   <p className="text-sm font-semibold text-slate-900">{previewName}</p>
-                  <p className="mt-1 text-sm text-slate-600">{form.publicHeadline || 'Consultoria personalizada para sua evolução.'}</p>
-                  <p className="mt-1 text-xs text-slate-500">{form.publicDescription || 'Adicione uma descrição para melhorar conversão.'}</p>
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{form.publicHeadline || 'Consultoria personalizada para sua evolução.'}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{form.publicDescription || 'Adicione uma descrição para melhorar conversão.'}</p>
                   <div className="mt-4 flex gap-2">
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${formatWhatsapp(form.whatsappNumber) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${formatWhatsapp(form.whatsappNumber) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500 dark:text-slate-400'}`}>
                       {formatWhatsapp(form.whatsappNumber) ? 'CTA WhatsApp ativo' : 'CTA WhatsApp inativo'}
                     </span>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${form.publicPageEnabled ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-100 text-slate-500'}`}>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${form.publicPageEnabled ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-100 text-slate-500 dark:text-slate-400'}`}>
                       {form.publicPageEnabled ? <Eye size={12} className="mr-1" /> : <EyeOff size={12} className="mr-1" />}
                       {form.publicPageEnabled ? 'Pública' : 'Oculta'}
                     </span>
@@ -237,5 +237,7 @@ export function PublicPageSettingsPage() {
     </FormPage>
   );
 }
+
+
 
 

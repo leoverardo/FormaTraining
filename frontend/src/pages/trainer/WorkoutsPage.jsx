@@ -92,12 +92,12 @@ export function WorkoutsPage() {
             <div key={w.id} className={`${themeClasses.card} rounded-2xl overflow-hidden`}>
               <div className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
-                  <button onClick={() => setExpandedId(expandedId === w.id ? null : w.id)} className="text-gray-400 hover:text-gray-600">
+                  <button onClick={() => setExpandedId(expandedId === w.id ? null : w.id)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
                     {expandedId === w.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </button>
                   <div className="min-w-0">
                     <p className="font-semibold text-slate-900 dark:text-white text-sm">{w.name}</p>
-                    <p className="text-slate-400 dark:text-slate-500 text-xs">{w.exercises?.length || 0} exercícios · {levelLabel(w.level)}</p>
+                    <p className="text-slate-400 dark:text-slate-500 dark:text-slate-400 text-xs">{w.exercises?.length || 0} exercícios · {levelLabel(w.level)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -108,17 +108,17 @@ export function WorkoutsPage() {
                 </div>
               </div>
               {expandedId === w.id && (
-                <div className="border-t border-gray-100 dark:border-white/10 px-6 py-4 bg-gray-50 dark:bg-slate-950">
+                <div className="border-t border-slate-100 dark:border-white/10 bg-slate-50 px-6 py-4 dark:bg-slate-950">
                   {w.exercises?.length === 0 ? (
-                    <p className="text-sm text-gray-400 text-center py-4">Nenhum exercício adicionado.</p>
+                    <p className="text-center py-4 text-sm text-slate-400 dark:text-slate-500">Nenhum exercício adicionado.</p>
                   ) : (
                     <div className="space-y-2">
                       {w.exercises?.sort((a, b) => a.orderIndex - b.orderIndex).map(we => (
                         <div key={we.id} className={`${themeClasses.card} flex items-center gap-3 rounded-xl px-4 py-3`}>
-                          <GripVertical size={16} className="text-gray-300" />
+                          <GripVertical size={16} className="text-slate-300 dark:text-slate-500" />
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm text-slate-900 dark:text-white">{we.exercise?.name}</p>
-                            <p className="text-xs text-gray-400">{we.sets}x{we.reps} · {we.suggestedLoad || 'Carga livre'} · Descanso: {we.restSeconds}s</p>
+                            <p className="text-xs text-slate-400 dark:text-slate-500">{we.sets}x{we.reps} · {we.suggestedLoad || 'Carga livre'} · Descanso: {we.restSeconds}s</p>
                           </div>
                           <button onClick={() => removeExercise(w.id, we.id)} className="p-1 rounded-lg hover:bg-red-50 text-red-400 transition-colors"><Trash2 size={14} /></button>
                         </div>
@@ -182,3 +182,6 @@ export function WorkoutsPage() {
     </div>
   );
 }
+
+
+

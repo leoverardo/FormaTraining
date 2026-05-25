@@ -64,8 +64,8 @@ function SectionHeader({ icon: Icon, title, description, accent = 'indigo' }) {
         <Icon size={18} />
       </div>
       <div>
-        <h2 className="text-base font-bold text-slate-900 leading-tight">{title}</h2>
-        {description && <p className="text-xs text-slate-500 mt-0.5">{description}</p>}
+        <h2 className="text-base font-bold text-slate-900 leading-tight dark:text-white">{title}</h2>
+        {description && <p className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">{description}</p>}
       </div>
     </div>
   );
@@ -73,7 +73,7 @@ function SectionHeader({ icon: Icon, title, description, accent = 'indigo' }) {
 
 function Section({ children, className = '' }) {
   return (
-    <section className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
+    <section className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-900 ${className}`}>
       {children}
     </section>
   );
@@ -91,7 +91,7 @@ function KpiCard({ title, value, subtitle, icon: Icon, tone = 'indigo', badge })
   };
   const t = tones[tone] || tones.indigo;
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">{title}</p>
@@ -269,22 +269,22 @@ export function OwnerDashboard() {
     <PageContainer className="space-y-5">
 
       {/* "? Cabeçalho "? */}
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.07)]">
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900 shadow-[0_8px_24px_rgba(15,23,42,0.07)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Painel Owner</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Painel Owner</h1>
               {highAlerts > 0 && (
                 <span className="rounded-full bg-rose-100 text-rose-700 text-xs font-bold px-2 py-0.5">
                   {highAlerts} alerta{highAlerts > 1 ? 's' : ''}
                 </span>
               )}
             </div>
-            <p className="text-sm text-slate-500 mt-1">Visão executiva de negócio, operação e crescimento.</p>
+            <p className="text-sm text-slate-500 mt-1 dark:text-slate-400">Visão executiva de negócio, operação e crescimento.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => navigate('/owner/plans')}>Gerenciar planos</Button>
-            <div className="flex rounded-xl border border-slate-300 bg-slate-50 overflow-hidden">
+            <div className="flex overflow-hidden rounded-xl border border-slate-300 bg-slate-50 dark:border-white/10 dark:bg-slate-950">
               {PERIOD_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
@@ -292,7 +292,7 @@ export function OwnerDashboard() {
                   className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
                     range === opt.value
                       ? 'bg-indigo-600 text-white'
-                      : 'text-slate-600 hover:bg-slate-100'
+                      : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10'
                   }`}
                 >
                   {opt.label}
@@ -694,15 +694,15 @@ export function OwnerDashboard() {
         <div className="mt-4 grid grid-cols-3 gap-3">
           <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
             <p className="text-xl font-bold text-slate-900">{num(serviceSales.totalOffers)}</p>
-            <p className="text-xs text-slate-500 mt-0.5">Serviços cadastrados</p>
+            <p className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">Serviços cadastrados</p>
           </div>
           <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
             <p className="text-xl font-bold text-emerald-700">{num(serviceSales.activePublicOffers)}</p>
-            <p className="text-xs text-slate-500 mt-0.5">Serviços públicos ativos</p>
+            <p className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">Serviços públicos ativos</p>
           </div>
           <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
             <p className="text-xl font-bold text-indigo-700">{num(serviceSales.trainersWithActiveOffers)}</p>
-            <p className="text-xs text-slate-500 mt-0.5">Trainers com ofertas ativas</p>
+            <p className="text-xs text-slate-500 mt-0.5 dark:text-slate-400">Trainers com ofertas ativas</p>
           </div>
         </div>
       </Section>
@@ -727,6 +727,8 @@ export function OwnerDashboard() {
     </PageContainer>
   );
 }
+
+
 
 
 

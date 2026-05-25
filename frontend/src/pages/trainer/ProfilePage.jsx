@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import { trainerService } from '../../services/trainerService';
 import { useToast } from '../../components/ui/Toast';
 import { Input } from '../../components/ui/Input';
@@ -194,13 +194,13 @@ export function ProfilePage() {
                     <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-cyan-100 text-sm font-semibold text-cyan-800">{getInitials(form.name || form.brandName)}</div>
                   )}
                   <p className="mt-2 font-semibold text-slate-900">{form.brandName || 'Sua marca'}</p>
-                  <p className="text-xs text-slate-500">{form.specialties || 'Especialidades em fitness e performance'}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{form.specialties || 'Especialidades em fitness e performance'}</p>
                 </div>
               </div>
             </PreviewCard>
 
             <PreviewCard title={t('trainer.profile.logoTitle')} subtitle={t('trainer.profile.logoSubtitle')}>
-              {form.logoUrl ? <img src={form.logoUrl} alt="Logo" className="h-20 w-auto rounded-lg border border-slate-200 bg-white p-2" /> : <p className="text-sm text-slate-500">Adicione sua logo para fortalecer sua identidade.</p>}
+              {form.logoUrl ? <img src={form.logoUrl} alt="Logo" className="h-20 w-auto rounded-lg border border-slate-200 bg-white p-2" /> : <p className="text-sm text-slate-500 dark:text-slate-400">Adicione sua logo para fortalecer sua identidade.</p>}
             </PreviewCard>
           </div>
         </div>
@@ -210,3 +210,5 @@ export function ProfilePage() {
     </FormPage>
   );
 }
+
+

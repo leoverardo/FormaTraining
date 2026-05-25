@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { uploadService } from '../../services/uploadService';
 import { useToast } from './Toast';
 import { Video, X, Loader2 } from 'lucide-react';
@@ -8,8 +8,8 @@ export function VideoUpload({
   currentUrl,
   onUploaded,
   onRemoved,
-  label = 'Vídeo',
-  description = 'MP4, WebM · máx. 100 MB',
+  label = 'VÃ­deo',
+  description = 'MP4, WebM Â· mÃ¡x. 100 MB',
   disabled = false,
   className = '',
 }) {
@@ -23,11 +23,11 @@ export function VideoUpload({
 
     const allowed = ['video/mp4', 'video/webm', 'video/quicktime'];
     if (!allowed.includes(file.type)) {
-      toast('Tipo de vídeo não permitido. Use MP4, WebM ou MOV.', 'error');
+      toast('Tipo de vÃ­deo nÃ£o permitido. Use MP4, WebM ou MOV.', 'error');
       return;
     }
     if (file.size > 100 * 1024 * 1024) {
-      toast('Vídeo muito grande. Máximo: 100 MB.', 'error');
+      toast('VÃ­deo muito grande. MÃ¡ximo: 100 MB.', 'error');
       return;
     }
 
@@ -40,10 +40,10 @@ export function VideoUpload({
       const media = res.data.data;
       setPreview(media.url);
       onUploaded?.(media);
-      toast('Vídeo enviado com sucesso!');
+      toast('VÃ­deo enviado com sucesso!');
     } catch (err) {
       setPreview(currentUrl || null);
-      toast(err.response?.data?.message || 'Erro ao enviar vídeo.', 'error');
+      toast(err.response?.data?.message || 'Erro ao enviar vÃ­deo.', 'error');
     } finally {
       setUploading(false);
     }
@@ -57,15 +57,15 @@ export function VideoUpload({
 
   return (
     <div className={`space-y-1 ${className}`}>
-      {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
+      {label && <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">{label}</label>}
 
       {preview ? (
-        <div className="relative rounded-2xl overflow-hidden border border-gray-200 bg-black">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-black dark:border-white/10">
           <video src={preview} className="w-full h-40 object-contain" controls={!uploading} />
           {uploading && (
             <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2">
               <Loader2 size={28} className="text-white animate-spin" />
-              <p className="text-white text-sm">Enviando vídeo...</p>
+              <p className="text-white text-sm">Enviando vÃ­deo...</p>
             </div>
           )}
           {!uploading && !disabled && (
@@ -81,19 +81,19 @@ export function VideoUpload({
           onDrop={(e) => { e.preventDefault(); if (!disabled && !uploading) handleFile(e.dataTransfer.files?.[0]); }}
           onDragOver={(e) => e.preventDefault()}
           className={`border-2 border-dashed rounded-2xl px-4 py-8 text-center cursor-pointer transition-all ${
-            disabled || uploading ? 'opacity-50 cursor-not-allowed border-gray-200' :
-            'border-gray-300 hover:border-indigo-400 hover:bg-indigo-50/30'
+            disabled || uploading ? 'cursor-not-allowed border-slate-200 opacity-50 dark:border-white/10' :
+            'border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/30 dark:border-white/15 dark:hover:bg-indigo-500/10'
           }`}
         >
           <div className="flex flex-col items-center gap-2">
-            <div className="p-3 bg-gray-100 rounded-xl">
-              <Video size={22} className="text-gray-400" />
+            <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-800">
+              <Video size={22} className="text-slate-400 dark:text-slate-300" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-700">
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                 <span className="text-indigo-600">Clique para enviar</span> ou arraste aqui
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">{description}</p>
+              <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{description}</p>
             </div>
           </div>
         </div>
@@ -110,4 +110,5 @@ export function VideoUpload({
     </div>
   );
 }
+
 

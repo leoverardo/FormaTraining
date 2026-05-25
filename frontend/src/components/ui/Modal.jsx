@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+﻿import { X } from 'lucide-react';
 
 export function Modal({ open, onClose, title, description, children, size = 'md' }) {
   if (!open) return null;
@@ -12,7 +12,7 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
             {description ? <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p> : null}
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-slate-400">
+          <button onClick={onClose} className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/10">
             <X size={18} />
           </button>
         </div>
@@ -21,4 +21,5 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
     </div>
   );
 }
+
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { notificationService } from '../../services/notificationService';
 import { Bell } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -61,7 +61,7 @@ export function NotificationBell() {
 
   return (
     <div className="relative">
-      <button onClick={handleOpen} className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-slate-300 transition-colors" aria-label={t('common.notifications')}>
+      <button onClick={handleOpen} className="relative rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10" aria-label={t('common.notifications')}>
         <Bell size={20} />
         {count > 0 && (
           <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center leading-none">
@@ -73,9 +73,9 @@ export function NotificationBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-10 w-80 bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl z-50 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10 flex justify-between items-center">
-              <span className="font-semibold text-sm text-gray-900 dark:text-white">{t('common.notifications')}</span>
+          <div className="absolute right-0 top-10 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-white/10">
+              <span className="text-sm font-semibold text-slate-900 dark:text-white">{t('common.notifications')}</span>
               {count > 0 && (
                 <button
                   onClick={async () => {
@@ -95,20 +95,20 @@ export function NotificationBell() {
             </div>
             <div className="max-h-80 overflow-y-auto">
               {notifications.length === 0 ? (
-                <p className="text-center text-sm text-gray-400 dark:text-slate-400 py-8">{t('common.noNotifications')}</p>
+                <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-400">{t('common.noNotifications')}</p>
               ) : (
                 notifications.map((n, index) => (
                   <div
                     key={resolveNotificationId(n) ?? `notification-${index}`}
                     onClick={() => markRead(resolveNotificationId(n))}
-                    className={`px-4 py-3 border-b border-gray-50 dark:border-white/5 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors ${!n.isRead ? 'bg-indigo-50/40 dark:bg-indigo-500/10' : ''}`}
+                    className={`cursor-pointer border-b border-slate-50 px-4 py-3 transition-colors hover:bg-slate-50 dark:border-white/5 dark:hover:bg-white/5 ${!n.isRead ? 'bg-indigo-50/40 dark:bg-indigo-500/10' : ''}`}
                   >
                     <div className="flex items-start gap-2">
                       {!n.isRead && <div className="w-2 h-2 bg-indigo-500 rounded-full mt-1.5 shrink-0" />}
                       <div className={!n.isRead ? '' : 'ml-4'}>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{formatNotificationType(n.title || n.type || '')}</p>
-                        <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">{n.message}</p>
-                        <p className="text-xs text-gray-300 dark:text-slate-500 mt-1">{new Date(n.createdAt).toLocaleDateString(language === 'pt-BR' ? 'pt-BR' : 'en-US')}</p>
+                        <p className="text-sm font-medium text-slate-900 dark:text-white">{formatNotificationType(n.title || n.type || '')}</p>
+                        <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{n.message}</p>
+                        <p className="mt-1 text-xs text-slate-300 dark:text-slate-500">{new Date(n.createdAt).toLocaleDateString(language === 'pt-BR' ? 'pt-BR' : 'en-US')}</p>
                       </div>
                     </div>
                   </div>
@@ -121,3 +121,4 @@ export function NotificationBell() {
     </div>
   );
 }
+

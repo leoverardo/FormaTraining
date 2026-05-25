@@ -70,16 +70,16 @@ export function SchedulePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Rotina Semanal</h1>
-        <p className="text-gray-500 text-sm mt-1">Monte a rotina semanal por aluno</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Rotina Semanal</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Monte a rotina semanal por aluno</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900">
         <div className="flex items-end gap-4 flex-wrap">
           <div className="flex-1 min-w-48">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Selecionar aluno</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Selecionar aluno</label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-white/10 dark:bg-slate-950 dark:text-white"
               value={selectedStudent}
               onChange={e => setSelectedStudent(e.target.value)}
             >
@@ -100,13 +100,13 @@ export function SchedulePage() {
       ) : loadingSchedule ? <LoadingState /> : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {scheduleByDay.map(({ day, idx, items }) => (
-            <div key={idx} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
-                <p className="font-semibold text-sm text-gray-700">{day}</p>
+            <div key={idx} className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-slate-900">
+              <div className="border-b border-slate-100 bg-slate-50 px-4 py-3 dark:border-white/10 dark:bg-slate-950">
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{day}</p>
               </div>
               <div className="px-4 py-3 min-h-[80px]">
                 {items.length === 0 ? (
-                  <p className="text-xs text-gray-300 text-center py-4">Descanso</p>
+                  <p className="py-4 text-center text-xs text-slate-300 dark:text-slate-500">Descanso</p>
                 ) : items.map(s => (
                   <div key={s.id} className="flex items-center justify-between gap-2 bg-indigo-50 rounded-lg px-3 py-2 mb-2">
                     <p className="text-xs font-medium text-indigo-700 leading-snug">{s.workoutName}</p>
@@ -122,14 +122,14 @@ export function SchedulePage() {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={t('trainer.schedule.addWorkoutToRoutine')}>
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Dia da semana</label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={form.dayOfWeek} onChange={e => setForm(p => ({ ...p, dayOfWeek: parseInt(e.target.value) }))}>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Dia da semana</label>
+            <select className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-white/10 dark:bg-slate-950 dark:text-white" value={form.dayOfWeek} onChange={e => setForm(p => ({ ...p, dayOfWeek: parseInt(e.target.value) }))}>
               {days.map((d, i) => <option key={i} value={i}>{d}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('nav.workouts')}</label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={form.workoutId} onChange={e => setForm(p => ({ ...p, workoutId: e.target.value }))} required>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">{t('nav.workouts')}</label>
+            <select className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-white/10 dark:bg-slate-950 dark:text-white" value={form.workoutId} onChange={e => setForm(p => ({ ...p, workoutId: e.target.value }))} required>
               <option value="">{t('trainer.schedule.select')}...</option>
               {workouts.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
             </select>
@@ -146,6 +146,7 @@ export function SchedulePage() {
     </div>
   );
 }
+
 
 
 

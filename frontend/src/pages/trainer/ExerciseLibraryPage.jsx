@@ -118,7 +118,7 @@ export function ExerciseLibraryPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((item) => (
-            <article key={item.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)]">
+            <article key={item.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-slate-900 dark:shadow-[0_14px_30px_rgba(2,6,23,0.45)]">
               {item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover" /> : <Placeholder name={item.name} />}
               <div className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
@@ -126,9 +126,9 @@ export function ExerciseLibraryPage() {
                   <Badge variant="gray">{item.level ? levelLabel(item.level) : t('trainer.exerciseLibrary.freeLevel')}</Badge>
                 </div>
                 <h3 className={`truncate text-sm font-semibold ${themeClasses.cardTitle}`}>{item.name}</h3>
-                <p className="mt-0.5 text-xs text-slate-500">{item.muscleGroup || t('trainer.exerciseLibrary.groupNotInformed')}</p>
-                <p className="mt-2 line-clamp-2 text-xs text-slate-600">{item.description || t('trainer.exerciseLibrary.defaultDescription')}</p>
-                <div className="mt-4 flex gap-2 border-t border-slate-100 pt-3">
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{item.muscleGroup || t('trainer.exerciseLibrary.groupNotInformed')}</p>
+                <p className="mt-2 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">{item.description || t('trainer.exerciseLibrary.defaultDescription')}</p>
+                <div className="mt-4 flex gap-2 border-t border-slate-100 dark:border-white/10 pt-3">
                   <Button
                     className="flex-1"
                     size="sm"
@@ -151,4 +151,6 @@ export function ExerciseLibraryPage() {
     </FormPage>
   );
 }
+
+
 
