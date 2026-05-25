@@ -12,12 +12,88 @@ namespace FitPlatform.Infrastructure.Migrations
         {
             migrationBuilder.Sql(
                 """
+                IF COL_LENGTH('dbo.PlatformPlans', 'Code') IS NULL
+                BEGIN
+                    ALTER TABLE dbo.PlatformPlans
+                    ADD Code NVARCHAR(50) NULL;
+                END;
+
+                IF COL_LENGTH('dbo.PlatformPlans', 'HasUnlimitedStudents') IS NULL
+                BEGIN
+                    ALTER TABLE dbo.PlatformPlans
+                    ADD HasUnlimitedStudents bit NOT NULL CONSTRAINT DF_PlatformPlans_HasUnlimitedStudents DEFAULT(0);
+                END;
+
+                IF COL_LENGTH('dbo.PlatformPlans', 'IsPublic') IS NULL
+                BEGIN
+                    ALTER TABLE dbo.PlatformPlans
+                    ADD IsPublic bit NOT NULL CONSTRAINT DF_PlatformPlans_IsPublic DEFAULT(1);
+                END;
+
+                IF COL_LENGTH('dbo.PlatformPlans', 'IsComingSoon') IS NULL
+                BEGIN
+                    ALTER TABLE dbo.PlatformPlans
+                    ADD IsComingSoon bit NOT NULL CONSTRAINT DF_PlatformPlans_IsComingSoon DEFAULT(0);
+                END;
+
+                IF COL_LENGTH('dbo.PlatformPlans', 'IsAvailableForPurchase') IS NULL
+                BEGIN
+                    ALTER TABLE dbo.PlatformPlans
+                    ADD IsAvailableForPurchase bit NOT NULL CONSTRAINT DF_PlatformPlans_IsAvailableForPurchase DEFAULT(1);
+                END;
+                """);
+
+            migrationBuilder.Sql(
+                """
                 UPDATE PlatformPlans
                 SET Code = CASE
                     WHEN UPPER(ISNULL(Code, '')) = '' AND UPPER(Name) IN ('STARTER','BASIC') THEN 'BASIC'
                     WHEN UPPER(ISNULL(Code, '')) = '' AND UPPER(Name) = 'PRO' THEN 'PRO'
                     WHEN UPPER(ISNULL(Code, '')) = '' AND UPPER(Name) = 'GROWTH' THEN 'GROWTH'
                     ELSE UPPER(Code)
+                END;
+                UPDATE dbo.PlatformPlans
+                SET Code = UPPER(Name)
+                WHERE Code IS NULL OR LTRIM(RTRIM(Code)) = '';
+                """);
+
+            migrationBuilder.Sql(
+                """
+                IF EXISTS (SELECT 1 FROM dbo.PlatformPlans WHERE Code IS NULL OR LTRIM(RTRIM(Code)) = '')
+                BEGIN
+                    THROW 50001, 'Não foi possível normalizar PlatformPlans.Code para todos os registros.', 1;
+                END;
+
+                IF EXISTS (
+                    SELECT Code
+                    FROM dbo.PlatformPlans
+                    GROUP BY Code
+                    HAVING COUNT(*) > 1
+                )
+                BEGIN
+                    ;WITH dupes AS (
+                        SELECT
+                            Id,
+                            Code,
+                            ROW_NUMBER() OVER (PARTITION BY Code ORDER BY CreatedAt, Id) AS rn
+                        FROM dbo.PlatformPlans
+                    )
+                    UPDATE p
+                    SET p.Code = CONCAT(p.Code, '_', RIGHT(CONVERT(varchar(36), p.Id), 8))
+                    FROM dbo.PlatformPlans p
+                    INNER JOIN dupes d ON d.Id = p.Id
+                    WHERE d.rn > 1;
+                END;
+                """);
+
+            migrationBuilder.Sql(
+                """
+                ALTER TABLE dbo.PlatformPlans
+                ALTER COLUMN Code NVARCHAR(50) NOT NULL;
+
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PlatformPlans_Code' AND object_id = OBJECT_ID('dbo.PlatformPlans'))
+                BEGIN
+                    CREATE UNIQUE INDEX IX_PlatformPlans_Code ON dbo.PlatformPlans(Code);
                 END;
                 """);
 
@@ -83,40 +159,36 @@ namespace FitPlatform.Infrastructure.Migrations
                     UPDATE PlatformPlanPrices SET Price = 575.04, Active = 1 WHERE PlatformPlanId = @basicId AND BillingCycle = 4;
 
                     UPDATE PlanBillingOptions SET
-                        MonthlyPrice = 59.90,
+                        MonthsCount = 1,
                         BasePriceInCents = 5990,
                         CycleDiscountPercent = 0,
-                        CycleDiscountAmountInCents = 0,
                         FinalPriceInCents = 5990,
                         IsActive = 1,
                         UpdatedAt = SYSUTCDATETIME()
                     WHERE PlatformPlanId = @basicId AND BillingCycle = 1;
 
                     UPDATE PlanBillingOptions SET
-                        MonthlyPrice = 59.90,
+                        MonthsCount = 3,
                         BasePriceInCents = 17970,
                         CycleDiscountPercent = 10,
-                        CycleDiscountAmountInCents = 1797,
                         FinalPriceInCents = 16173,
                         IsActive = 1,
                         UpdatedAt = SYSUTCDATETIME()
                     WHERE PlatformPlanId = @basicId AND BillingCycle = 2;
 
                     UPDATE PlanBillingOptions SET
-                        MonthlyPrice = 59.90,
+                        MonthsCount = 6,
                         BasePriceInCents = 35940,
                         CycleDiscountPercent = 15,
-                        CycleDiscountAmountInCents = 5391,
                         FinalPriceInCents = 30549,
                         IsActive = 1,
                         UpdatedAt = SYSUTCDATETIME()
                     WHERE PlatformPlanId = @basicId AND BillingCycle = 3;
 
                     UPDATE PlanBillingOptions SET
-                        MonthlyPrice = 59.90,
+                        MonthsCount = 12,
                         BasePriceInCents = 71880,
                         CycleDiscountPercent = 20,
-                        CycleDiscountAmountInCents = 14376,
                         FinalPriceInCents = 57504,
                         IsActive = 1,
                         UpdatedAt = SYSUTCDATETIME()
