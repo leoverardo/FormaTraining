@@ -228,6 +228,8 @@ public class AppDbContext : DbContext
         {
             e.HasIndex(w => new { w.Provider, w.EventId }).IsUnique();
             e.HasIndex(w => w.ResourceId);
+            e.HasIndex(w => w.ProcessingStatus);
+            e.Property(w => w.ProcessingStatus).HasConversion<int>();
         });
         modelBuilder.Entity<DiscountCoupon>(e =>
         {

@@ -9,7 +9,7 @@ export function ImageUpload({
   onUploaded,
   onRemoved,
   label = 'Imagem',
-  description = 'JPG, PNG ou WebP Â· mÃ¡x. 5 MB',
+  description = 'JPG, PNG ou WebP - máx. 5 MB',
   disabled = false,
   studentId,
   isPublic = false,
@@ -25,11 +25,11 @@ export function ImageUpload({
 
     const allowed = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowed.includes(file.type)) {
-      toast('Tipo de arquivo nÃ£o permitido. Use JPG, PNG ou WebP.', 'error');
+      toast('Tipo de arquivo não permitido. Use JPG, PNG ou WebP.', 'error');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast('Imagem muito grande. MÃ¡ximo permitido: 5 MB.', 'error');
+      toast('Imagem muito grande. Máximo permitido: 5 MB.', 'error');
       return;
     }
 
@@ -132,5 +132,4 @@ export function ImageUpload({
     </div>
   );
 }
-
 

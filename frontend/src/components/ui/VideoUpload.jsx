@@ -8,8 +8,8 @@ export function VideoUpload({
   currentUrl,
   onUploaded,
   onRemoved,
-  label = 'VÃ­deo',
-  description = 'MP4, WebM Â· mÃ¡x. 100 MB',
+  label = 'Vídeo',
+  description = 'MP4, WebM - máx. 100 MB',
   disabled = false,
   className = '',
 }) {
@@ -23,11 +23,11 @@ export function VideoUpload({
 
     const allowed = ['video/mp4', 'video/webm', 'video/quicktime'];
     if (!allowed.includes(file.type)) {
-      toast('Tipo de vÃ­deo nÃ£o permitido. Use MP4, WebM ou MOV.', 'error');
+      toast('Tipo de vídeo não permitido. Use MP4, WebM ou MOV.', 'error');
       return;
     }
     if (file.size > 100 * 1024 * 1024) {
-      toast('VÃ­deo muito grande. MÃ¡ximo: 100 MB.', 'error');
+      toast('Vídeo muito grande. Máximo: 100 MB.', 'error');
       return;
     }
 
@@ -40,10 +40,10 @@ export function VideoUpload({
       const media = res.data.data;
       setPreview(media.url);
       onUploaded?.(media);
-      toast('VÃ­deo enviado com sucesso!');
+      toast('Vídeo enviado com sucesso!');
     } catch (err) {
       setPreview(currentUrl || null);
-      toast(err.response?.data?.message || 'Erro ao enviar vÃ­deo.', 'error');
+      toast(err.response?.data?.message || 'Erro ao enviar vídeo.', 'error');
     } finally {
       setUploading(false);
     }
@@ -65,7 +65,7 @@ export function VideoUpload({
           {uploading && (
             <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2">
               <Loader2 size={28} className="text-white animate-spin" />
-              <p className="text-white text-sm">Enviando vÃ­deo...</p>
+              <p className="text-white text-sm">Enviando vídeo...</p>
             </div>
           )}
           {!uploading && !disabled && (
@@ -110,5 +110,4 @@ export function VideoUpload({
     </div>
   );
 }
-
 

@@ -316,7 +316,7 @@ export function OwnerDashboard() {
           title={`Receita (${periodLabel})`}
           value={money(revenue.revenueInPeriod)}
           subtitle={`Crescimento mês: ${pct(revenue.growthPercentageComparedToLastMonth)}`}
-          badge={revenue.growthPercentageComparedToLastMonth > 0 ? `?' ${pct(revenue.growthPercentageComparedToLastMonth)} vs mês anterior` : undefined}
+          badge={revenue.growthPercentageComparedToLastMonth > 0 ? `${pct(revenue.growthPercentageComparedToLastMonth)} vs mês anterior` : undefined}
           icon={ArrowUpRight}
           tone="emerald"
         />

@@ -16,7 +16,7 @@ import { ChevronLeft, Plus, Trash2, TrendingUp, Camera } from 'lucide-react';
 import { useI18n } from '../../i18n';
 
 const TABS = ['Dados', 'Rotina', 'Progresso', 'Fotos', 'Habitos'];
-const days = ['Domingo', 'Segunda', 'TerÃ§a', 'Quarta', 'Quinta', 'Sexta', 'SÃ¡bado'];
+const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 const emptyProgress = { weight: '', height: '', chest: '', waist: '', abdomen: '', hip: '', rightArm: '', leftArm: '', rightThigh: '', leftThigh: '', bodyFatPercentage: '', notes: '', progressDate: new Date().toISOString().split('T')[0] };
 
@@ -242,7 +242,7 @@ export function StudentDetailPage() {
           <Row label="Telefone" value={student.phone} />
           <Row label="Objetivo" value={student.goal} />
           <Row label="Data de nasc." value={student.birthDate ? new Date(student.birthDate).toLocaleDateString('pt-BR') : null} />
-          <Row label="ObservaÃ§Ãµes" value={student.notes} />
+          <Row label="Observações" value={student.notes} />
           <Row label="Cadastrado em" value={new Date(student.createdAt).toLocaleDateString('pt-BR')} />
           <div className="pt-4 border-t border-slate-100 dark:border-white/10 flex gap-2">
             <Button size="sm" variant="secondary" onClick={() => studentService.resendAccessEmail(id).then(() => toast('E-mail reenviado!')).catch(() => toast('Erro', 'error'))}>
@@ -280,7 +280,7 @@ export function StudentDetailPage() {
           </div>
 
           {progress.length === 0 ? (
-            <EmptyState icon={TrendingUp} title="Nenhum registro de progresso" description="Registre o progresso fÃ­sico deste aluno." action={<Button size="sm" onClick={() => setProgressModal(true)}><Plus size={14} />Registrar</Button>} />
+            <EmptyState icon={TrendingUp} title="Nenhum registro de progresso" description="Registre o progresso físico deste aluno." action={<Button size="sm" onClick={() => setProgressModal(true)}><Plus size={14} />Registrar</Button>} />
           ) : (
             <div className="space-y-3">
               {progress.map(p => (
@@ -293,7 +293,7 @@ export function StudentDetailPage() {
                     <button onClick={() => deleteProgress(p.id)} className="p-1 rounded-lg hover:bg-red-50 text-red-400 transition-colors"><Trash2 size={14} /></button>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                    {[['Peso', p.weight, 'kg'], ['Altura', p.height, 'cm'], ['Peito', p.chest, 'cm'], ['Cintura', p.waist, 'cm'], ['AbdÃ´men', p.abdomen, 'cm'], ['Quadril', p.hip, 'cm'], ['BraÃ§o D', p.rightArm, 'cm'], ['BraÃ§o E', p.leftArm, 'cm'], ['Coxa D', p.rightThigh, 'cm'], ['% Gordura', p.bodyFatPercentage, '%']].filter(([, v]) => v != null).map(([label, value, unit]) => (
+                    {[['Peso', p.weight, 'kg'], ['Altura', p.height, 'cm'], ['Peito', p.chest, 'cm'], ['Cintura', p.waist, 'cm'], ['Abdômen', p.abdomen, 'cm'], ['Quadril', p.hip, 'cm'], ['Braço D', p.rightArm, 'cm'], ['Braço E', p.leftArm, 'cm'], ['Coxa D', p.rightThigh, 'cm'], ['% Gordura', p.bodyFatPercentage, '%']].filter(([, v]) => v != null).map(([label, value, unit]) => (
                       <div key={label} className="bg-slate-50 dark:bg-slate-950 rounded-xl px-3 py-2 text-center">
                         <p className="text-xs text-slate-400 dark:text-slate-500">{label}</p>
                         <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{value}{unit}</p>
@@ -312,13 +312,13 @@ export function StudentDetailPage() {
       {activeTab === 'Fotos' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-slate-400 dark:text-slate-500">{photos.length} fotos Â· ConteÃºdo privado</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">{photos.length} fotos - Conteúdo privado</p>
             <Button size="sm" onClick={() => setPhotoModal(true)}><Plus size={14} />Adicionar</Button>
           </div>
 
           {photos.length >= 2 && (
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-4">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white mb-3">ComparaÃ§Ã£o</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Comparação</p>
               <div className="grid grid-cols-2 gap-4">
                 {[['Foto inicial', compareA, setCompareA], ['Foto atual', compareB, setCompareB]].map(([label, val, setter]) => (
                   <div key={label}>
@@ -435,7 +435,7 @@ export function StudentDetailPage() {
                 <div key={habit.id} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10 p-4 flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-900 dark:text-white">{habit.title}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{habit.category} {habit.targetValue ? `â€¢ ${habit.targetValue} ${habit.targetUnit || ''}` : ''}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{habit.category} {habit.targetValue ? `⬢ ${habit.targetValue} ${habit.targetUnit || ''}` : ''}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant={habit.isActive ? 'success' : 'gray'}>{habit.isActive ? 'Ativo' : 'Inativo'}</Badge>
@@ -455,12 +455,12 @@ export function StudentDetailPage() {
         <form onSubmit={handleAddProgress} className="space-y-4">
           <Input label="Data" type="date" {...pf('progressDate')} />
           <div className="grid grid-cols-2 gap-3">
-            {[['weight', 'Peso (kg)'], ['height', 'Altura (cm)'], ['chest', 'Peito (cm)'], ['waist', 'Cintura (cm)'], ['abdomen', 'AbdÃ´men (cm)'], ['hip', 'Quadril (cm)'], ['rightArm', 'BraÃ§o Direito (cm)'], ['leftArm', 'BraÃ§o Esquerdo (cm)'], ['rightThigh', 'Coxa Direita (cm)'], ['leftThigh', 'Coxa Esquerda (cm)'], ['bodyFatPercentage', '% Gordura']].map(([field, label]) => (
+            {[['weight', 'Peso (kg)'], ['height', 'Altura (cm)'], ['chest', 'Peito (cm)'], ['waist', 'Cintura (cm)'], ['abdomen', 'Abdômen (cm)'], ['hip', 'Quadril (cm)'], ['rightArm', 'Braço Direito (cm)'], ['leftArm', 'Braço Esquerdo (cm)'], ['rightThigh', 'Coxa Direita (cm)'], ['leftThigh', 'Coxa Esquerda (cm)'], ['bodyFatPercentage', '% Gordura']].map(([field, label]) => (
               <Input key={field} label={label} type="number" step="0.01" {...pf(field)} />
             ))}
           </div>
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">ObservaÃ§Ãµes</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">Observações</label>
             <textarea className="w-full px-3 py-2 border border-slate-300 dark:border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" rows={2} {...pf('notes')} />
           </div>
           <div className="flex gap-3">
@@ -476,8 +476,8 @@ export function StudentDetailPage() {
           <Input label="URL da imagem" value={photoForm.imageUrl} onChange={e => setPhotoForm(p => ({ ...p, imageUrl: e.target.value }))} placeholder="https://..." required />
           {photoForm.imageUrl && <img src={photoForm.imageUrl} className="w-full h-40 object-cover rounded-xl" alt="preview" />}
           <Input label="Data da foto" type="date" value={photoForm.photoDate} onChange={e => setPhotoForm(p => ({ ...p, photoDate: e.target.value }))} />
-          <Input label="DescriÃ§Ã£o (opcional)" value={photoForm.description} onChange={e => setPhotoForm(p => ({ ...p, description: e.target.value }))} />
-          <p className="text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 rounded-xl p-3">Fotos sÃ£o privadas e visÃ­veis apenas para o aluno e seu personal trainer.</p>
+          <Input label="Descrição (opcional)" value={photoForm.description} onChange={e => setPhotoForm(p => ({ ...p, description: e.target.value }))} />
+          <p className="text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 rounded-xl p-3">Fotos são privadas e visíveis apenas para o aluno e seu personal trainer.</p>
           <div className="flex gap-3">
             <Button variant="secondary" type="button" onClick={() => setPhotoModal(false)} className="flex-1">Cancelar</Button>
             <Button type="submit" loading={saving} className="flex-1">Adicionar</Button>
@@ -518,6 +518,5 @@ function Row({ label, value }) {
     </div>
   );
 }
-
 
 

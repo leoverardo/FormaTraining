@@ -47,6 +47,8 @@ builder.Services.AddScoped<IDateTimeProvider, SaoPauloDateTimeProvider>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddHttpClient<IPaymentProvider, AbacatePayPaymentProvider>();
 builder.Services.AddScoped<IPaymentWebhookValidator, AbacatePayWebhookValidator>();
+builder.Services.AddScoped<IAbacatePaySignatureValidator, AbacatePaySignatureValidator>();
+builder.Services.AddScoped<IAbacatePayWebhookService, AbacatePayWebhookService>();
 builder.Services.AddScoped<IEmailService, ConsoleEmailService>();
 builder.Services.AddScoped<PasswordSetupService>();
 builder.Services.AddScoped<OnboardingService>();
