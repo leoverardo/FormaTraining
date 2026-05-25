@@ -3,18 +3,26 @@ using FitPlatform.Application.DTOs.Owner;
 using FitPlatform.Domain.Enums;
 using FitPlatform.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FitPlatform.Infrastructure.Services;
 
 public class OwnerDashboardService
 {
     private readonly AppDbContext _db;
+    private readonly ILogger<OwnerDashboardService> _logger;
 
-    public OwnerDashboardService(AppDbContext db) => _db = db;
+    public OwnerDashboardService(AppDbContext db, ILogger<OwnerDashboardService> logger)
+    {
+        _db = db;
+        _logger = logger;
+    }
 
     public async Task<ApiResponse<OwnerDashboardResponse>> GetDashboardAsync(int range = 30)
     {
-        range = range is 7 or 30 or 90 ? range : 30;
+        try
+        {
+            range = range is 7 or 30 or 90 ? range : 30;
 
         var now = DateTime.UtcNow;
         var periodStart = now.AddDays(-range);
@@ -106,7 +114,7 @@ public class OwnerDashboardService
         var trainersAcceptingStudents = await _db.Trainers.AsNoTracking().CountAsync(t => t.User.IsActive && t.AcceptingStudents);
         var newTrainersInPeriod = await _db.Trainers.AsNoTracking().CountAsync(t => t.User.IsActive && t.CreatedAt >= periodStart);
 
-        var recentPayments = await _db.TrainerPayments
+            var recentPayments = await _db.TrainerPayments
             .AsNoTracking()
             .OrderByDescending(p => p.PaidAt ?? p.CreatedAt)
             .Take(20)
@@ -114,13 +122,13 @@ public class OwnerDashboardService
             {
                 PaymentId = p.Id,
                 TrainerId = p.TrainerId,
-                TrainerName = p.Trainer.User.Name,
-                BrandName = p.Trainer.BrandName,
-                PlanName = p.Subscription.PlatformPlan.Name,
-                BillingCycle = p.Subscription.BillingCycle.ToString(),
+                TrainerName = p.Trainer != null && p.Trainer.User != null ? (p.Trainer.User.Name ?? "Treinador sem nome") : "Treinador indisponivel",
+                BrandName = p.Trainer != null ? (p.Trainer.BrandName ?? "Sem marca") : "Sem marca",
+                PlanName = p.Subscription != null && p.Subscription.PlatformPlan != null ? (p.Subscription.PlatformPlan.Name ?? "Plano indisponivel") : "Plano indisponivel",
+                BillingCycle = p.Subscription != null ? p.Subscription.BillingCycle.ToString() : "Unknown",
                 Amount = p.Amount,
                 Status = p.Status.ToString(),
-                Provider = p.Provider,
+                Provider = p.Provider ?? "Unknown",
                 PaidAt = p.PaidAt,
                 CreatedAt = p.CreatedAt
             })
@@ -359,8 +367,8 @@ public class OwnerDashboardService
         var ordersInPeriod = serviceSalesStats?.OrdersInPeriod ?? 0;
         var volumeInPeriod = serviceSalesStats?.VolumeApprovedInPeriod ?? 0m;
 
-        var response = new OwnerDashboardResponse
-        {
+            var response = new OwnerDashboardResponse
+            {
             Range = range,
             Summary = new OwnerSummaryDto
             {
@@ -467,9 +475,18 @@ public class OwnerDashboardService
             TopTrainersByB2C = topTrainersByB2C,
             TopServicesByOrders = topServicesByOrders,
             AttentionItems = attentionItems
-        };
+            };
 
-        return ApiResponse<OwnerDashboardResponse>.Ok(response);
+            return ApiResponse<OwnerDashboardResponse>.Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Owner dashboard failed for range {Range}. Returning fallback payload.", range);
+
+            return ApiResponse<OwnerDashboardResponse>.Ok(
+                new OwnerDashboardResponse { Range = range is 7 or 30 or 90 ? range : 30 },
+                "Dashboard indisponivel temporariamente. Retornando valores padrao.");
+        }
     }
 
     private static decimal GetSubscriptionCycleAmount(SubscriptionSnapshot s)
