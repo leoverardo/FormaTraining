@@ -12,11 +12,13 @@ import { LoadingState } from '../../components/ui/LoadingState';
 import { Users, Plus, Pencil, Trash2, UserCheck, UserX, ChevronRight } from 'lucide-react';
 import { useDomainLabels } from '../../i18n/domainLabels';
 import { themeClasses } from '../../styles/themeClasses';
+import { useI18n } from '../../i18n';
 
 const empty = { name: '', email: '', password: '', phone: '', goal: '', notes: '', activeOnCreate: true };
 
 export function StudentsPage() {
   const { toast } = useToast();
+  const { t } = useI18n();
   const { subscriptionStatusLabel, goalLabel } = useDomainLabels();
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
@@ -173,7 +175,7 @@ export function StudentsPage() {
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        title="Remover aluno"
+        title={t('trainer.students.removeStudent')}
         description={`Deseja remover o aluno "${deleteTarget?.name}"? Esta ação não pode ser desfeita.`}
       />
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import { publicPageService } from '../../services/publicPageService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
@@ -15,6 +15,7 @@ import { Checkbox } from '../../components/forms/Checkbox';
 import { Switch } from '../../components/forms/Switch';
 import { PreviewCard } from '../../components/forms/PreviewCard';
 import { SaveBar } from '../../components/forms/SaveBar';
+import { useI18n } from '../../i18n';
 
 const initialForm = {
   publicSlug: '',
@@ -59,6 +60,7 @@ function mapResponseToForm(payload) {
 
 export function PublicPageSettingsPage() {
   const { toast } = useToast();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -146,7 +148,7 @@ export function PublicPageSettingsPage() {
 
   return (
     <FormPage>
-      <FormHeader title="Editor da Página Pública" description="Configure seu link público, CTA e conteúdos visíveis para captação." />
+      <FormHeader title={t('trainer.publicPage.editorTitle')} description={t('trainer.publicPage.editorDescription')} />
 
       <div className="grid gap-4 lg:hidden">
         <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1">
@@ -158,7 +160,7 @@ export function PublicPageSettingsPage() {
       <form ref={formRef} onSubmit={handleSave} className="space-y-5">
         <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
           <div className={`space-y-5 ${tab === 'preview' ? 'hidden lg:block' : ''}`}>
-            <FormSection icon={Globe} title="Status da página" description="Ative sua vitrine pública quando quiser divulgar.">
+            <FormSection icon={Globe} title={t('trainer.publicPage.statusTitle')} description={t('trainer.publicPage.statusDescription')}>
               <Switch checked={form.publicPageEnabled} onChange={(value) => patchForm({ publicPageEnabled: value })} label={form.publicPageEnabled ? 'Página ativa' : 'Página inativa'} />
               <div className="mt-3 flex flex-col gap-2">
                 <Checkbox checked={form.publicSearchEnabled} onChange={(value) => patchForm({ publicSearchEnabled: value })} label="Aparecer no Explore" />
@@ -166,10 +168,10 @@ export function PublicPageSettingsPage() {
               </div>
             </FormSection>
 
-            <FormSection icon={Link2} title="URL pública" description="Defina seu slug e compartilhe com alunos e leads.">
+            <FormSection icon={Link2} title={t('trainer.publicPage.urlTitle')} description={t('trainer.publicPage.urlDescription')}>
               <FormGrid>
                 <Input label="Slug" placeholder="carlos-trainer" value={form.publicSlug} onChange={(e) => patchForm({ publicSlug: e.target.value })} />
-                <FormField label="URL final">
+                <FormField label={t('trainer.publicPage.finalUrl')}>
                   <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700">{pageUrl || `${window.location.origin}/p/seu-slug`}</div>
                 </FormField>
               </FormGrid>
@@ -196,7 +198,7 @@ export function PublicPageSettingsPage() {
               <Input label="URL do banner público" placeholder="https://..." value={form.publicBannerUrl} onChange={(e) => patchForm({ publicBannerUrl: e.target.value })} />
             </FormSection>
 
-            <FormSection icon={LayoutTemplate} title="Conteúdos visíveis" description="Escolha o que aparece para visitantes.">
+            <FormSection icon={LayoutTemplate} title={t('trainer.publicPage.visibleContentTitle')} description={t('trainer.publicPage.visibleContentDescription')}>
               <div className="flex flex-col gap-2">
                 <Checkbox checked={form.showInstagram} onChange={(value) => patchForm({ showInstagram: value })} label="Mostrar Instagram" />
                 <Checkbox checked={form.showTestimonials} onChange={(value) => patchForm({ showTestimonials: value })} label="Mostrar depoimentos" />
@@ -205,7 +207,7 @@ export function PublicPageSettingsPage() {
           </div>
 
           <div className={`space-y-4 lg:sticky lg:top-6 lg:self-start ${tab === 'edit' ? 'hidden lg:block' : ''}`}>
-            <PreviewCard title="Preview da página" subtitle="Visual resumido da sua página pública.">
+            <PreviewCard title={t('trainer.publicPage.previewTitle')} subtitle={t('trainer.publicPage.previewSubtitle')}>
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                 <div className="relative h-36 bg-[linear-gradient(120deg,_#0f172a,_#0e7490,_#14532d)]">
                   {form.publicBannerUrl ? <img src={form.publicBannerUrl} alt="Banner" className="absolute inset-0 h-full w-full object-cover" /> : null}
@@ -235,3 +237,5 @@ export function PublicPageSettingsPage() {
     </FormPage>
   );
 }
+
+

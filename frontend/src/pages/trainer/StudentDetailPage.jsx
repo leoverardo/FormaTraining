@@ -13,6 +13,7 @@ import { Modal } from '../../components/ui/Modal';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { ChevronLeft, Plus, Trash2, TrendingUp, Camera } from 'lucide-react';
+import { useI18n } from '../../i18n';
 
 const TABS = ['Dados', 'Rotina', 'Progresso', 'Fotos', 'Habitos'];
 const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -23,6 +24,7 @@ export function StudentDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState('Dados');
   const [student, setStudent] = useState(null);
   const [schedules, setSchedules] = useState([]);
@@ -322,7 +324,7 @@ export function StudentDetailPage() {
                   <div key={label}>
                     <p className="text-xs text-gray-400 mb-1">{label}</p>
                     <select className="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 mb-2 bg-white" value={val?.id || ''} onChange={e => setter(photos.find(p => p.id === e.target.value) || null)}>
-                      <option value="">Selecione...</option>
+                      <option value="">{t('common.search')}...</option>
                       {photos.map(p => <option key={p.id} value={p.id}>{new Date(p.photoDate).toLocaleDateString('pt-BR')}</option>)}
                     </select>
                     {val && <img src={val.imageUrl} className="w-full h-36 object-cover rounded-xl" alt="compare" />}
@@ -426,7 +428,7 @@ export function StudentDetailPage() {
           </div>
 
           {habits.length === 0 ? (
-            <EmptyState title="Nenhum habito configurado" description="Crie habitos diarios para acompanhar disciplina e rotina do aluno." />
+            <EmptyState title={t('trainer.studentDetail.noHabitConfigured')} description={t('trainer.studentDetail.noHabitConfiguredDescription')} />
           ) : (
             <div className="space-y-2">
               {habits.map((habit) => (

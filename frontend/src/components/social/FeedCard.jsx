@@ -1,18 +1,20 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import { Avatar } from '../ui/Avatar';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { PostMediaGrid } from './PostMediaGrid';
 import { PostActions } from './PostActions';
+import { useI18n } from '../../i18n';
 
 export function FeedCard({ item }) {
+  const { language } = useI18n();
   const [actionState, setActionState] = useState({
     likesCount: item.likesCount,
     commentsCount: item.commentsCount,
     isLiked: item.isLiked,
     isSaved: item.isSaved,
   });
-  const createdLabel = useMemo(() => new Date(item.createdAt).toLocaleDateString('pt-BR'), [item.createdAt]);
+  const createdLabel = useMemo(() => new Date(item.createdAt).toLocaleDateString(language), [item.createdAt, language]);
 
   const toggleLike = () => {
     setActionState((prev) => ({ ...prev, isLiked: !prev.isLiked, likesCount: prev.likesCount + (prev.isLiked ? -1 : 1) }));
@@ -39,5 +41,3 @@ export function FeedCard({ item }) {
     </Card>
   );
 }
-
-

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { SectionCard } from '../../components/ui/SectionCard';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
 import { trainerService } from '../../services/trainerService';
 import { Users } from 'lucide-react';
+import { useI18n } from '../../i18n';
 
 const statusOptions = ['New', 'Contacted', 'Archived', 'Converted'];
 
@@ -13,6 +14,7 @@ export function TrainerLeadsPage() {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const load = async () => {
     setLoading(true);
@@ -31,40 +33,40 @@ export function TrainerLeadsPage() {
   const updateStatus = async (id, status) => {
     try {
       await trainerService.updateLeadStatus(id, statusOptions.indexOf(status) + 1);
-      toast('Status atualizado.');
+      toast(t('trainer.leads.statusUpdated'));
       load();
     } catch {
-      toast('Falha ao atualizar status.', 'error');
+      toast(t('trainer.leads.statusUpdateError'), 'error');
     }
   };
 
   const convert = async (id) => {
     try {
       await trainerService.convertLeadToStudent(id);
-      toast('Lead convertido em aluno.');
+      toast(t('trainer.leads.convertedSuccess'));
       load();
     } catch (error) {
-      toast(error?.response?.data?.message || 'Falha ao converter lead.', 'error');
+      toast(error?.response?.data?.message || t('trainer.leads.convertError'), 'error');
     }
   };
 
-  if (loading) return <PageContainer><SectionCard title="Leads"><p className="text-sm text-slate-500">Carregando...</p></SectionCard></PageContainer>;
+  if (loading) return <PageContainer><SectionCard title={t('nav.leads')}><p className="text-sm text-slate-500">{t('common.loading')}</p></SectionCard></PageContainer>;
 
   return (
     <PageContainer className="space-y-4">
-      <SectionCard title="Leads de interesse" description="Contatos recebidos pela sua página e exploração pública.">
+      <SectionCard title={t('trainer.leads.title')} description={t('trainer.leads.description')}>
         {leads.length === 0 ? (
-          <EmptyState icon={Users} title="Sem leads por enquanto" description="Quando alguém demonstrar interesse, aparecerá aqui." />
+          <EmptyState icon={Users} title={t('trainer.leads.emptyTitle')} description={t('trainer.leads.emptyDescription')} />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                  <th className="py-2 pr-3">Nome</th>
-                  <th className="py-2 pr-3">Contato</th>
-                  <th className="py-2 pr-3">Objetivo</th>
-                  <th className="py-2 pr-3">Status</th>
-                  <th className="py-2 pr-3">Ações</th>
+                  <th className="py-2 pr-3">{t('public.name')}</th>
+                  <th className="py-2 pr-3">{t('trainer.leads.contact')}</th>
+                  <th className="py-2 pr-3">{t('public.goal')}</th>
+                  <th className="py-2 pr-3">{t('trainer.posts.statusField')}</th>
+                  <th className="py-2 pr-3">{t('trainer.leads.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -89,7 +91,7 @@ export function TrainerLeadsPage() {
                       </select>
                     </td>
                     <td className="py-2 pr-3">
-                      <Button size="sm" onClick={() => convert(lead.id)}>Converter em aluno</Button>
+                      <Button size="sm" onClick={() => convert(lead.id)}>{t('trainer.leads.convert')}</Button>
                     </td>
                   </tr>
                 ))}

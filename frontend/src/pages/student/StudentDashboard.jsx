@@ -12,10 +12,12 @@ import { FeedCard } from '../../components/social/FeedCard';
 import { WorkoutCard, CheckInCard, WeeklyScheduleCard, ProgressMetricCard } from '../../components/fitness/Cards';
 import { mapPostToFeedItem, mockFeedFallback } from '../../features/feed/feedAdapter';
 import { AlertCircle, FileText } from 'lucide-react';
+import { useI18n } from '../../i18n';
 
 const weekDays = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];
 
 export function StudentDashboard() {
+  const { t } = useI18n();
   const [data, setData] = useState(null);
   const [access, setAccess] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -76,8 +78,8 @@ export function StudentDashboard() {
       <PageContainer>
         <EmptyState
           icon={AlertCircle}
-          title="Acesso indisponivel"
-          description={access?.message || 'Seu acesso esta temporariamente indisponivel.'}
+          title={t('student.dashboard.accessUnavailable')}
+          description={access?.message || t('student.dashboard.accessTemporarilyUnavailable')}
         />
       </PageContainer>
     );
@@ -89,7 +91,7 @@ export function StudentDashboard() {
     return {
       day,
       active: !!schedule,
-      label: schedule ? schedule.workoutName : 'Descanso',
+      label: schedule ? schedule.workoutName : t('student.dashboard.rest'),
       workoutId: schedule?.workoutId,
     };
   });
@@ -109,10 +111,10 @@ export function StudentDashboard() {
             onOpen={data?.todayWorkout ? () => navigate(`/student/workouts/${data.todayWorkout.id}`) : undefined}
           />
 
-          <SectionCard title="Feed do personal" description="Dicas, aulas e avisos recentes">
+          <SectionCard title={t('student.dashboard.feedTitle')} description={t('student.dashboard.feedDescription')}>
             <div className="space-y-3">
               {feedItems.length ? feedItems.map((item, index) => <FeedCard key={item.id ?? item.postId ?? item.relatedEntityId ?? `feed-${index}`} item={item} />) : (
-                <EmptyState icon={FileText} title="Ainda nao ha conteudos por aqui" description="Quando seu personal publicar dicas, aulas ou avisos, eles aparecerao neste feed." />
+                <EmptyState icon={FileText} title={t('student.posts.emptyTitle')} description={t('student.posts.emptyDescription')} />
               )}
             </div>
           </SectionCard>
@@ -152,7 +154,7 @@ export function StudentDashboard() {
             )}
           </SectionCard>
 
-          <SectionCard title="Habitos de hoje" description={habitsToday ? `${habitsToday.completedHabits} de ${habitsToday.totalHabits} concluidos` : 'Sem habitos para hoje'}>
+          <SectionCard title={t('student.dashboard.habitsTodayTitle')} description={habitsToday ? t('student.dashboard.habitsProgress', { completed: habitsToday.completedHabits, total: habitsToday.totalHabits }) : t('student.dashboard.noHabitsForToday')}>
             {!habitsToday || habitsToday.totalHabits === 0 ? (
               <p className="text-sm text-slate-500">Seu personal ainda nao configurou habitos diarios.</p>
             ) : (
@@ -183,7 +185,7 @@ export function StudentDashboard() {
             )}
           </SectionCard>
 
-          <SectionCard title="Sua consistencia" description="Acompanhe sua evolucao recente">
+          <SectionCard title={t('student.dashboard.consistencyTitle')} description={t('student.dashboard.consistencyDescription')}>
             {!gamification ? (
               <p className="text-sm text-slate-500">Ainda sem dados suficientes.</p>
             ) : (
@@ -203,7 +205,7 @@ export function StudentDashboard() {
             )}
           </SectionCard>
 
-          <SectionCard title="Metas do mes" description="Progresso atual">
+          <SectionCard title={t('student.dashboard.monthGoalsTitle')} description={t('student.dashboard.currentProgress')}>
             {!gamification?.monthlyGoals ? (
               <p className="text-sm text-slate-500">Metas ainda indisponiveis.</p>
             ) : (
@@ -230,7 +232,7 @@ export function StudentDashboard() {
             )}
           </SectionCard>
 
-          <SectionCard title="Conquistas" description="Ultimas desbloqueadas">
+          <SectionCard title={t('student.dashboard.achievementsTitle')} description={t('student.dashboard.latestUnlocked')}>
             {achievements.length === 0 ? (
               <p className="text-sm text-slate-500">Conclua treinos e habitos para desbloquear suas conquistas.</p>
             ) : (

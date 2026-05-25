@@ -5,6 +5,7 @@ import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { LoadingState } from '../../components/ui/LoadingState';
+import { useI18n } from '../../i18n';
 
 const empty = {
   mainGoal: '',
@@ -44,6 +45,7 @@ const normalizeNum = (v) => (v === null || v === undefined || v === '' ? '' : St
 
 export function StudentAnamnesisPage() {
   const { toast } = useToast();
+  const { t } = useI18n();
   const [form, setForm] = useState(empty);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -152,16 +154,16 @@ export function StudentAnamnesisPage() {
         <form onSubmit={handleSave} className="space-y-5 xl:col-span-2">
           <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="mb-5">
-              <h2 className="text-lg font-semibold text-slate-900">Objetivos do treino</h2>
-              <p className="mt-1 text-sm text-slate-500">Conte um pouco sobre seus objetivos e sua rotina para que os treinos facam mais sentido para voce.</p>
+              <h2 className="text-lg font-semibold text-slate-900">{t('student.anamnesis.trainingGoalsTitle')}</h2>
+              <p className="mt-1 text-sm text-slate-500">{t('student.anamnesis.trainingGoalsDescription')}</p>
             </div>
 
             <div className="space-y-5">
               <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
-                <h3 className="text-sm font-semibold text-slate-900">Objetivo e experiencia</h3>
+                <h3 className="text-sm font-semibold text-slate-900">{t('student.anamnesis.goalAndExperience')}</h3>
                 <div className="mt-4 space-y-4">
                   <SelectField
-                    label="Objetivo principal"
+                    label={t('student.anamnesis.mainGoal')}
                     value={mainGoalSelectValue}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -170,12 +172,12 @@ export function StudentAnamnesisPage() {
                       setForm((p) => ({ ...p, mainGoal: v }));
                     }}
                     options={mainGoalOptions}
-                    placeholder="Selecione seu principal objetivo"
+                    placeholder={t('student.anamnesis.selectMainGoal')}
                   />
                   {mainGoalSelectValue === 'Outro' && (
                     <Input
-                      label="Qual e seu objetivo?"
-                      placeholder="Descreva seu objetivo"
+                      label={t('student.anamnesis.whatIsYourGoal')}
+                      placeholder={t('student.anamnesis.describeYourGoal')}
                       value={customMainGoal}
                       onChange={(e) => {
                         const v = e.target.value;
@@ -186,7 +188,7 @@ export function StudentAnamnesisPage() {
                   )}
 
                   <SelectField
-                    label="Experiencia com treino"
+                    label={t('student.anamnesis.trainingExperience')}
                     value={experienceSelectValue}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -195,12 +197,12 @@ export function StudentAnamnesisPage() {
                       setForm((p) => ({ ...p, trainingExperience: v }));
                     }}
                     options={[...trainingExperienceOptions, ...(experienceSelectValue === 'Outro' ? ['Outro'] : [])]}
-                    placeholder="Selecione sua experiencia"
+                    placeholder={t('student.anamnesis.selectExperience')}
                   />
                   {experienceSelectValue === 'Outro' && (
                     <Input
-                      label="Descreva sua experiencia"
-                      placeholder="Conte um pouco do seu historico"
+                      label={t('student.anamnesis.describeExperience')}
+                      placeholder={t('student.anamnesis.tellHistory')}
                       value={customTrainingExperience}
                       onChange={(e) => {
                         const v = e.target.value;
@@ -213,11 +215,11 @@ export function StudentAnamnesisPage() {
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
-                <h3 className="text-sm font-semibold text-slate-900">Disponibilidade e estrutura</h3>
+                <h3 className="text-sm font-semibold text-slate-900">{t('student.anamnesis.availabilityAndStructure')}</h3>
                 <div className="mt-4 space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <SelectField
-                      label="Dias disponiveis por semana"
+                      label={t('student.anamnesis.availableDaysPerWeek')}
                       value={form.availableDaysPerWeek}
                       onChange={(e) => setForm((p) => ({ ...p, availableDaysPerWeek: e.target.value }))}
                       options={['1', '2', '3', '4', '5', '6', '7']}
@@ -225,7 +227,7 @@ export function StudentAnamnesisPage() {
                     />
 
                     <SelectField
-                      label="Local de treino"
+                      label={t('student.anamnesis.trainingLocation')}
                       value={locationSelectValue}
                       onChange={(e) => {
                         const v = e.target.value;
@@ -240,8 +242,8 @@ export function StudentAnamnesisPage() {
 
                   {locationSelectValue === 'Outro' && (
                     <Input
-                      label="Qual local?"
-                      placeholder="Descreva seu local de treino"
+                      label={t('student.anamnesis.whichLocation')}
+                      placeholder={t('student.anamnesis.describeLocation')}
                       value={customTrainingLocation}
                       onChange={(e) => {
                         const v = e.target.value;
@@ -252,9 +254,9 @@ export function StudentAnamnesisPage() {
                   )}
 
                   <Input
-                    label="Equipamentos disponiveis"
-                    placeholder="Ex.: academia completa, halteres, elasticos, banco, barra..."
-                    hint="Se nao tiver equipamentos, pode escrever 'nenhum'."
+                    label={t('student.anamnesis.availableEquipment')}
+                    placeholder={t('student.anamnesis.availableEquipmentPlaceholder')}
+                    hint={t('student.anamnesis.availableEquipmentHint')}
                     value={form.availableEquipment}
                     onChange={(e) => setForm((p) => ({ ...p, availableEquipment: e.target.value }))}
                   />
@@ -269,28 +271,28 @@ export function StudentAnamnesisPage() {
                 <ShieldAlert size={18} />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">Saude e cuidados</h2>
-                <p className="mt-1 text-sm text-slate-600">Essas informacoes ajudam seu personal a respeitar seus limites e adaptar os exercicios quando necessario.</p>
+                <h2 className="text-lg font-semibold text-slate-900">{t('student.anamnesis.healthAndCareTitle')}</h2>
+                <p className="mt-1 text-sm text-slate-600">{t('student.anamnesis.healthAndCareDescription')}</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <HealthQuestionCard
-                title="Possui alguma lesao anterior ou atual?"
+                title={t('student.anamnesis.injuryQuestion')}
                 active={hasInjuries}
                 onNo={() => setForm((p) => ({ ...p, injuries: '' }))}
                 onYes={() => setForm((p) => ({ ...p, injuries: p.injuries || '' }))}
-                placeholder="Conte quais lesoes ja teve ou ainda possui e se algo incomoda durante o treino."
+                placeholder={t('student.anamnesis.injuryPlaceholder')}
                 value={form.injuries}
                 onChange={(v) => setForm((p) => ({ ...p, injuries: v }))}
               />
 
               <HealthQuestionCard
-                title="Possui alguma restricao de saude relevante para o treino?"
+                title={t('student.anamnesis.restrictionQuestion')}
                 active={hasHealthRestrictions}
                 onNo={() => setForm((p) => ({ ...p, healthRestrictions: '' }))}
                 onYes={() => setForm((p) => ({ ...p, healthRestrictions: p.healthRestrictions || '' }))}
-                placeholder="Ex.: pressao alta, limitacao medica, cirurgia recente ou outra informacao importante."
+                placeholder={t('student.anamnesis.restrictionPlaceholder')}
                 value={form.healthRestrictions}
                 onChange={(v) => setForm((p) => ({ ...p, healthRestrictions: v }))}
               />
@@ -298,17 +300,17 @@ export function StudentAnamnesisPage() {
           </section>
 
           <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-            <h2 className="text-lg font-semibold text-slate-900">Rotina e bem-estar</h2>
+            <h2 className="text-lg font-semibold text-slate-900">{t('student.anamnesis.routineAndWellbeingTitle')}</h2>
 
             <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
               <ScaleInput
-                label="Qualidade do sono"
+                label={t('student.anamnesis.sleepQuality')}
                 value={form.sleepQuality}
                 labels={sleepLabels}
                 onChange={(v) => setForm((p) => ({ ...p, sleepQuality: String(v) }))}
               />
               <ScaleInput
-                label="Nivel de estresse"
+                label={t('student.anamnesis.stressLevel')}
                 value={form.stressLevel}
                 labels={stressLabels}
                 onChange={(v) => setForm((p) => ({ ...p, stressLevel: String(v) }))}
@@ -317,15 +319,15 @@ export function StudentAnamnesisPage() {
 
             <div className="mt-4 space-y-4">
               <TextAreaField
-                label="Rotina alimentar"
-                placeholder="Conte brevemente como costuma ser sua alimentacao no dia a dia."
+                label={t('student.anamnesis.foodRoutine')}
+                placeholder={t('student.anamnesis.foodRoutinePlaceholder')}
                 value={form.foodRoutineNotes}
                 onChange={(e) => setForm((p) => ({ ...p, foodRoutineNotes: e.target.value }))}
               />
 
               <TextAreaField
-                label="Observacoes adicionais"
-                placeholder="Compartilhe qualquer informacao que possa ajudar seu personal."
+                label={t('student.anamnesis.additionalNotes')}
+                placeholder={t('student.anamnesis.additionalNotesPlaceholder')}
                 value={form.additionalNotes}
                 onChange={(e) => setForm((p) => ({ ...p, additionalNotes: e.target.value }))}
               />

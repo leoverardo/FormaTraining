@@ -13,12 +13,14 @@ import { LoadingState } from '../../components/ui/LoadingState';
 import { ClipboardList, Plus, Pencil, Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { useDomainLabels } from '../../i18n/domainLabels';
 import { themeClasses } from '../../styles/themeClasses';
+import { useI18n } from '../../i18n';
 
 const emptyWorkout = { name: '', goal: '', level: 1, description: '', status: 1 };
 
 export function WorkoutsPage() {
   const { toast } = useToast();
   const { levelLabel, subscriptionStatusLabel, goalLabel } = useDomainLabels();
+  const { t } = useI18n();
   const [workouts, setWorkouts] = useState([]);
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -153,10 +155,10 @@ export function WorkoutsPage() {
         </form>
       </Modal>
 
-      <Modal open={!!addExModal} onClose={() => setAddExModal(null)} title={`Adicionar exercício • ${addExModal?.name}`}>
+      <Modal open={!!addExModal} onClose={() => setAddExModal(null)} title={`${t('trainer.workouts.addExercise')} • ${addExModal?.name || ''}`}>
         <form onSubmit={handleAddExercise} className="space-y-4">
           <Select label="Exercício" value={exForm.exerciseId} onChange={e => setExForm(p => ({ ...p, exerciseId: e.target.value }))} required>
-            <option value="">Selecione...</option>
+            <option value="">{t('trainer.schedule.select')}...</option>
             {exercises.map(ex => <option key={ex.id} value={ex.id}>{ex.name}</option>)}
           </Select>
           <div className="grid grid-cols-2 gap-4">

@@ -10,6 +10,7 @@ import { PageContainer } from '../../components/ui/PageContainer';
 import { SectionCard } from '../../components/ui/SectionCard';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { TrendingUp, Plus, Trash2 } from 'lucide-react';
+import { useI18n } from '../../i18n';
 
 const emptyForm = {
   weight: '', height: '', chest: '', waist: '', abdomen: '', hip: '',
@@ -56,6 +57,7 @@ function valueDiff(current, previous) {
 
 export function StudentProgressPage() {
   const { toast } = useToast();
+  const { t, language } = useI18n();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -90,12 +92,12 @@ export function StudentProgressPage() {
         Object.entries(form).map(([k, v]) => [k, k === 'progressDate' || k === 'notes' ? (v || null) : (v === '' ? null : parseFloat(v) || null)]),
       );
       await progressService.createOwn(payload);
-      toast('Progresso registrado!');
+      toast(t('student.progress.savedSuccess'));
       setModalOpen(false);
       setForm(emptyForm);
       load();
     } catch (err) {
-      toast(err.response?.data?.message || 'Erro', 'error');
+      toast(err.response?.data?.message || t('common.error'), 'error');
     } finally {
       setSaving(false);
     }
@@ -104,11 +106,11 @@ export function StudentProgressPage() {
   const handleDelete = async () => {
     try {
       await progressService.deleteOwn(deleteTarget);
-      toast('Registro removido.');
+      toast(t('student.progress.deletedSuccess'));
       setDeleteTarget(null);
       load();
     } catch {
-      toast('Erro', 'error');
+      toast(t('common.error'), 'error');
     }
   };
 
@@ -121,20 +123,20 @@ export function StudentProgressPage() {
       <section className="rounded-3xl bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 p-5 sm:p-6 text-white shadow-[0_16px_38px_rgba(79,70,229,0.32)]">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-indigo-100 text-sm">Acompanhe sua evolução</p>
-            <h1 className="text-2xl sm:text-3xl font-bold mt-1">Meu Progresso</h1>
-            <p className="text-indigo-100 text-sm mt-2">Última atualização: {latest ? new Date(latest.progressDate).toLocaleDateString('pt-BR') : '—'}</p>
+            <p className="text-indigo-100 text-sm">{t('student.progress.trackEvolution')}</p>
+            <h1 className="text-2xl sm:text-3xl font-bold mt-1">{t('nav.progress')}</h1>
+            <p className="text-indigo-100 text-sm mt-2">{t('student.progress.lastUpdate')}: {latest ? new Date(latest.progressDate).toLocaleDateString(language) : '—'}</p>
           </div>
-          <Button size="sm" onClick={() => setModalOpen(true)}><Plus size={14} />Registrar</Button>
+          <Button size="sm" onClick={() => setModalOpen(true)}><Plus size={14} />{t('student.progress.register')}</Button>
         </div>
       </section>
 
       {records.length === 0 ? (
         <EmptyState
           icon={TrendingUp}
-          title="Nenhum registro ainda"
-          description="Comece a registrar seu peso e medidas para acompanhar sua evolução."
-          action={<Button size="sm" onClick={() => setModalOpen(true)}><Plus size={14} />Registrar progresso</Button>}
+          title={t('student.progress.emptyTitle')}
+          description={t('student.progress.emptyDescription')}
+          action={<Button size="sm" onClick={() => setModalOpen(true)}><Plus size={14} />{t('student.progress.registerProgress')}</Button>}
         />
       ) : (
         <>
@@ -151,7 +153,7 @@ export function StudentProgressPage() {
             ))}
           </div>
 
-          <SectionCard title="Linha do tempo" description="Histórico completo de evolução corporal">
+          <SectionCard title={t('student.progress.timelineTitle')} description={t('student.progress.timelineDescription')}>
             <div className="space-y-4">
               {records.map((record, idx) => (
                 <article key={record.id} className="relative rounded-2xl border border-slate-200 p-4">
@@ -160,7 +162,7 @@ export function StudentProgressPage() {
                     <div className="flex items-center gap-3">
                       <span className="h-3 w-3 rounded-full bg-indigo-500 mt-1" />
                       <div>
-                        <p className="font-semibold text-slate-900">{new Date(record.progressDate).toLocaleDateString('pt-BR')}</p>
+                        <p className="font-semibold text-slate-900">{new Date(record.progressDate).toLocaleDateString(language)}</p>
                         <p className="text-xs text-slate-500">Registro #{records.length - idx}</p>
                       </div>
                     </div>
@@ -182,24 +184,24 @@ export function StudentProgressPage() {
         </>
       )}
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Registrar progresso" size="lg">
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={t('student.progress.registerProgress')} size="lg">
         <form onSubmit={handleSave} className="space-y-4">
           <Input label="Data" type="date" {...f('progressDate')} />
           <div className="grid grid-cols-2 gap-3">
             {metricLabels.map(([field, label]) => <Input key={field} label={`${label}${field === 'bodyFatPercentage' ? '' : ' (cm/kg conforme campo)'}`} type="number" step="0.01" {...f(field)} />)}
           </div>
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Observações</label>
+            <label className="block text-sm font-medium text-gray-700">{t('student.progress.notes')}</label>
             <textarea className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" rows={3} value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} />
           </div>
           <div className="flex gap-3">
-            <Button variant="secondary" type="button" onClick={() => setModalOpen(false)} className="flex-1">Cancelar</Button>
-            <Button type="submit" loading={saving} className="flex-1">Salvar</Button>
+            <Button variant="secondary" type="button" onClick={() => setModalOpen(false)} className="flex-1">{t('common.cancel')}</Button>
+            <Button type="submit" loading={saving} className="flex-1">{t('common.save')}</Button>
           </div>
         </form>
       </Modal>
 
-      <ConfirmDialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} title="Remover registro" description="Deseja remover este registro de progresso?" />
+      <ConfirmDialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} title={t('student.progress.removeRecord')} description={t('student.progress.removeRecordConfirm')} />
     </PageContainer>
   );
 }

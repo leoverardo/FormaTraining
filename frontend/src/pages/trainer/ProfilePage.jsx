@@ -16,6 +16,7 @@ import { ColorPickerField } from '../../components/forms/ColorPickerField';
 import { PreviewCard } from '../../components/forms/PreviewCard';
 import { SaveBar } from '../../components/forms/SaveBar';
 import { UploadField } from '../../components/forms/UploadField';
+import { useI18n } from '../../i18n';
 
 const initialForm = {
   name: '', brandName: '', phone: '', cpf: '', birthDate: '',
@@ -35,6 +36,7 @@ function getInitials(name) {
 
 export function ProfilePage() {
   const { toast } = useToast();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(initialForm);
@@ -101,12 +103,12 @@ export function ProfilePage() {
 
   return (
     <FormPage>
-      <FormHeader title="Meu Perfil" description="Organize sua marca profissional com dados, identidade visual e midias." />
+      <FormHeader title={t('nav.myProfile')} description={t('trainer.profile.description')} />
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
         <div className="grid gap-5 xl:grid-cols-[1.25fr_0.8fr]">
           <div className="space-y-5">
-            <FormSection icon={User} title="Dados pessoais" description="Informacoes basicas para contato e identificacao.">
+            <FormSection icon={User} title={t('trainer.profile.personalDataTitle')} description={t('trainer.profile.personalDataDescription')}>
               <FormGrid>
                 <div className="md:col-span-2"><Input label="Nome completo" required {...f('name')} /></div>
                 <Input label="Telefone" placeholder="(11) 99999-9999" {...f('phone')} />
@@ -115,11 +117,11 @@ export function ProfilePage() {
               </FormGrid>
             </FormSection>
 
-            <FormSection icon={Briefcase} title="Dados profissionais" description="Posicionamento da sua consultoria e especialidades.">
+            <FormSection icon={Briefcase} title={t('trainer.profile.professionalDataTitle')} description={t('trainer.profile.professionalDataDescription')}>
               <FormGrid>
                 <div className="md:col-span-2"><Input label="Nome da marca" required {...f('brandName')} /></div>
                 <Input label="CREF" placeholder="000000-G/SP" {...f('cref')} />
-                <FormField label="Instagram" helper="Informe sem @ se preferir.">
+                <FormField label={t('trainer.profile.instagram')} helper={t('trainer.profile.instagramHelper')}>
                   <div className="flex items-center rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus-within:ring-2 focus-within:ring-cyan-200">
                     <span className="text-slate-400">@</span>
                     <input value={form.instagram} onChange={(e) => setForm((p) => ({ ...p, instagram: e.target.value }))} className="ml-1 w-full border-0 p-0 text-slate-800 focus:outline-none" />
@@ -153,9 +155,9 @@ export function ProfilePage() {
               </FormGrid>
             </FormSection>
 
-            <FormSection icon={Sparkles} title="Midias da marca" description="Foto profissional e logo para reforcar sua autoridade.">
+            <FormSection icon={Sparkles} title={t('trainer.profile.brandMediaTitle')} description={t('trainer.profile.brandMediaDescription')}>
               <FormGrid>
-                <UploadField label="Foto de perfil" helper="JPG ou PNG, maximo 5MB.">
+                <UploadField label={t('trainer.profile.profilePhoto')} helper={t('trainer.profile.uploadHelper')}>
                   <ImageUpload
                     category={MediaCategory.TrainerProfile}
                     currentUrl={form.profilePhotoUrl}
@@ -165,7 +167,7 @@ export function ProfilePage() {
                     onRemoved={() => { setProfilePhotoMediaId(null); setForm((p) => ({ ...p, profilePhotoUrl: '' })); }}
                   />
                 </UploadField>
-                <UploadField label="Logo da marca" helper="JPG ou PNG, maximo 5MB.">
+                <UploadField label={t('trainer.profile.brandLogo')} helper={t('trainer.profile.uploadHelper')}>
                   <ImageUpload
                     category={MediaCategory.TrainerLogo}
                     currentUrl={form.logoUrl}
@@ -180,7 +182,7 @@ export function ProfilePage() {
           </div>
 
           <div className="space-y-4 xl:sticky xl:top-6 xl:self-start">
-            <PreviewCard title="Preview da marca" subtitle="Como o aluno visualiza seu perfil.">
+            <PreviewCard title={t('trainer.profile.brandPreviewTitle')} subtitle={t('trainer.profile.brandPreviewSubtitle')}>
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
                 <div className="h-28 p-4" style={{ background: previewGradient }}>
                   <div className="inline-flex rounded-full bg-white/20 px-2 py-1 text-xs font-semibold text-white">Consultoria</div>
@@ -197,7 +199,7 @@ export function ProfilePage() {
               </div>
             </PreviewCard>
 
-            <PreviewCard title="Logo" subtitle="Exibicao institucional">
+            <PreviewCard title={t('trainer.profile.logoTitle')} subtitle={t('trainer.profile.logoSubtitle')}>
               {form.logoUrl ? <img src={form.logoUrl} alt="Logo" className="h-20 w-auto rounded-lg border border-slate-200 bg-white p-2" /> : <p className="text-sm text-slate-500">Adicione sua logo para fortalecer sua identidade.</p>}
             </PreviewCard>
           </div>

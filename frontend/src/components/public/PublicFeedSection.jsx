@@ -1,13 +1,15 @@
 import { PublicFeedCard } from './PublicFeedCard';
 import { EmptyState } from '../ui/EmptyState';
 import { MessageSquare } from 'lucide-react';
+import { useI18n } from '../../i18n';
 
 export function PublicFeedSection({ items, fallbackName, fallbackAvatar, feedRef }) {
+  const { t } = useI18n();
   return (
     <section ref={feedRef} className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">Conteudos e dicas recentes</h2>
-        <p className="mt-1 text-sm text-slate-600 sm:text-base">Acompanhe dicas, treinos e orientacoes publicadas pelo personal.</p>
+        <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">{t('public.feedSectionTitle')}</h2>
+        <p className="mt-1 text-sm text-slate-600 sm:text-base">{t('public.feedSectionDescription')}</p>
       </div>
 
       {items.length ? (
@@ -19,8 +21,8 @@ export function PublicFeedSection({ items, fallbackName, fallbackAvatar, feedRef
       ) : (
         <EmptyState
           icon={MessageSquare}
-          title="Conteudos em breve"
-          description="Novas dicas e orientacoes serao publicadas por aqui." 
+          title={t('public.feedSectionEmptyTitle')}
+          description={t('public.feedSectionEmptyDescription')}
         />
       )}
     </section>

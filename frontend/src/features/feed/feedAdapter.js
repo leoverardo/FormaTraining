@@ -5,7 +5,7 @@
 export function mapPostToFeedItem(post, authorFallback = {}) {
   const media = [];
   if (post.imageUrl) media.push({ type: 'image', url: post.imageUrl, alt: post.title || 'Imagem do post' });
-  if (post.videoUrl) media.push({ type: 'video', url: post.videoUrl, alt: post.title || 'VÃ­deo do post' });
+  if (post.videoUrl) media.push({ type: 'video', url: post.videoUrl, alt: post.title || 'Vídeo do post' });
 
   const resolvedId =
     post.id
@@ -36,7 +36,7 @@ export const feedTabs = [
   { value: 'all', label: 'Todos' },
   { value: 'workout', label: 'Treinos' },
   { value: 'tips', label: 'Dicas' },
-  { value: 'progress', label: 'EvoluÃ§Ã£o' },
+  { value: 'progress', label: 'Evolução' },
   { value: 'class', label: 'Aulas' },
   { value: 'notice', label: 'Avisos' },
 ];
@@ -49,7 +49,7 @@ export const mockFeedFallback = [
     authorRole: 'Trainer',
     createdAt: new Date().toISOString(),
     title: 'Bem-vindo ao seu novo feed',
-    text: 'Aqui vocÃª verÃ¡ treinos, dicas e avisos publicados pelo seu personal.',
+    text: 'Aqui você verá treinos, dicas e avisos publicados pelo seu personal.',
     media: [],
     tags: ['dicas'],
     likesCount: 9,

@@ -6,6 +6,7 @@ import { useToast } from '../../components/ui/Toast';
 import { authService } from '../../services/authService';
 import { useAuth } from '../../contexts/AuthContext';
 import { BrandLogo } from '../../components/brand/BrandLogo';
+import { useI18n } from '../../i18n';
 
 const empty = {
   fullName: '',
@@ -31,6 +32,7 @@ export function StudentRegisterPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useI18n();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -40,7 +42,7 @@ export function StudentRegisterPage() {
       await login(form.email, form.password);
       navigate('/explore', { replace: true });
     } catch (error) {
-      toast(error?.response?.data?.message || 'Falha ao criar conta.', 'error');
+      toast(error?.response?.data?.message || t('auth.studentRegister.createError'), 'error');
     } finally {
       setLoading(false);
     }
@@ -50,39 +52,39 @@ export function StudentRegisterPage() {
     <div className="min-h-screen bg-slate-50 p-4 sm:p-8">
       <div className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
         <div className="mb-3 inline-flex"><BrandLogo showText={false} size="lg" /></div>
-        <h1 className="text-2xl font-bold text-slate-900">Criar conta de aluno</h1>
-        <p className="mt-1 text-sm text-slate-500">Entre como explorador para descobrir personais e conteúdos públicos.</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t('auth.studentRegister.title')}</h1>
+        <p className="mt-1 text-sm text-slate-500">{t('auth.studentRegister.subtitle')}</p>
 
         <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <Input label="Nome completo" value={form.fullName} onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))} required />
+            <Input label={t('auth.studentRegister.fullName')} value={form.fullName} onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))} required />
           </div>
-          <Input label="E-mail" type="email" value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} required />
-          <Input label="Senha" type="password" value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} required />
-          <Input label="Telefone" value={form.phone} onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))} />
-          <Input label="Cidade" value={form.city} onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))} />
-          <Input label="Estado" value={form.state} onChange={(e) => setForm((p) => ({ ...p, state: e.target.value }))} />
-          <Input label="Objetivo" value={form.goal} onChange={(e) => setForm((p) => ({ ...p, goal: e.target.value }))} />
-          <Input label="Interesses" value={form.interests} onChange={(e) => setForm((p) => ({ ...p, interests: e.target.value }))} />
-          <Input label="Nível de treino" value={form.trainingLevel} onChange={(e) => setForm((p) => ({ ...p, trainingLevel: e.target.value }))} />
+          <Input label={t('auth.studentRegister.email')} type="email" value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} required />
+          <Input label={t('auth.studentRegister.password')} type="password" value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} required />
+          <Input label={t('auth.studentRegister.phone')} value={form.phone} onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))} />
+          <Input label={t('student.city')} value={form.city} onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))} />
+          <Input label={t('student.state')} value={form.state} onChange={(e) => setForm((p) => ({ ...p, state: e.target.value }))} />
+          <Input label={t('auth.studentRegister.goal')} value={form.goal} onChange={(e) => setForm((p) => ({ ...p, goal: e.target.value }))} />
+          <Input label={t('auth.studentRegister.interests')} value={form.interests} onChange={(e) => setForm((p) => ({ ...p, interests: e.target.value }))} />
+          <Input label={t('auth.studentRegister.trainingLevel')} value={form.trainingLevel} onChange={(e) => setForm((p) => ({ ...p, trainingLevel: e.target.value }))} />
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Modalidade preferida</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">{t('auth.studentRegister.preferredMode')}</label>
             <select className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" value={form.preferredTrainingMode} onChange={(e) => setForm((p) => ({ ...p, preferredTrainingMode: e.target.value }))}>
-              <option value="online">Online</option>
-              <option value="presencial">Presencial</option>
-              <option value="hibrido">Híbrido</option>
+              <option value="online">{t('domain.serviceMode.Online')}</option>
+              <option value="presencial">{t('domain.serviceMode.InPerson')}</option>
+              <option value="hibrido">{t('domain.serviceMode.Hybrid')}</option>
             </select>
           </div>
           <div className="sm:col-span-2 mt-2">
-            <label className="text-xs block"><input type="checkbox" checked={form.acceptTermsOfUse} onChange={(e) => setForm((p) => ({ ...p, acceptTermsOfUse: e.target.checked }))} /> Li e concordo com os <Link to="/terms-of-use" className="text-indigo-600">Termos de Uso</Link>.</label>
-            <label className="text-xs block"><input type="checkbox" checked={form.acceptPrivacyPolicy} onChange={(e) => setForm((p) => ({ ...p, acceptPrivacyPolicy: e.target.checked }))} /> Li e concordo com a <Link to="/privacy-policy" className="text-indigo-600">Politica de Privacidade</Link>.</label>
-            <label className="text-xs block"><input type="checkbox" checked={form.healthRelatedDataProcessingAcknowledged} onChange={(e) => setForm((p) => ({ ...p, healthRelatedDataProcessingAcknowledged: e.target.checked }))} /> Aviso sobre tratamento de dados de treino, habitos e evolucao (texto sujeito a revisao juridica).</label>
-            <label className="text-xs block"><input type="checkbox" checked={form.marketingEmail} onChange={(e) => setForm((p) => ({ ...p, marketingEmail: e.target.checked }))} /> Aceito marketing por e-mail (opcional).</label>
-            <label className="text-xs block"><input type="checkbox" checked={form.marketingWhatsapp} onChange={(e) => setForm((p) => ({ ...p, marketingWhatsapp: e.target.checked }))} /> Aceito marketing por WhatsApp (opcional).</label>
-            <Button type="submit" className="w-full" loading={loading}>Criar conta</Button>
+            <label className="text-xs block"><input type="checkbox" checked={form.acceptTermsOfUse} onChange={(e) => setForm((p) => ({ ...p, acceptTermsOfUse: e.target.checked }))} /> {t('auth.studentRegister.acceptTermsPrefix')} <Link to="/terms-of-use" className="text-indigo-600">{t('auth.studentRegister.terms')}</Link>.</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.acceptPrivacyPolicy} onChange={(e) => setForm((p) => ({ ...p, acceptPrivacyPolicy: e.target.checked }))} /> {t('auth.studentRegister.acceptPrivacyPrefix')} <Link to="/privacy-policy" className="text-indigo-600">{t('auth.studentRegister.privacyPolicy')}</Link>.</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.healthRelatedDataProcessingAcknowledged} onChange={(e) => setForm((p) => ({ ...p, healthRelatedDataProcessingAcknowledged: e.target.checked }))} /> {t('auth.studentRegister.healthDataNotice')}</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.marketingEmail} onChange={(e) => setForm((p) => ({ ...p, marketingEmail: e.target.checked }))} /> {t('auth.studentRegister.marketingEmail')}</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.marketingWhatsapp} onChange={(e) => setForm((p) => ({ ...p, marketingWhatsapp: e.target.checked }))} /> {t('auth.studentRegister.marketingWhatsapp')}</label>
+            <Button type="submit" className="w-full" loading={loading}>{t('auth.studentRegister.createAccount')}</Button>
           </div>
         </form>
-        <p className="mt-4 text-center text-sm text-slate-500">Já tem conta? <Link to="/login" className="font-semibold text-indigo-600">Entrar</Link></p>
+        <p className="mt-4 text-center text-sm text-slate-500">{t('auth.studentRegister.hasAccount')} <Link to="/login" className="font-semibold text-indigo-600">{t('auth.login.signIn')}</Link></p>
       </div>
     </div>
   );

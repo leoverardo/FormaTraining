@@ -8,12 +8,12 @@ export function StatCard({ title, value, subtitle, icon: Icon, color = 'indigo' 
     blue: 'bg-cyan-100/70 text-cyan-600',
   };
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 shadow-[0_10px_24px_rgba(15,23,42,0.06)] dark:shadow-[0_12px_28px_rgba(2,6,23,0.45)]">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-slate-500 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-slate-900">{value}</p>
-          {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{title}</p>
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
+          {subtitle && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{subtitle}</p>}
         </div>
         {Icon && (
           <div className={`p-3 rounded-xl ${colors[color]}`}>

@@ -15,6 +15,7 @@ import { FormGrid } from '../../components/forms/FormGrid';
 import { Dumbbell, Search, Download, ExternalLink, Library } from 'lucide-react';
 import { useDomainLabels } from '../../i18n/domainLabels';
 import { themeClasses } from '../../styles/themeClasses';
+import { useI18n } from '../../i18n';
 
 const levelOptions = [
   { value: 'all', label: 'Todos os niveis' },
@@ -41,6 +42,7 @@ function Placeholder({ name }) {
 export function ExerciseLibraryPage() {
   const { toast } = useToast();
   const { levelLabel } = useDomainLabels();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
@@ -74,10 +76,10 @@ export function ExerciseLibraryPage() {
     setImportingId(item.id);
     try {
       await exerciseLibraryService.duplicateToMyLibrary(item.id);
-      toast('Exercicio adicionado aos seus exercicios!');
+      toast(t('trainer.exerciseLibrary.addedSuccess'));
       setItems((prev) => prev.map((entry) => (entry.id === item.id ? { ...entry, alreadyAdded: true } : entry)));
     } catch (err) {
-      toast(err.response?.data?.message || 'Erro ao adicionar exercicio', 'error');
+      toast(err.response?.data?.message || t('trainer.exerciseLibrary.addError'), 'error');
     } finally {
       setImportingId(null);
     }
@@ -88,16 +90,16 @@ export function ExerciseLibraryPage() {
   return (
     <FormPage>
       <FormHeader
-        title="Biblioteca Base"
-        description="Explore exercicios prontos e adicione a sua biblioteca pessoal."
-        actions={<Button variant="outline" onClick={() => navigate('/trainer/exercises')}><ExternalLink size={15} />Ver meus exercicios</Button>}
+        title={t('nav.baseLibrary')}
+        description={t('trainer.exerciseLibrary.description')}
+        actions={<Button variant="outline" onClick={() => navigate('/trainer/exercises')}><ExternalLink size={15} />{t('trainer.exerciseLibrary.viewMyExercises')}</Button>}
       />
 
-      <FormSection icon={Search} title="Filtros da biblioteca" description="Use filtros para descobrir exercicios prontos com mais rapidez.">
+      <FormSection icon={Search} title={t('trainer.exerciseLibrary.filtersTitle')} description={t('trainer.exerciseLibrary.filtersDescription')}>
         <FormGrid cols="3">
-          <Input placeholder="Buscar exercicio base" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input placeholder={t('trainer.exerciseLibrary.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} />
           <Select value={muscleFilter} onChange={(e) => setMuscleFilter(e.target.value)}>
-            <option value="all">Todos os grupos</option>
+            <option value="all">{t('trainer.exerciseLibrary.allGroups')}</option>
             {muscleGroups.map((group) => <option key={group} value={group}>{group}</option>)}
           </Select>
           <Select value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)}>
@@ -109,9 +111,9 @@ export function ExerciseLibraryPage() {
       {filtered.length === 0 ? (
         <EmptyState
           icon={Library}
-          title="Nenhum exercicio encontrado"
-          description="Ajuste os filtros ou tente outro termo de busca."
-          action={<Button onClick={() => { setSearch(''); setMuscleFilter('all'); setLevelFilter('all'); }}>Limpar filtros</Button>}
+          title={t('trainer.exerciseLibrary.emptyTitle')}
+          description={t('trainer.exerciseLibrary.emptyDescription')}
+          action={<Button onClick={() => { setSearch(''); setMuscleFilter('all'); setLevelFilter('all'); }}>{t('student.clearFilters')}</Button>}
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -120,12 +122,12 @@ export function ExerciseLibraryPage() {
               {item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover" /> : <Placeholder name={item.name} />}
               <div className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <Badge variant="info">Base Forma Training</Badge>
-                  <Badge variant="gray">{item.level ? levelLabel(item.level) : 'NÃ­vel livre'}</Badge>
+                  <Badge variant="info">{t('trainer.exerciseLibrary.baseBadge')}</Badge>
+                  <Badge variant="gray">{item.level ? levelLabel(item.level) : t('trainer.exerciseLibrary.freeLevel')}</Badge>
                 </div>
                 <h3 className={`truncate text-sm font-semibold ${themeClasses.cardTitle}`}>{item.name}</h3>
-                <p className="mt-0.5 text-xs text-slate-500">{item.muscleGroup || 'Grupo nao informado'}</p>
-                <p className="mt-2 line-clamp-2 text-xs text-slate-600">{item.description || 'Exercicio da biblioteca base pronto para uso.'}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{item.muscleGroup || t('trainer.exerciseLibrary.groupNotInformed')}</p>
+                <p className="mt-2 line-clamp-2 text-xs text-slate-600">{item.description || t('trainer.exerciseLibrary.defaultDescription')}</p>
                 <div className="mt-4 flex gap-2 border-t border-slate-100 pt-3">
                   <Button
                     className="flex-1"
@@ -135,10 +137,10 @@ export function ExerciseLibraryPage() {
                     onClick={() => handleImport(item)}
                   >
                     <Download size={14} />
-                    {item.alreadyAdded ? 'Adicionado' : 'Adicionar'}
+                    {item.alreadyAdded ? t('trainer.exerciseLibrary.added') : t('trainer.exerciseLibrary.add')}
                   </Button>
                   <Button className="flex-1" size="sm" variant="outline" onClick={() => navigate('/trainer/exercises')}>
-                    Ver detalhes
+                    {t('trainer.exerciseLibrary.viewDetails')}
                   </Button>
                 </div>
               </div>

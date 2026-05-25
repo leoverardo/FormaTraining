@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Forma Training",
     "logout": "Sair",
@@ -330,6 +330,98 @@
       "created": "Check-in enviado com sucesso!",
       "sleep": "Sono",
       "training": "Treino"
+    },
+    "posts": {
+      "noTrainerLinked": "You do not have a linked trainer yet.",
+      "loadError": "Failed to load content right now.",
+      "lockedTitle": "This area will be unlocked when you are linked to a trainer.",
+      "lockedDescription": "Find a trainer to unlock your private content.",
+      "emptyTitle": "No content yet",
+      "emptyDescription": "When your trainer posts tips, classes, or notices, they will appear in this feed.",
+      "watchVideo": "Watch video"
+    },
+    "explore": {
+      "heroTitle": "Descubra personais e conte?dos para evoluir",
+      "heroDescription": "Feed p?blico com dicas, aulas e publica??es abertas.",
+      "publicFeedTitle": "Feed p?blico",
+      "feedErrorTitle": "Erro ao carregar feed",
+      "feedEmptyTitle": "Sem conte?dos p?blicos",
+      "feedEmptyDescription": "Publique conte?dos p?blicos para aparecer aqui.",
+      "feedNotAvailable": "O feed Explore ainda n?o est? dispon?vel.",
+      "feedLoadError": "N?o foi poss?vel carregar o feed agora.",
+      "recommendedTitle": "Personais recomendados para voc?",
+      "recommendedErrorTitle": "Erro ao carregar recomenda??es",
+      "recommendedEmptyTitle": "Sem recomenda??es por enquanto",
+      "recommendedEmptyDescription": "As recomenda??es aparecer?o quando houver personais p?blicos compat?veis.",
+      "recommendedNotAvailable": "As recomenda??es ainda n?o est?o dispon?veis.",
+      "recommendedLoadError": "N?o foi poss?vel carregar recomenda??es agora.",
+      "recommendedByLocationError": "N?o foi poss?vel carregar recomenda??es por localiza??o agora.",
+      "distanceUnavailable": "Dist?ncia indispon?vel"
+    },
+    "photos": {
+      "title": "Fotos de Progresso",
+      "privateDescription": "Conte?do privado, vis?vel apenas para voc? e seu personal.",
+      "add": "Adicionar",
+      "addPhoto": "Adicionar foto",
+      "beforeAfterTitle": "Antes e depois",
+      "beforeAfterDescription": "Compara??o visual da sua evolu??o",
+      "before": "Antes",
+      "after": "Depois",
+      "emptyTitle": "Nenhuma foto ainda",
+      "emptyDescription": "Adicione fotos de progresso para acompanhar sua evolu??o visual.",
+      "galleryTitle": "Galeria",
+      "privateRecords": "{{value}} registros privados",
+      "progressPhoto": "Foto de progresso",
+      "addProgressPhoto": "Adicionar foto de progresso",
+      "uploadHint": "JPG, PNG ? m?x. 5 MB",
+      "privateHint": "Suas fotos s?o privadas e vis?veis apenas para voc? e seu personal trainer.",
+      "photoDate": "Data da foto",
+      "descriptionOptional": "Descri??o (opcional)",
+      "removePhoto": "Remover foto",
+      "removePhotoConfirm": "Deseja remover esta foto de progresso?",
+      "selectPhotoError": "Selecione uma foto antes de salvar.",
+      "addedSuccess": "Foto adicionada!",
+      "addError": "Erro ao adicionar",
+      "deletedSuccess": "Foto removida."
+    },
+    "progress": {
+      "trackEvolution": "Acompanhe sua evolu??o",
+      "lastUpdate": "?ltima atualiza??o",
+      "register": "Registrar",
+      "emptyTitle": "Nenhum registro ainda",
+      "emptyDescription": "Comece a registrar seu peso e medidas para acompanhar sua evolu??o.",
+      "registerProgress": "Registrar progresso",
+      "notes": "Observa??es",
+      "removeRecord": "Remover registro",
+      "removeRecordConfirm": "Deseja remover este registro de progresso?",
+      "savedSuccess": "Progresso registrado!",
+      "deletedSuccess": "Registro removido.",
+      "timelineTitle": "Linha do tempo",
+      "timelineDescription": "Hist?rico completo de evolu??o corporal"
+    },
+    "dashboard": {
+      "workoutTodayTitle": "Treino do dia",
+      "checkYourWorkout": "Confira seu treino",
+      "viewWorkout": "Ver treino",
+      "scheduledRest": "Descanso programado",
+      "recoveryDayHint": "Use o dia para recupera??o.",
+      "weeklyCheckinTitle": "Check-in semanal",
+      "fill": "Preencher",
+      "weeklyRoutineTitle": "Rotina da semana",
+      "accessUnavailable": "Acesso indispon?vel",
+      "accessTemporarilyUnavailable": "Seu acesso est? temporariamente indispon?vel.",
+      "rest": "Descanso",
+      "feedTitle": "Feed do personal",
+      "feedDescription": "Dicas, aulas e avisos recentes",
+      "habitsTodayTitle": "H?bitos de hoje",
+      "habitsProgress": "{{completed}} de {{total}} conclu?dos",
+      "noHabitsForToday": "Sem h?bitos para hoje",
+      "consistencyTitle": "Sua consist?ncia",
+      "consistencyDescription": "Acompanhe sua evolu??o recente",
+      "monthGoalsTitle": "Metas do m?s",
+      "currentProgress": "Progresso atual",
+      "achievementsTitle": "Conquistas",
+      "latestUnlocked": "?ltimas desbloqueadas"
     }
   },
   "public": {
@@ -361,14 +453,229 @@
     "years": "anos",
     "specialtiesLabel": "Especialidades",
     "reviews": "Avaliações",
-    "footerText": "Página profissional criada com Forma Training"
+    "footerText": "Página profissional criada com Forma Training",
+    "feedSectionTitle": "Conte?dos e dicas recentes",
+    "feedSectionDescription": "Acompanhe dicas, treinos e orienta??es publicadas pelo personal.",
+    "feedSectionEmptyTitle": "Conte?dos em breve",
+    "feedSectionEmptyDescription": "Novas dicas e orienta??es ser?o publicadas por aqui."
   },
   "language": {
     "change": "Alterar idioma",
     "portuguese": "Português",
     "english": "Inglês"
+  },
+  "trainer": {
+    "feedFilters": {
+      "all": "All",
+      "workout": "Workouts",
+      "tips": "Tips",
+      "progress": "Progress",
+      "class": "Classes",
+      "notice": "Notices"
+    },
+    "dashboard": {
+      "title": "Trainer dashboard",
+      "subtitle": "Consulting overview and quick actions.",
+      "newStudent": "New student",
+      "newWorkout": "New workout",
+      "publicPage": "Public page",
+      "stats": {
+        "activeStudents": "Active students",
+        "createdWorkouts": "Created workouts",
+        "contents": "Contents",
+        "pendingCheckins": "Pending check-ins",
+        "todayAppointments": "Appointments today"
+      },
+      "recentActivityTitle": "Recent activity",
+      "recentActivityDescription": "Posts and student interactions",
+      "quickActionsTitle": "Quick management",
+      "manageStudents": "Manage students",
+      "manageWorkouts": "Manage workouts",
+      "manageContents": "Manage contents",
+      "editPublicPage": "Edit public page",
+      "openAppointments": "Open appointments"
+    },
+    "posts": {
+      "title": "Contents",
+      "total": "{{value}} posts",
+      "newPost": "New post",
+      "emptyTitle": "No content yet",
+      "emptyDescription": "Create posts and content for your students.",
+      "editPost": "Edit post",
+      "deletePost": "Delete post",
+      "deleteConfirm": "Do you want to delete \"{{value}}\"?",
+      "titleField": "Title",
+      "descriptionField": "Description",
+      "coverImageField": "Cover image",
+      "lessonVideoField": "Class video",
+      "statusField": "Status",
+      "statusPublished": "Published",
+      "statusDraft": "Draft",
+      "statusInactive": "Inactive",
+      "created": "Post created!",
+      "updated": "Post updated!",
+      "deleted": "Post removed."
+    },
+    "exerciseLibrary": {
+      "description": "Explore exerc?cios prontos e adicione ? sua biblioteca pessoal.",
+      "viewMyExercises": "Ver meus exerc?cios",
+      "filtersTitle": "Filtros da biblioteca",
+      "filtersDescription": "Use filtros para descobrir exerc?cios prontos com mais rapidez.",
+      "searchPlaceholder": "Buscar exerc?cio base",
+      "allGroups": "Todos os grupos",
+      "emptyTitle": "Nenhum exerc?cio encontrado",
+      "emptyDescription": "Ajuste os filtros ou tente outro termo de busca.",
+      "baseBadge": "Base Forma Training",
+      "freeLevel": "N?vel livre",
+      "groupNotInformed": "Grupo n?o informado",
+      "defaultDescription": "Exerc?cio da biblioteca base pronto para uso.",
+      "add": "Adicionar",
+      "added": "Adicionado",
+      "viewDetails": "Ver detalhes",
+      "addedSuccess": "Exerc?cio adicionado aos seus exerc?cios!",
+      "addError": "Erro ao adicionar exerc?cio"
+    },
+    "leads": {
+      "title": "Leads de interesse",
+      "description": "Contatos recebidos pela sua p?gina e explora??o p?blica.",
+      "emptyTitle": "Sem leads por enquanto",
+      "emptyDescription": "Quando algu?m demonstrar interesse, aparecer? aqui.",
+      "contact": "Contato",
+      "actions": "A??es",
+      "convert": "Converter em aluno",
+      "statusUpdated": "Status atualizado.",
+      "statusUpdateError": "Falha ao atualizar status.",
+      "convertedSuccess": "Lead convertido em aluno.",
+      "convertError": "Falha ao converter lead."
+    },
+    "exercises": {
+      "description": "Gerencie os exerc?cios que voc? usa nos treinos dos seus alunos.",
+      "newExercise": "Novo exerc?cio",
+      "filtersTitle": "Filtros",
+      "filtersDescription": "Encontre exerc?cios por nome, grupo muscular e n?vel.",
+      "searchPlaceholder": "Buscar exerc?cio",
+      "allLevels": "Todos os n?veis",
+      "emptyTitle": "Voc? ainda n?o cadastrou exerc?cios",
+      "emptyDescription": "Crie seu primeiro exerc?cio ou importe da biblioteca base.",
+      "createFirst": "Criar primeiro exerc?cio",
+      "importBase": "Importar da biblioteca base",
+      "noDescription": "Sem descri??o cadastrada.",
+      "videoAvailable": "V?deo dispon?vel",
+      "noVideo": "Sem v?deo",
+      "editExercise": "Editar exerc?cio",
+      "basicDataTitle": "Dados b?sicos",
+      "basicDataDescription": "Informa??es principais para identificar o exerc?cio.",
+      "instructionsTitle": "Instru??es",
+      "instructionsDescription": "Detalhes de execu??o e observa??es para o aluno.",
+      "mediaTitle": "M?dia",
+      "mediaDescription": "Adicione imagem e v?deo de demonstra??o.",
+      "previewTitle": "Preview do exerc?cio",
+      "previewSubtitle": "Como o card aparece para o aluno.",
+      "deleteExercise": "Excluir exerc?cio",
+      "descriptionField": "Descri??o",
+      "executionInstructions": "Instru??es de execu??o",
+      "exerciseImage": "Imagem do exerc?cio",
+      "demoVideo": "V?deo demonstrativo"
+    },
+    "profile": {
+      "description": "Organize sua marca profissional com dados, identidade visual e m?dias.",
+      "personalDataTitle": "Dados pessoais",
+      "personalDataDescription": "Informa??es b?sicas para contato e identifica??o.",
+      "professionalDataTitle": "Dados profissionais",
+      "professionalDataDescription": "Posicionamento da sua consultoria e especialidades.",
+      "brandMediaTitle": "M?dias da marca",
+      "brandMediaDescription": "Foto profissional e logo para refor?ar sua autoridade.",
+      "brandPreviewTitle": "Preview da marca",
+      "brandPreviewSubtitle": "Como o aluno visualiza seu perfil.",
+      "logoTitle": "Logo",
+      "logoSubtitle": "Exibi??o institucional",
+      "instagram": "Instagram",
+      "instagramHelper": "Informe sem @ se preferir.",
+      "profilePhoto": "Foto de perfil",
+      "uploadHelper": "JPG ou PNG, m?ximo 5MB.",
+      "brandLogo": "Logo da marca"
+    },
+    "publicPage": {
+      "editorTitle": "Editor da P?gina P?blica",
+      "editorDescription": "Configure seu link p?blico, CTA e conte?dos vis?veis para capta??o.",
+      "statusTitle": "Status da p?gina",
+      "statusDescription": "Ative sua vitrine p?blica quando quiser divulgar.",
+      "urlTitle": "URL p?blica",
+      "urlDescription": "Defina seu slug e compartilhe com alunos e leads.",
+      "visibleContentTitle": "Conte?dos vis?veis",
+      "visibleContentDescription": "Escolha o que aparece para visitantes.",
+      "previewTitle": "Preview da p?gina",
+      "previewSubtitle": "Visual resumido da sua p?gina p?blica.",
+      "finalUrl": "URL final"
+    },
+    "schedule": {
+      "addWorkoutToRoutine": "Adicionar treino ? rotina",
+      "select": "Selecione"
+    },
+    "students": {
+      "removeStudent": "Remover aluno"
+    },
+    "studentDetail": {
+      "noHabitConfigured": "Nenhum h?bito configurado",
+      "noHabitConfiguredDescription": "Crie h?bitos di?rios para acompanhar disciplina e rotina do aluno."
+    },
+    "workouts": {
+      "addExercise": "Adicionar exerc?cio"
+    }
+  },
+  "auth": {
+    "login": {
+      "invalidCredentials": "E-mail ou senha incorretos.",
+      "featureManage": "Gerencie alunos, treinos e metas em um s? lugar",
+      "featureProgress": "Acompanhe o progresso e check-ins semanais",
+      "featureReports": "Relat?rios de engajamento e evolu??o f?sica",
+      "heroTitle": "Gerencie sua consultoria fitness em um s? lugar",
+      "heroDescription": "Treinos, alunos, progresso e conte?dos organizados em uma plataforma profissional e f?cil de usar.",
+      "rights": "Todos os direitos reservados.",
+      "welcomeBack": "Bem-vindo de volta",
+      "enterCredentials": "Entre com suas credenciais para continuar.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "seu@email.com",
+      "passwordLabel": "Senha",
+      "signIn": "Entrar",
+      "trainerPrompt": "Personal trainer?",
+      "explorerPrompt": "Aluno explorador?",
+      "createAccount": "Criar conta",
+      "testCredentials": "Credenciais de teste"
+    },
+    "studentRegister": {
+      "title": "Criar conta de aluno",
+      "subtitle": "Entre como explorador para descobrir personais e conte?dos p?blicos.",
+      "createError": "Falha ao criar conta.",
+      "fullName": "Nome completo",
+      "email": "E-mail",
+      "password": "Senha",
+      "phone": "Telefone",
+      "goal": "Objetivo",
+      "interests": "Interesses",
+      "trainingLevel": "N?vel de treino",
+      "preferredMode": "Modalidade preferida",
+      "acceptTermsPrefix": "Li e concordo com os",
+      "terms": "Termos de Uso",
+      "acceptPrivacyPrefix": "Li e concordo com a",
+      "privacyPolicy": "Pol?tica de Privacidade",
+      "healthDataNotice": "Aviso sobre tratamento de dados de treino, h?bitos e evolu??o (texto sujeito a revis?o jur?dica).",
+      "marketingEmail": "Aceito marketing por e-mail (opcional).",
+      "marketingWhatsapp": "Aceito marketing por WhatsApp (opcional).",
+      "createAccount": "Criar conta",
+      "hasAccount": "J? tem conta?"
+    }
+  },
+  "owner": {
+    "dashboard": {
+      "kpi": {
+        "mrr": "MRR estimado",
+        "mrrSubtitle": "Equivalente mensal ativo",
+        "paidTrainers": "Trainers pagantes",
+        "activeStudents": "Alunos ativos",
+        "approvalRate": "Taxa de aprova??o",
+        "avgTicketB2C": "Ticket m?dio B2C"
+      }
+    }
   }
 }
-
-
-

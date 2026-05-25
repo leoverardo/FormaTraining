@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { ownerService } from '../../services/ownerService';
 import { useDomainLabels } from '../../i18n/domainLabels';
+import { useI18n } from '../../i18n';
 import {
   AlertTriangle,
   ArrowUpRight,
@@ -20,7 +21,7 @@ import {
   Zap,
 } from 'lucide-react';
 
-// ─── Utilitários ──────────────────────────────────────────────────────────────
+// "? Utilitários "?
 
 function money(v) {
   return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -45,7 +46,7 @@ const PERIOD_OPTIONS = [
   { value: 90, label: '90 dias' },
 ];
 
-// ─── Componentes base ─────────────────────────────────────────────────────────
+// "? Componentes base "?
 
 function SectionHeader({ icon: Icon, title, description, accent = 'indigo' }) {
   const colors = {
@@ -146,7 +147,7 @@ function FunnelStep({ label, value, isLast }) {
         <p className="text-lg font-bold text-slate-900">{num(value)}</p>
         <p className="text-[11px] text-slate-500 mt-0.5 leading-tight">{label}</p>
       </div>
-      {!isLast && <span className="text-slate-300 text-lg font-light shrink-0">›</span>}
+      {!isLast && <span className="text-slate-300 text-lg font-light shrink-0">?</span>}
     </div>
   );
 }
@@ -185,10 +186,11 @@ function EmptyState({ message = 'Sem dados no período' }) {
   );
 }
 
-// ─── Dashboard principal ──────────────────────────────────────────────────────
+// "? Dashboard principal "?
 
 export function OwnerDashboard() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { subscriptionStatusLabel, billingCycleLabel, planLabel, paymentStatusLabel, leadStatusLabel } = useDomainLabels();
   const [range, setRange] = useState(30);
   const [data, setData] = useState(null);
@@ -266,7 +268,7 @@ export function OwnerDashboard() {
   return (
     <PageContainer className="space-y-5">
 
-      {/* ── Cabeçalho ──────────────────────────────────────────────────────── */}
+      {/* "? Cabeçalho "? */}
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.07)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -301,12 +303,12 @@ export function OwnerDashboard() {
         </div>
       </section>
 
-      {/* ── BLOCO 1: Quick KPIs ────────────────────────────────────────────── */}
+      {/* "? BLOCO 1: Quick KPIs "? */}
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <KpiCard
-          title="MRR estimado"
+          title={t('owner.dashboard.kpi.mrr')}
           value={money(revenue.monthlyRecurringRevenue)}
-          subtitle="Equivalente mensal ativo"
+          subtitle={t('owner.dashboard.kpi.mrrSubtitle')}
           icon={BadgeDollarSign}
           tone="indigo"
         />
@@ -314,19 +316,19 @@ export function OwnerDashboard() {
           title={`Receita (${periodLabel})`}
           value={money(revenue.revenueInPeriod)}
           subtitle={`Crescimento mês: ${pct(revenue.growthPercentageComparedToLastMonth)}`}
-          badge={revenue.growthPercentageComparedToLastMonth > 0 ? `↑ ${pct(revenue.growthPercentageComparedToLastMonth)} vs mês anterior` : undefined}
+          badge={revenue.growthPercentageComparedToLastMonth > 0 ? `?' ${pct(revenue.growthPercentageComparedToLastMonth)} vs mês anterior` : undefined}
           icon={ArrowUpRight}
           tone="emerald"
         />
         <KpiCard
-          title="Trainers pagantes"
+          title={t('owner.dashboard.kpi.paidTrainers')}
           value={num(summary.activeTrainers)}
           subtitle={`${num(summary.totalTrainers)} cadastrados · ${num(newTrainersInPeriod)} novos`}
           icon={UserCheck}
           tone="violet"
         />
         <KpiCard
-          title="Alunos ativos"
+          title={t('owner.dashboard.kpi.activeStudents')}
           value={num(summary.activeStudents)}
           subtitle={`${num(summary.totalStudents)} total · ${num(studentMetrics.newStudentsInPeriod ?? 0)} novos`}
           icon={Users}
@@ -334,7 +336,7 @@ export function OwnerDashboard() {
         />
       </div>
 
-      {/* ── BLOCO 2: Receita e Assinaturas SaaS ───────────────────────────── */}
+      {/* "? BLOCO 2: Receita e Assinaturas SaaS "? */}
       <Section>
         <SectionHeader icon={CreditCard} title="Receita e Assinaturas SaaS" description="Saúde financeira da plataforma" accent="indigo" />
 
@@ -464,7 +466,7 @@ export function OwnerDashboard() {
         </div>
       </Section>
 
-      {/* ── BLOCO 3: Aquisição e ativação de trainers ──────────────────────── */}
+      {/* "? BLOCO 3: Aquisição e ativação de trainers "? */}
       <Section>
         <SectionHeader icon={TrendingUp} title="Aquisição e Ativação de Trainers" description={`Crescimento e funil de onboarding nos últimos ${periodLabel}`} accent="violet" />
 
@@ -525,15 +527,15 @@ export function OwnerDashboard() {
         )}
       </Section>
 
-      {/* ── BLOCO 4: Base de alunos ────────────────────────────────────────── */}
+      {/* "? BLOCO 4: Base de alunos "? */}
       <Section>
         <SectionHeader icon={Users} title="Base de Alunos e Uso da Plataforma" description="Ocupação, crescimento e engajamento dos alunos" accent="sky" />
 
         <div className="grid grid-cols-2 gap-3 mb-5 xl:grid-cols-4">
           <KpiCard title="Total de alunos" value={num(studentMetrics.totalStudents)} subtitle={`${num(studentMetrics.newStudentsInPeriod ?? 0)} novos nos últimos ${periodLabel}`} icon={Users} tone="sky" />
-          <KpiCard title="Alunos ativos" value={num(studentMetrics.activeStudents)} subtitle={`${num(studentMetrics.inactiveStudents)} inativos`} icon={UserCheck} tone="emerald" />
+          <KpiCard title={t('owner.dashboard.kpi.activeStudents')} value={num(studentMetrics.activeStudents)} subtitle={`${num(studentMetrics.inactiveStudents)} inativos`} icon={UserCheck} tone="emerald" />
           <KpiCard title="Média por trainer ativo" value={studentMetrics.averagePerActiveTrainer ?? '0'} subtitle="Alunos ativos / trainers ativos" icon={TrendingUp} tone="indigo" />
-          <KpiCard title="Trainers no limite" value={num(studentMetrics.trainersAtCapacity)} subtitle={`${num(studentMetrics.trainersNearCapacity)} próximos do limite (≥80%)`} icon={ShieldAlert} tone={studentMetrics.trainersAtCapacity > 0 ? 'rose' : 'slate'} />
+          <KpiCard title="Trainers no limite" value={num(studentMetrics.trainersAtCapacity)} subtitle={`${num(studentMetrics.trainersNearCapacity)} próximos do limite (?80%)`} icon={ShieldAlert} tone={studentMetrics.trainersAtCapacity > 0 ? 'rose' : 'slate'} />
         </div>
 
         {topTrainersByStudents.length > 0 && (
@@ -556,7 +558,7 @@ export function OwnerDashboard() {
         )}
       </Section>
 
-      {/* ── BLOCO 5: Funil público ─────────────────────────────────────────── */}
+      {/* "? BLOCO 5: Funil público "? */}
       <Section>
         <SectionHeader icon={Globe} title="Funil Público: Explore, Páginas e Leads" description={`Presença online e geração de leads nos últimos ${periodLabel}`} accent="emerald" />
 
@@ -602,7 +604,7 @@ export function OwnerDashboard() {
         </div>
       </Section>
 
-      {/* ── BLOCO 6: Vendas B2C ────────────────────────────────────────────── */}
+      {/* "? BLOCO 6: Vendas B2C "? */}
       <Section>
         <SectionHeader icon={ShoppingBag} title="Vendas B2C dos Trainers" description={`Serviços e pedidos no período de ${periodLabel}`} accent="amber" />
 
@@ -622,14 +624,14 @@ export function OwnerDashboard() {
             tone="indigo"
           />
           <KpiCard
-            title="Taxa de aprovação"
+            title={t('owner.dashboard.kpi.approvalRate')}
             value={pct(serviceSales.approvalRate)}
             subtitle={`${num(serviceSales.rejectedOrCancelledInPeriod)} rejeitados/cancelados`}
             icon={CheckCircle2}
             tone={serviceSales.approvalRate >= 70 ? 'emerald' : 'rose'}
           />
           <KpiCard
-            title="Ticket médio B2C"
+            title={t('owner.dashboard.kpi.avgTicketB2C')}
             value={money(serviceSales.averageTicket)}
             subtitle={`${num(serviceSales.activePublicOffers)} serviços públicos ativos`}
             icon={TrendingUp}
@@ -705,7 +707,7 @@ export function OwnerDashboard() {
         </div>
       </Section>
 
-      {/* ── BLOCO 7: Alertas operacionais ─────────────────────────────────── */}
+      {/* "? BLOCO 7: Alertas operacionais "? */}
       <Section>
         <SectionHeader icon={AlertTriangle} title="Alertas Operacionais" description="Pontos de atenção que exigem acompanhamento" accent="rose" />
         {attentionItems.length === 0 ? (
@@ -725,3 +727,7 @@ export function OwnerDashboard() {
     </PageContainer>
   );
 }
+
+
+
+

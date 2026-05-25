@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { studentService } from '../../services/studentService';
 import { scheduleService } from '../../services/scheduleService';
 import { workoutService } from '../../services/workoutService';
@@ -10,11 +10,13 @@ import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { Input } from '../../components/ui/Input';
 import { CalendarDays, Plus, Trash2 } from 'lucide-react';
+import { useI18n } from '../../i18n';
 
 const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
 export function SchedulePage() {
   const { toast } = useToast();
+  const { t } = useI18n();
   const [students, setStudents] = useState([]);
   const [workouts, setWorkouts] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState('');
@@ -117,7 +119,7 @@ export function SchedulePage() {
         </div>
       )}
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Adicionar treino à rotina">
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={t('trainer.schedule.addWorkoutToRoutine')}>
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Dia da semana</label>
@@ -126,9 +128,9 @@ export function SchedulePage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Treino</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('nav.workouts')}</label>
             <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={form.workoutId} onChange={e => setForm(p => ({ ...p, workoutId: e.target.value }))} required>
-              <option value="">Selecione...</option>
+              <option value="">{t('trainer.schedule.select')}...</option>
               {workouts.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
             </select>
           </div>
@@ -144,4 +146,6 @@ export function SchedulePage() {
     </div>
   );
 }
+
+
 
