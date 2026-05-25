@@ -479,7 +479,6 @@ public class OwnerDashboardService
         return s.BillingCycle switch
         {
             BillingFrequency.Monthly => monthly,
-            BillingFrequency.Quarterly => monthly * 3,
             BillingFrequency.Semiannual => monthly * 6,
             BillingFrequency.Yearly => monthly * 12,
             _ => monthly
@@ -492,7 +491,6 @@ public class OwnerDashboardService
         return s.BillingCycle switch
         {
             BillingFrequency.Monthly => cycle,
-            BillingFrequency.Quarterly => cycle / 3m,
             BillingFrequency.Semiannual => cycle / 6m,
             BillingFrequency.Yearly => cycle / 12m,
             _ => cycle

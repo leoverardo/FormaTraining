@@ -34,7 +34,7 @@ public class PaymentService
         if (!plan.IsAvailableForPurchase)
             return ApiResponse<List<PlanBillingOptionResponse>>.Fail("Este plano ainda não está disponível para contratação.");
 
-        var list = Enum.GetValues<BillingFrequency>().Select(c => Calculate(plan.MonthlyPrice, c)).ToList();
+        var list = SupportedBillingCycles.Select(c => Calculate(plan.MonthlyPrice, c)).ToList();
         return ApiResponse<List<PlanBillingOptionResponse>>.Ok(list.Select(x => new PlanBillingOptionResponse
         {
             BillingCycle = x.BillingCycle,
@@ -48,6 +48,9 @@ public class PaymentService
 
     public async Task<ApiResponse<ValidateCouponResponse>> ValidateCouponAsync(Guid trainerId, ValidateCouponRequest request, CancellationToken cancellationToken = default)
     {
+        if (!IsSupportedBillingCycle(request.BillingCycle))
+            return ApiResponse<ValidateCouponResponse>.Fail("Ciclo de cobrança inválido. Escolha mensal, semestral ou anual.");
+
         var plan = await _db.PlatformPlans.FirstOrDefaultAsync(x => x.Id == request.PlanId && x.Active, cancellationToken);
         if (plan == null) return ApiResponse<ValidateCouponResponse>.Fail("Plano nÃ£o encontrado.");
         if (!plan.IsAvailableForPurchase)
@@ -59,6 +62,9 @@ public class PaymentService
 
     public async Task<ApiResponse<SubscriptionResponse>> CreateSubscriptionAsync(Guid trainerId, CreateSubscriptionRequest request, CancellationToken cancellationToken = default)
     {
+        if (!IsSupportedBillingCycle(request.BillingCycle))
+            return ApiResponse<SubscriptionResponse>.Fail("Ciclo de cobrança inválido. Escolha mensal, semestral ou anual.");
+
         var trainer = await _db.Trainers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == trainerId, cancellationToken);
         if (trainer == null) return ApiResponse<SubscriptionResponse>.Fail("Trainer nÃ£o encontrado.");
 
@@ -556,14 +562,12 @@ public class PaymentService
     {
         var months = cycle switch
         {
-            BillingFrequency.Quarterly => 3,
             BillingFrequency.Semiannual => 6,
             BillingFrequency.Yearly => 12,
             _ => 1
         };
         var cycleDiscount = cycle switch
         {
-            BillingFrequency.Quarterly => 10m,
             BillingFrequency.Semiannual => 15m,
             BillingFrequency.Yearly => 20m,
             _ => 0m
@@ -579,12 +583,21 @@ public class PaymentService
         var now = DateTime.UtcNow;
         return cycle switch
         {
-            BillingFrequency.Quarterly => now.AddMonths(3),
             BillingFrequency.Semiannual => now.AddMonths(6),
             BillingFrequency.Yearly => now.AddMonths(12),
             _ => now.AddMonths(1)
         };
     }
+
+    private static readonly BillingFrequency[] SupportedBillingCycles =
+    [
+        BillingFrequency.Monthly,
+        BillingFrequency.Semiannual,
+        BillingFrequency.Yearly
+    ];
+
+    private static bool IsSupportedBillingCycle(BillingFrequency cycle) =>
+        cycle is BillingFrequency.Monthly or BillingFrequency.Semiannual or BillingFrequency.Yearly;
 
     private static ValidateCouponResponse ToCouponResponse(PricingSnapshot x, string message) => new()
     {

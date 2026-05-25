@@ -35,15 +35,12 @@ public static class DatabaseSeeder
         var prices = new List<PlatformPlanPrice>
         {
             new() { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Monthly,   Price = 59.90m, Active = true },
-            new() { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Quarterly, Price = 161.73m, Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Semiannual, Price = 305.49m, Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Yearly,    Price = 575.04m, Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = proPlan.Id,     BillingCycle = BillingFrequency.Monthly,   Price = 197.00m,  Active = true },
-            new() { Id = Guid.NewGuid(), PlatformPlanId = proPlan.Id,     BillingCycle = BillingFrequency.Quarterly, Price = 547.00m,  Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = proPlan.Id,     BillingCycle = BillingFrequency.Semiannual, Price = 1004.70m, Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = proPlan.Id,     BillingCycle = BillingFrequency.Yearly,    Price = 1997.00m, Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = growthPlan.Id,  BillingCycle = BillingFrequency.Monthly,   Price = 297.00m,  Active = true },
-            new() { Id = Guid.NewGuid(), PlatformPlanId = growthPlan.Id,  BillingCycle = BillingFrequency.Quarterly, Price = 797.00m,  Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = growthPlan.Id,  BillingCycle = BillingFrequency.Semiannual, Price = 1514.70m, Active = true },
             new() { Id = Guid.NewGuid(), PlatformPlanId = growthPlan.Id,  BillingCycle = BillingFrequency.Yearly,    Price = 2997.00m, Active = true },
         };

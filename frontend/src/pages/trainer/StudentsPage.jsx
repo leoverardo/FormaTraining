@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { studentService } from '../../services/studentService';
 import { useToast } from '../../components/ui/Toast';
@@ -10,11 +10,14 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { Users, Plus, Pencil, Trash2, UserCheck, UserX, ChevronRight } from 'lucide-react';
+import { useDomainLabels } from '../../i18n/domainLabels';
+import { themeClasses } from '../../styles/themeClasses';
 
 const empty = { name: '', email: '', password: '', phone: '', goal: '', notes: '', activeOnCreate: true };
 
 export function StudentsPage() {
   const { toast } = useToast();
+  const { subscriptionStatusLabel, goalLabel } = useDomainLabels();
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,8 +87,8 @@ export function StudentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Alunos</h1>
-          <p className="text-gray-500 text-sm mt-1">{students.length} alunos cadastrados</p>
+          <h1 className={themeClasses.pageTitle}>Alunos</h1>
+          <p className={themeClasses.pageSubtitle}>{students.length} alunos cadastrados</p>
         </div>
         <Button onClick={openCreate}><Plus size={16} />Novo aluno</Button>
       </div>
@@ -93,32 +96,32 @@ export function StudentsPage() {
       {students.length === 0 ? (
         <EmptyState icon={Users} title="Nenhum aluno cadastrado" description="Adicione seu primeiro aluno para começar." action={<Button onClick={openCreate}><Plus size={16} />Novo aluno</Button>} />
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className={`${themeClasses.card} rounded-2xl overflow-hidden`}>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 bg-gray-50 dark:bg-slate-950">
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Aluno</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Objetivo</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-6 py-3"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-white/10">
                 {students.map(s => (
-                  <tr key={s.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-medium text-gray-900 text-sm">{s.name}</p>
-                        <p className="text-gray-400 text-xs">{s.email}</p>
+                        <p className="font-medium text-slate-900 dark:text-white text-sm">{s.name}</p>
+                        <p className="text-slate-400 dark:text-slate-500 text-xs">{s.email}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
-                      <p className="text-gray-600 text-sm">{s.goal || '?'}</p>
+                      <p className="text-slate-600 dark:text-slate-300 text-sm">{s.goal ? goalLabel(s.goal) : '?'}</p>
                     </td>
                     <td className="px-6 py-4">
                       <Badge variant={s.status === 'Active' ? 'success' : 'gray'}>
-                        {s.status === 'Active' ? 'Ativo' : 'Inativo'}
+                        {subscriptionStatusLabel(s.status)}
                       </Badge>
                     </td>
                     <td className="px-6 py-4">
@@ -149,13 +152,13 @@ export function StudentsPage() {
           <Input label="Telefone" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} />
           <Input label="Objetivo" value={form.goal} onChange={e => setForm(p => ({ ...p, goal: e.target.value }))} />
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Observações</label>
-            <textarea className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" rows={3} value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} />
+            <label className={`block text-sm font-medium ${themeClasses.label}`}>Observações</label>
+            <textarea className={`w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${themeClasses.input}`} rows={3} value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} />
           </div>
           {!editStudent && (
             <div className="flex items-center gap-2">
               <input type="checkbox" id="active" checked={form.activeOnCreate} onChange={e => setForm(p => ({ ...p, activeOnCreate: e.target.checked }))} className="rounded" />
-              <label htmlFor="active" className="text-sm text-gray-700">Cadastrar como ativo</label>
+              <label htmlFor="active" className={`text-sm ${themeClasses.label}`}>Cadastrar como ativo</label>
             </div>
           )}
           <div className="flex gap-3 pt-2">
@@ -176,4 +179,3 @@ export function StudentsPage() {
     </div>
   );
 }
-

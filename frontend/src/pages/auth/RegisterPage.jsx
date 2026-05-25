@@ -15,9 +15,9 @@ const STEPS = [
   { id: 5, label: 'Pagamento', icon: Zap }
 ];
 
-const cycleLabels = { Monthly: 'Mensal', Quarterly: 'Trimestral', Semiannual: 'Semestral', Yearly: 'Anual' };
-const cycleValues = { Monthly: 1, Quarterly: 2, Semiannual: 3, Yearly: 4 };
-const cycleBadges = { Monthly: '', Quarterly: '10% OFF', Semiannual: '15% OFF', Yearly: '20% OFF - Maior economia' };
+const cycleLabels = { Monthly: 'Mensal', Semiannual: 'Semestral', Yearly: 'Anual' };
+const cycleValues = { Monthly: 1, Semiannual: 3, Yearly: 4 };
+const cycleBadges = { Monthly: '', Semiannual: '15% OFF', Yearly: '20% OFF - Maior economia' };
 
 const formatMoney = (cents) => `R$ ${(cents / 100).toFixed(2).replace('.', ',')}`;
 
@@ -55,8 +55,8 @@ export function RegisterPage() {
   const baseBreakdown = useMemo(() => {
     if (!selectedPrice) return null;
     const totalCents = Math.round(selectedPrice.price * 100);
-    const discountPct = billingCycle === 'Quarterly' ? 10 : billingCycle === 'Semiannual' ? 15 : billingCycle === 'Yearly' ? 20 : 0;
-    const months = billingCycle === 'Quarterly' ? 3 : billingCycle === 'Semiannual' ? 6 : billingCycle === 'Yearly' ? 12 : 1;
+    const discountPct = billingCycle === 'Semiannual' ? 15 : billingCycle === 'Yearly' ? 20 : 0;
+    const months = billingCycle === 'Semiannual' ? 6 : billingCycle === 'Yearly' ? 12 : 1;
     const monthlyBase = months > 1 ? Math.round((totalCents / (1 - discountPct / 100)) / months) : totalCents;
     const cycleBase = monthlyBase * months;
     const cycleDiscount = cycleBase - totalCents;
@@ -276,7 +276,7 @@ export function RegisterPage() {
                 {plans.map(plan => {
                   const price = plan?.prices?.find(p => p.billingCycle === billingCycle);
                   const isSelected = selectedPlan?.id === plan.id;
-                  const months = billingCycle === 'Quarterly' ? 3 : billingCycle === 'Semiannual' ? 6 : billingCycle === 'Yearly' ? 12 : 1;
+                  const months = billingCycle === 'Semiannual' ? 6 : billingCycle === 'Yearly' ? 12 : 1;
                   const monthlyEquivalent = price ? (price.price / months) : null;
 
                   return (

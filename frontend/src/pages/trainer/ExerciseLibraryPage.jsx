@@ -13,6 +13,8 @@ import { FormHeader } from '../../components/forms/FormHeader';
 import { FormSection } from '../../components/forms/FormSection';
 import { FormGrid } from '../../components/forms/FormGrid';
 import { Dumbbell, Search, Download, ExternalLink, Library } from 'lucide-react';
+import { useDomainLabels } from '../../i18n/domainLabels';
+import { themeClasses } from '../../styles/themeClasses';
 
 const levelOptions = [
   { value: 'all', label: 'Todos os niveis' },
@@ -38,6 +40,7 @@ function Placeholder({ name }) {
 
 export function ExerciseLibraryPage() {
   const { toast } = useToast();
+  const { levelLabel } = useDomainLabels();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
@@ -118,9 +121,9 @@ export function ExerciseLibraryPage() {
               <div className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <Badge variant="info">Base FitPlatform</Badge>
-                  <Badge variant="gray">{item.level || 'Nivel livre'}</Badge>
+                  <Badge variant="gray">{item.level ? levelLabel(item.level) : 'Nível livre'}</Badge>
                 </div>
-                <h3 className="truncate text-sm font-semibold text-slate-900">{item.name}</h3>
+                <h3 className={`truncate text-sm font-semibold ${themeClasses.cardTitle}`}>{item.name}</h3>
                 <p className="mt-0.5 text-xs text-slate-500">{item.muscleGroup || 'Grupo nao informado'}</p>
                 <p className="mt-2 line-clamp-2 text-xs text-slate-600">{item.description || 'Exercicio da biblioteca base pronto para uso.'}</p>
                 <div className="mt-4 flex gap-2 border-t border-slate-100 pt-3">

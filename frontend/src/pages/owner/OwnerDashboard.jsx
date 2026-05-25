@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { ownerService } from '../../services/ownerService';
+import { useDomainLabels } from '../../i18n/domainLabels';
 import {
   AlertTriangle,
   ArrowUpRight,
@@ -188,6 +189,7 @@ function EmptyState({ message = 'Sem dados no período' }) {
 
 export function OwnerDashboard() {
   const navigate = useNavigate();
+  const { subscriptionStatusLabel, billingCycleLabel, planLabel, paymentStatusLabel, leadStatusLabel } = useDomainLabels();
   const [range, setRange] = useState(30);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -363,7 +365,7 @@ export function OwnerDashboard() {
                 {planDistribution.map((item) => (
                   <BarRow
                     key={item.planId}
-                    label={item.planName}
+                    label={planLabel(item.planName)}
                     value={item.revenue}
                     max={revenue.monthlyRecurringRevenue || 1}
                     color="bg-indigo-500"
@@ -383,7 +385,7 @@ export function OwnerDashboard() {
                 {billingCycleDistribution.map((item) => (
                   <BarRow
                     key={item.billingCycle}
-                    label={item.billingCycle}
+                    label={billingCycleLabel(item.billingCycle)}
                     value={item.count}
                     max={subscriptions.active || 1}
                     color="bg-cyan-500"
@@ -417,7 +419,7 @@ export function OwnerDashboard() {
                         <td className="py-2 pr-3">
                           <p className="font-medium text-slate-800 truncate max-w-[120px]">{item.brandName}</p>
                         </td>
-                        <td className="py-2 pr-3 text-xs text-slate-600">{item.planName}</td>
+                        <td className="py-2 pr-3 text-xs text-slate-600">{planLabel(item.planName)}</td>
                         <td className="py-2 pr-3 text-xs font-semibold">{money(item.amount)}</td>
                         <td className="py-2 pr-3 text-xs text-slate-500">{dt(item.endDate)} <span className="text-amber-600">({item.daysRemaining}d)</span></td>
                       </tr>
@@ -447,10 +449,10 @@ export function OwnerDashboard() {
                       <tr key={item.paymentId} className="border-b border-slate-100">
                         <td className="py-2 pr-3">
                           <p className="font-medium text-slate-800 truncate max-w-[120px]">{item.brandName}</p>
-                          <p className="text-[11px] text-slate-400">{item.planName}</p>
+                          <p className="text-[11px] text-slate-400">{planLabel(item.planName)}</p>
                         </td>
                         <td className="py-2 pr-3 text-xs font-semibold">{money(item.amount)}</td>
-                        <td className="py-2 pr-3"><StatusBadge status={item.status} /></td>
+                        <td className="py-2 pr-3"><StatusBadge status={paymentStatusLabel(item.status)} /></td>
                         <td className="py-2 pr-3 text-xs text-slate-500">{dt(item.paidAt || item.createdAt)}</td>
                       </tr>
                     ))}
@@ -512,7 +514,7 @@ export function OwnerDashboard() {
                       </td>
                       <td className="py-2 pr-3 text-xs text-slate-500 truncate max-w-[160px]">{t.email}</td>
                       <td className="py-2 pr-3 text-xs text-slate-700">{t.currentPlan}</td>
-                      <td className="py-2 pr-3"><StatusBadge status={t.subscriptionStatus} /></td>
+                      <td className="py-2 pr-3"><StatusBadge status={subscriptionStatusLabel(t.subscriptionStatus)} /></td>
                       <td className="py-2 pr-3 text-xs text-slate-500">{dt(t.createdAt)}</td>
                     </tr>
                   ))}
@@ -571,10 +573,10 @@ export function OwnerDashboard() {
             <p className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-3">Leads por status (total histórico)</p>
             {leadFunnel.totalAllTime === 0 ? <EmptyState message="Nenhum lead registrado ainda" /> : (
               <div className="space-y-2.5">
-                <BarRow label="Novos" value={leadFunnel.newLeads} max={leadFunnel.totalAllTime || 1} color="bg-sky-400" />
-                <BarRow label="Contatados" value={leadFunnel.contactedLeads} max={leadFunnel.totalAllTime || 1} color="bg-amber-400" />
-                <BarRow label="Convertidos" value={leadFunnel.convertedLeads} max={leadFunnel.totalAllTime || 1} color="bg-emerald-500" />
-                <BarRow label="Arquivados" value={leadFunnel.archivedLeads} max={leadFunnel.totalAllTime || 1} color="bg-slate-300" />
+                <BarRow label={leadStatusLabel('New')} value={leadFunnel.newLeads} max={leadFunnel.totalAllTime || 1} color="bg-sky-400" />
+                <BarRow label={leadStatusLabel('Contacted')} value={leadFunnel.contactedLeads} max={leadFunnel.totalAllTime || 1} color="bg-amber-400" />
+                <BarRow label={leadStatusLabel('Converted')} value={leadFunnel.convertedLeads} max={leadFunnel.totalAllTime || 1} color="bg-emerald-500" />
+                <BarRow label={leadStatusLabel('Archived')} value={leadFunnel.archivedLeads} max={leadFunnel.totalAllTime || 1} color="bg-slate-300" />
               </div>
             )}
           </div>

@@ -6,6 +6,8 @@ import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { exploreService } from '../../services/exploreService';
 import { privacyService } from '../../services/privacyService';
+import { useI18n } from '../../i18n';
+import { useDomainLabels } from '../../i18n/domainLabels';
 
 const defaultQuery = {
   search: '',
@@ -18,6 +20,8 @@ const defaultQuery = {
 };
 
 export function ExploreTrainersPage() {
+  const { t } = useI18n();
+  const { serviceModeLabel } = useDomainLabels();
   const [query, setQuery] = useState(defaultQuery);
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [items, setItems] = useState([]);
@@ -43,7 +47,7 @@ export function ExploreTrainersPage() {
       setItems([]);
       setTotal(0);
       setHasLoadError(true);
-      setError('Nao foi possivel carregar a busca de personais agora.');
+      setError(t('student.exploreLoadError'));
     } finally {
       setLoading(false);
     }
@@ -62,7 +66,7 @@ export function ExploreTrainersPage() {
 
   const confirmUseMyLocation = () => {
     if (!navigator.geolocation) {
-      setError('Seu navegador nao suporta localizacao. Voce ainda pode buscar por cidade ou estado.');
+      setError(t('student.geolocationUnsupported'));
       setShowGeoPrompt(false);
       return;
     }
@@ -82,7 +86,7 @@ export function ExploreTrainersPage() {
       () => {
         setLocationLoading(false);
         setShowGeoPrompt(false);
-        setError('Nao foi possivel acessar sua localizacao. Voce ainda pode buscar por cidade ou estado.');
+        setError(t('student.geolocationAccessError'));
       },
       {
         enableHighAccuracy: false,
@@ -107,7 +111,7 @@ export function ExploreTrainersPage() {
       await exploreService.followTrainer(trainer.trainerId);
       setItems((prev) => prev.map((x) => (x.trainerId === trainer.trainerId ? { ...x, isFollowedByCurrentUser: true } : x)));
     } catch (err) {
-      setError(getErrorMessage(err, 'Nao foi possivel atualizar o status de seguir.'));
+      setError(getErrorMessage(err, t('student.followUpdateError')));
     } finally {
       setActionLoadingId(null);
     }
@@ -125,7 +129,7 @@ export function ExploreTrainersPage() {
       await exploreService.saveTrainer(trainer.trainerId);
       setItems((prev) => prev.map((x) => (x.trainerId === trainer.trainerId ? { ...x, isSavedByCurrentUser: true } : x)));
     } catch (err) {
-      setError(getErrorMessage(err, 'Nao foi possivel atualizar o status de salvar.'));
+      setError(getErrorMessage(err, t('student.saveUpdateError')));
     } finally {
       setActionLoadingId(null);
     }
@@ -144,65 +148,65 @@ export function ExploreTrainersPage() {
 
   return (
     <PageContainer className="space-y-4">
-      <section className="rounded-3xl border border-slate-200 bg-white p-5">
-        <h1 className="text-2xl font-bold text-slate-900">Encontre o personal ideal</h1>
-        <p className="mt-1 text-sm text-slate-500">Pesquise por nome, cidade, estado, especialidade e modalidade.</p>
+      <section className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 p-5">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('student.findTrainer')}</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('student.findTrainerDescription')}</p>
         <form onSubmit={handleSearch} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          <Input label="Busca" value={query.search} onChange={(e) => setQuery((prev) => ({ ...prev, search: e.target.value }))} />
-          <Input label="Cidade" value={query.city} onChange={(e) => setQuery((prev) => ({ ...prev, city: e.target.value }))} />
-          <Input label="Estado" value={query.state} onChange={(e) => setQuery((prev) => ({ ...prev, state: e.target.value }))} />
-          <Input label="Especialidade" value={query.specialty} onChange={(e) => setQuery((prev) => ({ ...prev, specialty: e.target.value }))} />
-          <Input label="Modalidade" placeholder="Online, InPerson, Hybrid" value={query.serviceMode} onChange={(e) => setQuery((prev) => ({ ...prev, serviceMode: e.target.value }))} />
-          <Button className="self-end" loading={loading}>Buscar</Button>
+          <Input label={t('common.search')} value={query.search} onChange={(e) => setQuery((prev) => ({ ...prev, search: e.target.value }))} />
+          <Input label={t('student.city')} value={query.city} onChange={(e) => setQuery((prev) => ({ ...prev, city: e.target.value }))} />
+          <Input label={t('student.state')} value={query.state} onChange={(e) => setQuery((prev) => ({ ...prev, state: e.target.value }))} />
+          <Input label={t('student.specialty')} value={query.specialty} onChange={(e) => setQuery((prev) => ({ ...prev, specialty: e.target.value }))} />
+          <Input label={t('student.serviceMode')} placeholder="Online, InPerson, Hybrid" value={query.serviceMode} onChange={(e) => setQuery((prev) => ({ ...prev, serviceMode: e.target.value }))} />
+          <Button className="self-end" loading={loading}>{t('common.search')}</Button>
         </form>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button variant="outline" onClick={handleUseMyLocation} loading={locationLoading}>
-            <MapPin size={14} />Usar minha localizacao
+            <MapPin size={14} />{t('student.useMyLocation')}
           </Button>
-          <Button variant="ghost" onClick={clearFilters}>Limpar filtros</Button>
-          <Button variant="ghost" onClick={handleOnlyOnline}>Ver personais online</Button>
+          <Button variant="ghost" onClick={clearFilters}>{t('student.clearFilters')}</Button>
+          <Button variant="ghost" onClick={handleOnlyOnline}>{t('student.viewOnlineTrainers')}</Button>
         </div>
         {showGeoPrompt && (
           <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm">
-            <p>Usamos sua localizacao aproximada apenas para sugerir trainers proximos. Voce pode continuar sem permitir.</p>
+            <p>{t('student.locationPrompt')}</p>
             <div className="mt-2 flex gap-2">
-              <Button onClick={confirmUseMyLocation} loading={locationLoading}>Permitir localizacao</Button>
+              <Button onClick={confirmUseMyLocation} loading={locationLoading}>{t('student.allowLocation')}</Button>
               <Button variant="outline" onClick={() => { setShowGeoPrompt(false); privacyService.updateConsent('GEOLOCATION_FOR_EXPLORE', false).catch(() => {}); }}>
-                Continuar sem localizacao
+                {t('student.continueWithoutLocation')}
               </Button>
             </div>
           </div>
         )}
-        <p className="mt-2 text-xs text-slate-500">Total encontrado: {total}</p>
+        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{t('student.totalFound')}: {total}</p>
       </section>
 
       {items.length ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((trainer) => (
-            <article key={trainer.trainerId} className="rounded-2xl border border-slate-200 bg-white p-4">
-              <p className="text-sm font-semibold text-slate-900">{trainer.brandName || trainer.fullName}</p>
-              <p className="mt-1 text-xs text-slate-500">{trainer.headline || trainer.bio || 'Personal trainer'}</p>
+            <article key={trainer.trainerId} className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 p-4">
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">{trainer.brandName || trainer.fullName}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{trainer.headline || trainer.bio || t('student.personalTrainer')}</p>
               <div className="mt-2 flex flex-wrap gap-1">
-                {trainer.serviceMode && <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700">{trainer.serviceMode}</span>}
-                {trainer.acceptingStudents && <span className="rounded bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">Aceitando alunos</span>}
-                {trainer.distanceKm != null && <span className="rounded bg-indigo-100 px-2 py-0.5 text-[11px] text-indigo-700">A {trainer.distanceKm} km de voce</span>}
+                {trainer.serviceMode && <span className="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] text-slate-700 dark:text-slate-200">{serviceModeLabel(trainer.serviceMode)}</span>}
+                {trainer.acceptingStudents && <span className="rounded bg-emerald-100 dark:bg-emerald-500/20 px-2 py-0.5 text-[11px] text-emerald-700 dark:text-emerald-300">{t('student.acceptingStudents')}</span>}
+                {trainer.distanceKm != null && <span className="rounded bg-indigo-100 dark:bg-indigo-500/20 px-2 py-0.5 text-[11px] text-indigo-700 dark:text-indigo-300">{t('student.distanceKm', { value: trainer.distanceKm })}</span>}
               </div>
               <p className="mt-2 text-xs text-slate-400">{trainer.city || '-'}{trainer.state ? `, ${trainer.state}` : ''}</p>
               <div className="mt-3 flex gap-2">
-                <a href={`/p/${trainer.slug}`} className="rounded-lg border border-slate-300 px-3 py-1 text-xs text-slate-700">Ver perfil</a>
+                <a href={`/p/${trainer.slug}`} className="rounded-lg border border-slate-300 dark:border-white/10 px-3 py-1 text-xs text-slate-700 dark:text-slate-200">{t('student.viewProfile')}</a>
                 <button
                   disabled={actionLoadingId === trainer.trainerId}
                   onClick={() => toggleFollow(trainer)}
                   className="rounded-lg bg-indigo-600 px-3 py-1 text-xs text-white disabled:opacity-60"
                 >
-                  {trainer.isFollowedByCurrentUser ? 'Seguindo' : 'Seguir'}
+                  {trainer.isFollowedByCurrentUser ? t('student.following') : t('student.follow')}
                 </button>
                 <button
                   disabled={actionLoadingId === trainer.trainerId}
                   onClick={() => toggleSave(trainer)}
                   className="rounded-lg border border-indigo-300 px-3 py-1 text-xs text-indigo-700 disabled:opacity-60"
                 >
-                  {trainer.isSavedByCurrentUser ? 'Salvo' : 'Salvar'}
+                  {trainer.isSavedByCurrentUser ? t('student.saved') : t('student.save')}
                 </button>
               </div>
             </article>
@@ -211,12 +215,12 @@ export function ExploreTrainersPage() {
       ) : (
         <EmptyState
           icon={Users}
-          title={hasLoadError ? 'Erro ao carregar busca' : 'Nenhum personal encontrado'}
-          description={hasLoadError ? error : 'Tente ajustar os filtros, buscar por outra cidade ou explorar personais online.'}
+          title={hasLoadError ? t('student.exploreLoadErrorTitle') : t('student.noTrainersFound')}
+          description={hasLoadError ? error : t('student.noTrainersFoundDescription')}
           action={
             <div className="flex gap-2">
-              <Button variant="outline" onClick={clearFilters}>Limpar filtros</Button>
-              <Button onClick={handleOnlyOnline}>Ver personais online</Button>
+              <Button variant="outline" onClick={clearFilters}>{t('student.clearFilters')}</Button>
+              <Button onClick={handleOnlyOnline}>{t('student.viewOnlineTrainers')}</Button>
             </div>
           }
         />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { workoutService } from '../../services/workoutService';
 import { exerciseService } from '../../services/exerciseService';
 import { useToast } from '../../components/ui/Toast';
@@ -11,11 +11,14 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { ClipboardList, Plus, Pencil, Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
+import { useDomainLabels } from '../../i18n/domainLabels';
+import { themeClasses } from '../../styles/themeClasses';
 
 const emptyWorkout = { name: '', goal: '', level: 1, description: '', status: 1 };
 
 export function WorkoutsPage() {
   const { toast } = useToast();
+  const { levelLabel, subscriptionStatusLabel, goalLabel } = useDomainLabels();
   const [workouts, setWorkouts] = useState([]);
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,8 +74,8 @@ export function WorkoutsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Treinos</h1>
-          <p className="text-gray-500 text-sm mt-1">{workouts.length} treinos criados</p>
+          <h1 className={themeClasses.pageTitle}>Treinos</h1>
+          <p className={themeClasses.pageSubtitle}>{workouts.length} treinos criados</p>
         </div>
         <Button onClick={() => { setEditWorkout(null); setForm(emptyWorkout); setModalOpen(true); }}>
           <Plus size={16} />Novo treino
@@ -84,35 +87,35 @@ export function WorkoutsPage() {
       ) : (
         <div className="space-y-3">
           {workouts.map(w => (
-            <div key={w.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div key={w.id} className={`${themeClasses.card} rounded-2xl overflow-hidden`}>
               <div className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <button onClick={() => setExpandedId(expandedId === w.id ? null : w.id)} className="text-gray-400 hover:text-gray-600">
                     {expandedId === w.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </button>
                   <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm">{w.name}</p>
-                    <p className="text-gray-400 text-xs">{w.exercises?.length || 0} exercícios · {w.level}</p>
+                    <p className="font-semibold text-slate-900 dark:text-white text-sm">{w.name}</p>
+                    <p className="text-slate-400 dark:text-slate-500 text-xs">{w.exercises?.length || 0} exercícios · {levelLabel(w.level)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Badge variant={w.status === 'Active' ? 'success' : 'gray'}>{w.status === 'Active' ? 'Ativo' : 'Inativo'}</Badge>
+                  <Badge variant={w.status === 'Active' ? 'success' : 'gray'}>{subscriptionStatusLabel(w.status)}</Badge>
                   <button onClick={() => { setAddExModal(w); setExForm({ exerciseId: exercises[0]?.id || '', sets: 3, reps: '12', suggestedLoad: '', restSeconds: 60, notes: '', orderIndex: (w.exercises?.length || 0) + 1 }); }} className="p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-colors" title="Adicionar exercício"><Plus size={16} /></button>
                   <button onClick={() => { setEditWorkout(w); const lm = { Beginner: 1, Intermediate: 2, Advanced: 3 }; setForm({ name: w.name, goal: w.goal || '', level: lm[w.level] || 1, description: w.description || '', status: w.status === 'Active' ? 1 : 2 }); setModalOpen(true); }} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"><Pencil size={16} /></button>
                   <button onClick={() => setDeleteTarget(w)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors"><Trash2 size={16} /></button>
                 </div>
               </div>
               {expandedId === w.id && (
-                <div className="border-t border-gray-100 px-6 py-4 bg-gray-50">
+                <div className="border-t border-gray-100 dark:border-white/10 px-6 py-4 bg-gray-50 dark:bg-slate-950">
                   {w.exercises?.length === 0 ? (
                     <p className="text-sm text-gray-400 text-center py-4">Nenhum exercício adicionado.</p>
                   ) : (
                     <div className="space-y-2">
                       {w.exercises?.sort((a, b) => a.orderIndex - b.orderIndex).map(we => (
-                        <div key={we.id} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-gray-200">
+                        <div key={we.id} className={`${themeClasses.card} flex items-center gap-3 rounded-xl px-4 py-3`}>
                           <GripVertical size={16} className="text-gray-300" />
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm text-gray-900">{we.exercise?.name}</p>
+                            <p className="font-medium text-sm text-slate-900 dark:text-white">{we.exercise?.name}</p>
                             <p className="text-xs text-gray-400">{we.sets}x{we.reps} · {we.suggestedLoad || 'Carga livre'} · Descanso: {we.restSeconds}s</p>
                           </div>
                           <button onClick={() => removeExercise(w.id, we.id)} className="p-1 rounded-lg hover:bg-red-50 text-red-400 transition-colors"><Trash2 size={14} /></button>
@@ -130,7 +133,7 @@ export function WorkoutsPage() {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editWorkout ? 'Editar treino' : 'Novo treino'}>
         <form onSubmit={handleSaveWorkout} className="space-y-4">
           <Input label="Nome do treino" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
-          <Input label="Objetivo" value={form.goal} onChange={e => setForm(p => ({ ...p, goal: e.target.value }))} />
+          <Input label="Objetivo" value={form.goal} onChange={e => setForm(p => ({ ...p, goal: e.target.value }))} placeholder={goalLabel(form.goal) || ''} />
           <div className="grid grid-cols-2 gap-4">
             <Select label="Nível" value={form.level} onChange={e => setForm(p => ({ ...p, level: parseInt(e.target.value) }))}>
               <option value={1}>Iniciante</option><option value={2}>Intermediário</option><option value={3}>Avançado</option>
@@ -140,8 +143,8 @@ export function WorkoutsPage() {
             </Select>
           </div>
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Descrição</label>
-            <textarea className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" rows={2} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
+            <label className={`block text-sm font-medium ${themeClasses.label}`}>Descrição</label>
+            <textarea className={`w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${themeClasses.input}`} rows={2} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
           </div>
           <div className="flex gap-3 pt-2">
             <Button variant="secondary" type="button" onClick={() => setModalOpen(false)} className="flex-1">Cancelar</Button>
@@ -150,7 +153,7 @@ export function WorkoutsPage() {
         </form>
       </Modal>
 
-      <Modal open={!!addExModal} onClose={() => setAddExModal(null)} title={`Adicionar exercício ? ${addExModal?.name}`}>
+      <Modal open={!!addExModal} onClose={() => setAddExModal(null)} title={`Adicionar exercício • ${addExModal?.name}`}>
         <form onSubmit={handleAddExercise} className="space-y-4">
           <Select label="Exercício" value={exForm.exerciseId} onChange={e => setExForm(p => ({ ...p, exerciseId: e.target.value }))} required>
             <option value="">Selecione...</option>
@@ -177,4 +180,3 @@ export function WorkoutsPage() {
     </div>
   );
 }
-

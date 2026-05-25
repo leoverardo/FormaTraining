@@ -109,12 +109,28 @@ a {
   color: #f8fafc !important;
 }
 
+:root[data-theme='dark'] .text-gray-900,
+:root[data-theme='dark'] .text-zinc-900,
+:root[data-theme='dark'] .text-neutral-900,
+:root[data-theme='dark'] .text-black {
+  color: #f8fafc !important;
+}
+
 :root[data-theme='dark'] .text-slate-700 {
   color: #cbd5e1 !important;
 }
 
 :root[data-theme='dark'] .text-slate-600,
 :root[data-theme='dark'] .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+:root[data-theme='dark'] .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+
+:root[data-theme='dark'] .text-gray-600,
+:root[data-theme='dark'] .text-gray-500 {
   color: #94a3b8 !important;
 }
 
@@ -128,6 +144,11 @@ a {
 }
 
 :root[data-theme='dark'] .border-slate-200 {
+  border-color: #1e293b !important;
+}
+
+:root[data-theme='dark'] .border-gray-200,
+:root[data-theme='dark'] .border-gray-300 {
   border-color: #1e293b !important;
 }
 

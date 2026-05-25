@@ -22,6 +22,8 @@ import { PreviewCard } from '../../components/forms/PreviewCard';
 import { FormActions } from '../../components/forms/FormActions';
 import { Dumbbell, Plus, Pencil, Trash2, PlayCircle, Search, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useDomainLabels } from '../../i18n/domainLabels';
+import { themeClasses } from '../../styles/themeClasses';
 
 const empty = { name: '', muscleGroup: '', description: '', instructions: '', imageUrl: '', videoUrl: '', level: 1 };
 const emptyMedia = { imageMediaId: null, videoMediaId: null };
@@ -56,6 +58,7 @@ function CardMedia({ imageUrl, name }) {
 
 export function ExercisesPage() {
   const { toast } = useToast();
+  const { levelLabel } = useDomainLabels();
   const navigate = useNavigate();
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -185,10 +188,10 @@ export function ExercisesPage() {
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h3 className="truncate text-sm font-semibold text-slate-900">{exercise.name}</h3>
+                      <h3 className={`truncate text-sm font-semibold ${themeClasses.cardTitle}`}>{exercise.name}</h3>
                       <p className="mt-0.5 text-xs text-slate-500">{exercise.muscleGroup || 'Grupo nao informado'}</p>
                     </div>
-                    <Badge variant={level.badge}>{level.label}</Badge>
+                    <Badge variant={level.badge}>{levelLabel(level.apiValue)}</Badge>
                   </div>
                   <p className="mt-2 line-clamp-2 text-xs text-slate-600">{exercise.description || 'Sem descricao cadastrada.'}</p>
                   <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">

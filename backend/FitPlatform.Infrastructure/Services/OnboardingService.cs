@@ -116,6 +116,9 @@ public class OnboardingService
 
     public async Task<ApiResponse<TrainerOnboardingResponse>> SelectPlanAsync(Guid id, SelectPlanRequest request)
     {
+        if (!IsSupportedBillingCycle(request.BillingCycle))
+            return ApiResponse<TrainerOnboardingResponse>.Fail("Ciclo de cobrança inválido. Escolha mensal, semestral ou anual.");
+
         var onboarding = await _db.TrainerOnboardings.FindAsync(id);
         if (onboarding == null) return ApiResponse<TrainerOnboardingResponse>.Fail("Onboarding não encontrado.");
 
@@ -323,7 +326,6 @@ public class OnboardingService
         var billingCycle = onboarding.BillingCycle ?? BillingFrequency.Monthly;
         var endDate = billingCycle switch
         {
-            BillingFrequency.Quarterly => DateTime.UtcNow.AddMonths(3),
             BillingFrequency.Semiannual => DateTime.UtcNow.AddMonths(6),
             BillingFrequency.Yearly => DateTime.UtcNow.AddYears(1),
             _ => DateTime.UtcNow.AddMonths(1)
@@ -394,4 +396,7 @@ public class OnboardingService
         Status = o.Status.ToString(),
         CreatedAt = o.CreatedAt
     };
+
+    private static bool IsSupportedBillingCycle(BillingFrequency cycle) =>
+        cycle is BillingFrequency.Monthly or BillingFrequency.Semiannual or BillingFrequency.Yearly;
 }

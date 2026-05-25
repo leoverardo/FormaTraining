@@ -166,7 +166,7 @@ public class MercadoPagoPaymentProvider : IPaymentProvider
     private static (int frequency, string frequencyType) MapFrequency(BillingFrequency billingCycle) =>
         billingCycle switch
         {
-            BillingFrequency.Quarterly => (3, "months"),
+            BillingFrequency.Semiannual => (6, "months"),
             BillingFrequency.Yearly => (12, "months"),
             _ => (1, "months")
         };
