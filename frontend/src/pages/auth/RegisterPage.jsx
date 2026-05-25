@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { onboardingService } from '../../services/onboardingService';
 import { platformPlanService } from '../../services/platformPlanService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { BrandLogo } from '../../components/brand/BrandLogo';
 import { CheckCircle, CreditCard, MapPin, User, Briefcase, Zap } from 'lucide-react';
 
 const STEPS = [
@@ -206,7 +207,8 @@ export function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         <div className="text-center mb-6">
-          <h1 className="text-xl font-bold text-gray-900">FitPlatform</h1>
+          <div className="inline-flex mb-3"><BrandLogo showText={false} size="lg" /></div>
+          <h1 className="text-xl font-bold text-gray-900">Forma Training</h1>
           <p className="text-gray-500 text-sm">Cadastro de personal trainer</p>
         </div>
 
@@ -353,3 +355,4 @@ export function RegisterPage() {
     </div>
   );
 }
+

@@ -34,7 +34,7 @@ export function ExploreFeedPage() {
         if (!mounted) return;
         setItems([]);
         setFeedLoadError(true);
-        setFeedError(error?.response?.status === 404 ? 'O feed Explore ainda nao esta disponivel.' : 'Nao foi possivel carregar o feed agora.');
+        setFeedError(error?.response?.status === 404 ? 'O feed Explore ainda não está disponível.' : 'Não foi possível carregar o feed agora.');
       }
     };
 
@@ -49,7 +49,7 @@ export function ExploreFeedPage() {
         if (!mounted) return;
         setRecommended([]);
         setRecommendedLoadError(true);
-        setRecommendedError(error?.response?.status === 404 ? 'As recomendacoes ainda nao estao disponiveis.' : 'Nao foi possivel carregar recomendacoes agora.');
+        setRecommendedError(error?.response?.status === 404 ? 'As recomendações ainda não estão disponíveis.' : 'Não foi possível carregar recomendações agora.');
       }
     };
 
@@ -62,7 +62,7 @@ export function ExploreFeedPage() {
 
   const confirmUseMyLocation = () => {
     if (!navigator.geolocation) {
-      setRecommendedError('Seu navegador nao suporta localizacao. Voce ainda pode explorar normalmente.');
+      setRecommendedError('Seu navegador não suporta localização. Você ainda pode explorar normalmente.');
       setShowGeoPrompt(false);
       return;
     }
@@ -85,7 +85,7 @@ export function ExploreFeedPage() {
         } catch {
           setRecommended([]);
           setRecommendedLoadError(true);
-          setRecommendedError('Nao foi possivel carregar recomendacoes por localizacao agora.');
+          setRecommendedError('Não foi possível carregar recomendações por localização agora.');
         } finally {
           setLocationLoading(false);
           setShowGeoPrompt(false);
@@ -94,7 +94,7 @@ export function ExploreFeedPage() {
       () => {
         setLocationLoading(false);
         setShowGeoPrompt(false);
-        setRecommendedError('Nao foi possivel acessar sua localizacao. Voce ainda pode buscar por cidade ou estado.');
+        setRecommendedError('Não foi possível acessar sua localização. Você ainda pode buscar por cidade ou estado.');
       },
       {
         enableHighAccuracy: false,
@@ -113,33 +113,33 @@ export function ExploreFeedPage() {
   return (
     <PageContainer className="space-y-4">
       <section className="rounded-3xl border border-slate-200 bg-gradient-to-r from-cyan-500 to-indigo-600 p-6 text-white">
-        <h1 className="text-2xl font-bold">Descubra personais e conteudos para evoluir</h1>
-        <p className="mt-1 text-sm text-cyan-100">Feed publico com dicas, aulas e publicacoes abertas.</p>
+        <h1 className="text-2xl font-bold">Descubra personais e conteúdos para evoluir</h1>
+        <p className="mt-1 text-sm text-cyan-100">Feed público com dicas, aulas e publicações abertas.</p>
       </section>
 
-      <SectionCard title="Feed publico">
+      <SectionCard title="Feed público">
         {feed.length ? (
           <div className="space-y-3">
             {feed.map((item, index) => <FeedCard key={item.id ?? `explore-${index}`} item={item} />)}
           </div>
         ) : (
-          <EmptyState icon={FileText} title={feedLoadError ? 'Erro ao carregar feed' : 'Sem conteudos publicos'} description={feedError || 'Publique conteudos publicos para aparecer aqui.'} />
+          <EmptyState icon={FileText} title={feedLoadError ? 'Erro ao carregar feed' : 'Sem conteúdos públicos'} description={feedError || 'Publique conteúdos públicos para aparecer aqui.'} />
         )}
       </SectionCard>
 
-      <SectionCard title="Personais recomendados para voce">
+      <SectionCard title="Personais recomendados para você">
         <div className="mb-3">
           <Button variant="outline" onClick={handleUseMyLocation} loading={locationLoading}>
-            <MapPin size={14} />Encontrar personais proximos
+            <MapPin size={14} />Encontrar personais próximos
           </Button>
         </div>
         {showGeoPrompt && (
           <div className="mb-3 rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm">
-            <p>Usamos sua localizacao aproximada apenas para sugerir trainers proximos. Voce pode continuar sem permitir.</p>
+            <p>Usamos sua localização aproximada apenas para sugerir trainers próximos. Você pode continuar sem permitir.</p>
             <div className="mt-2 flex gap-2">
-              <Button onClick={confirmUseMyLocation} loading={locationLoading}>Permitir localizacao</Button>
+              <Button onClick={confirmUseMyLocation} loading={locationLoading}>Permitir localização</Button>
               <Button variant="outline" onClick={() => { setShowGeoPrompt(false); privacyService.updateConsent('GEOLOCATION_FOR_EXPLORE', false).catch(() => {}); }}>
-                Continuar sem localizacao
+                Continuar sem localização
               </Button>
             </div>
           </div>
@@ -159,7 +159,7 @@ export function ExploreFeedPage() {
             ))}
           </div>
         ) : (
-          <EmptyState icon={FileText} title={recommendedLoadError ? 'Erro ao carregar recomendacoes' : 'Sem recomendacoes por enquanto'} description={recommendedError || 'As recomendacoes aparecerao quando houver personais publicos compativeis.'} />
+          <EmptyState icon={FileText} title={recommendedLoadError ? 'Erro ao carregar recomendações' : 'Sem recomendações por enquanto'} description={recommendedError || 'As recomendações aparecerão quando houver personais públicos compatíveis.'} />
         )}
       </SectionCard>
     </PageContainer>

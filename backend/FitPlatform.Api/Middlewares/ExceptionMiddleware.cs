@@ -23,10 +23,16 @@ public class ExceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception");
+            var traceId = context.TraceIdentifier;
+            _logger.LogError(ex, "Unhandled exception. TraceId: {TraceId}", traceId);
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
-            var response = ApiResponse.Fail("Erro interno do servidor. Tente novamente mais tarde.");
+            var response = new
+            {
+                success = false,
+                message = "Erro interno no servidor.",
+                traceId
+            };
             await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
         }
     }

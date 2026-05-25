@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Forma Training",
     "logout": "Sign out",
@@ -361,7 +361,7 @@
     "years": "years",
     "specialtiesLabel": "Specialties",
     "reviews": "Reviews",
-    "footerText": "Professional page built with FitPlatform"
+    "footerText": "Professional page built with Forma Training"
   },
   "language": {
     "change": "Change language",

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FitPlatform.Infrastructure.Services;
 
@@ -17,73 +18,96 @@ public class MediaService : IMediaService
     private readonly AppDbContext _db;
     private readonly IConfiguration _configuration;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<MediaService> _logger;
 
-    public MediaService(AppDbContext db, IConfiguration configuration, IServiceProvider serviceProvider)
+    public MediaService(AppDbContext db, IConfiguration configuration, IServiceProvider serviceProvider, ILogger<MediaService> logger)
     {
         _db = db;
         _configuration = configuration;
         _serviceProvider = serviceProvider;
+        _logger = logger;
     }
 
     public async Task<ApiResponse<MediaAssetDto>> UploadMediaAsync(IFormFile file, MediaCategory category, Guid ownerUserId, Guid? trainerId, Guid? studentId, bool isPublic, string role, Guid? requesterStudentId, CancellationToken cancellationToken)
     {
-        if (file is null || file.Length == 0) return ApiResponse<MediaAssetDto>.Fail("Arquivo vazio ou ausente.");
-
-        if (role == "Student" && category != MediaCategory.ProgressPhoto)
-            return ApiResponse<MediaAssetDto>.Fail("Aluno pode enviar apenas foto de progresso.");
-
-        if (role == "Student") studentId = requesterStudentId;
-        if (IsSensitiveCategory(category)) isPublic = false;
-
-        var mediaType = ResolveMediaType(file.ContentType);
-        if (mediaType is null) return ApiResponse<MediaAssetDto>.Fail("Content-Type invalido para upload.");
-
-        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        if (DangerousExtensions.Contains(extension)) return ApiResponse<MediaAssetDto>.Fail("Extensao de arquivo bloqueada por seguranca.");
-
-        var sizeValidation = ValidateSize(file.Length, mediaType.Value);
-        if (!sizeValidation.Success) return ApiResponse<MediaAssetDto>.Fail(sizeValidation.Message!);
-
-        var provider = ResolveStorageProvider();
-        var storageService = provider == StorageProvider.Cloudinary
-            ? _serviceProvider.GetRequiredService<Storage.CloudinaryStorageService>() as IStorageService
-            : _serviceProvider.GetRequiredService<Storage.LocalStorageService>();
-
-        var uploadResult = await storageService.UploadAsync(file, new MediaUploadOptions
+        try
         {
-            OwnerUserId = ownerUserId,
-            TrainerId = trainerId,
-            StudentId = studentId,
-            Category = category,
-            MediaType = mediaType.Value,
-            IsPublic = isPublic
-        }, cancellationToken);
+            if (file is null || file.Length == 0) return ApiResponse<MediaAssetDto>.Fail("Arquivo vazio ou ausente.");
 
-        var media = new MediaFile
+            _logger.LogInformation("Media upload requested. UserId={UserId} Role={Role} Category={Category} FileName={FileName} ContentType={ContentType} Size={Size}",
+                ownerUserId, role, category, file.FileName, file.ContentType, file.Length);
+
+            if (role == "Student" && category != MediaCategory.ProgressPhoto)
+                return ApiResponse<MediaAssetDto>.Fail("Aluno pode enviar apenas foto de progresso.");
+
+            if (role == "Student") studentId = requesterStudentId;
+            if (IsSensitiveCategory(category)) isPublic = false;
+
+            var mediaType = ResolveMediaType(file.ContentType);
+            if (mediaType is null) return ApiResponse<MediaAssetDto>.Fail("Content-Type inválido para upload.");
+
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (DangerousExtensions.Contains(extension)) return ApiResponse<MediaAssetDto>.Fail("Extensão de arquivo bloqueada por segurança.");
+
+            var sizeValidation = ValidateSize(file.Length, mediaType.Value);
+            if (!sizeValidation.Success) return ApiResponse<MediaAssetDto>.Fail(sizeValidation.Message!);
+
+            var provider = ResolveStorageProvider();
+            var cloudConfigured = !string.IsNullOrWhiteSpace(_configuration["Cloudinary:CloudName"])
+                                  && !string.IsNullOrWhiteSpace(_configuration["Cloudinary:ApiKey"])
+                                  && !string.IsNullOrWhiteSpace(_configuration["Cloudinary:ApiSecret"]);
+            _logger.LogInformation("Media upload provider resolved. Provider={Provider} CloudinaryConfigured={CloudinaryConfigured}", provider, cloudConfigured);
+
+            var storageService = provider == StorageProvider.Cloudinary
+                ? _serviceProvider.GetRequiredService<Storage.CloudinaryStorageService>() as IStorageService
+                : _serviceProvider.GetRequiredService<Storage.LocalStorageService>();
+
+            var uploadResult = await storageService.UploadAsync(file, new MediaUploadOptions
+            {
+                OwnerUserId = ownerUserId,
+                TrainerId = trainerId,
+                StudentId = studentId,
+                Category = category,
+                MediaType = mediaType.Value,
+                IsPublic = isPublic
+            }, cancellationToken);
+
+            var media = new MediaFile
+            {
+                OwnerUserId = ownerUserId,
+                TrainerId = trainerId,
+                StudentId = studentId,
+                FileName = uploadResult.FileName,
+                OriginalFileName = Path.GetFileName(file.FileName),
+                ContentType = uploadResult.ContentType,
+                SizeInBytes = uploadResult.SizeInBytes,
+                Url = uploadResult.Url,
+                SecureUrl = uploadResult.SecureUrl,
+                ThumbnailUrl = uploadResult.ThumbnailUrl,
+                Provider = uploadResult.Provider,
+                ProviderKey = uploadResult.ProviderKey,
+                PublicId = uploadResult.PublicId,
+                Folder = uploadResult.Folder,
+                MediaType = mediaType.Value,
+                Category = category,
+                IsPublic = isPublic
+            };
+
+            _db.MediaFiles.Add(media);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            return ApiResponse<MediaAssetDto>.Ok(ToDto(media));
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("Cloudinary", StringComparison.OrdinalIgnoreCase))
         {
-            OwnerUserId = ownerUserId,
-            TrainerId = trainerId,
-            StudentId = studentId,
-            FileName = uploadResult.FileName,
-            OriginalFileName = Path.GetFileName(file.FileName),
-            ContentType = uploadResult.ContentType,
-            SizeInBytes = uploadResult.SizeInBytes,
-            Url = uploadResult.Url,
-            SecureUrl = uploadResult.SecureUrl,
-            ThumbnailUrl = uploadResult.ThumbnailUrl,
-            Provider = uploadResult.Provider,
-            ProviderKey = uploadResult.ProviderKey,
-            PublicId = uploadResult.PublicId,
-            Folder = uploadResult.Folder,
-            MediaType = mediaType.Value,
-            Category = category,
-            IsPublic = isPublic
-        };
-
-        _db.MediaFiles.Add(media);
-        await _db.SaveChangesAsync(cancellationToken);
-
-        return ApiResponse<MediaAssetDto>.Ok(ToDto(media));
+            _logger.LogError(ex, "Media upload unavailable due to Cloudinary configuration.");
+            return ApiResponse<MediaAssetDto>.Fail("Serviço de mídia indisponível no momento. Verifique a configuração de storage.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected media upload error.");
+            return ApiResponse<MediaAssetDto>.Fail("Não foi possível concluir o upload agora. Tente novamente.");
+        }
     }
 
     public async Task<ApiResponse> DeleteMediaAsync(Guid mediaId, Guid requestingUserId, string role, Guid? requestingTrainerId, CancellationToken cancellationToken)

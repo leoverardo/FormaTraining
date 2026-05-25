@@ -101,14 +101,14 @@ export function ServiceSalesPage() {
       </div>
 
       <div className="flex gap-2">
-        <Button variant={tab === 'offers' ? 'primary' : 'outline'} onClick={() => setTab('offers')}>ServiÃ§os</Button>
+        <Button variant={tab === 'offers' ? 'primary' : 'outline'} onClick={() => setTab('offers')}>Serviços</Button>
         <Button variant={tab === 'orders' ? 'primary' : 'outline'} onClick={() => setTab('orders')}>Vendas</Button>
       </div>
 
       {tab === 'offers' && (
         <div className="space-y-3">
           <div className="flex justify-end"><Button onClick={openCreate}>Nova oferta</Button></div>
-          {offers.length === 0 ? <EmptyState title="Nenhuma oferta cadastrada" description="Crie o primeiro serviÃ§o para comeÃ§ar a vender." /> : offers.map((item) => (
+          {offers.length === 0 ? <EmptyState title="Nenhuma oferta cadastrada" description="Crie o primeiro serviço para começar a vender." /> : offers.map((item) => (
             <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -128,11 +128,11 @@ export function ServiceSalesPage() {
 
       {tab === 'orders' && (
         <div className="space-y-2">
-          {orders.length === 0 ? <EmptyState title="Nenhuma venda registrada" description="As contrataÃ§Ãµes aparecerÃ£o aqui." /> : orders.map((item) => (
+          {orders.length === 0 ? <EmptyState title="Nenhuma venda registrada" description="As contratações aparecerão aqui." /> : orders.map((item) => (
             <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
               <p className="font-semibold text-slate-900">{item.serviceTitle}</p>
-              <p className="text-sm text-slate-600">{item.buyerName} â€¢ {item.buyerEmail}</p>
-              <p className="text-sm text-slate-600">R$ {Number(item.amount).toFixed(2)} â€¢ {paymentStatusLabel(item.status)}</p>
+              <p className="text-sm text-slate-600">{item.buyerName} • {item.buyerEmail}</p>
+              <p className="text-sm text-slate-600">R$ {Number(item.amount).toFixed(2)} • {paymentStatusLabel(item.status)}</p>
             </div>
           ))}
         </div>
@@ -140,15 +140,15 @@ export function ServiceSalesPage() {
 
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? 'Editar oferta' : 'Nova oferta'}>
         <form onSubmit={saveOffer} className="space-y-3">
-          <Input label="TÃ­tulo" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} required />
-          <Input label="DescriÃ§Ã£o" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
+          <Input label="Título" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} required />
+          <Input label="Descrição" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
           <div className="grid grid-cols-2 gap-2">
-            <Input label="PreÃ§o (R$)" type="number" min="1" step="0.01" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} required />
+            <Input label="Preço (R$)" type="number" min="1" step="0.01" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} required />
             <Input label="Ordem" type="number" min="0" value={form.displayOrder} onChange={(e) => setForm((p) => ({ ...p, displayOrder: e.target.value }))} />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <label className="text-sm text-slate-600">Ativo <input type="checkbox" checked={form.isActive} onChange={(e) => setForm((p) => ({ ...p, isActive: e.target.checked }))} className="ml-2" /></label>
-            <label className="text-sm text-slate-600">PÃºblico <input type="checkbox" checked={form.isPublic} onChange={(e) => setForm((p) => ({ ...p, isPublic: e.target.checked }))} className="ml-2" /></label>
+            <label className="text-sm text-slate-600">Público <input type="checkbox" checked={form.isPublic} onChange={(e) => setForm((p) => ({ ...p, isPublic: e.target.checked }))} className="ml-2" /></label>
           </div>
           <Button type="submit" className="w-full">Salvar oferta</Button>
         </form>

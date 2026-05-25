@@ -3,22 +3,10 @@ import { NavLink } from 'react-router-dom';
 import { Menu, LogOut, Moon, Sun } from 'lucide-react';
 import { NotificationBell } from '../components/ui/NotificationBell';
 import { LanguageSwitcher } from '../components/ui/LanguageSwitcher';
+import { BrandLogo } from '../components/brand/BrandLogo';
 import { useTheme } from '../contexts/ThemeContext';
 import { useI18n } from '../i18n';
 import { brand } from '../config/brand';
-
-function BrandMark({ size = 'md' }) {
-  const sizeClass = size === 'sm' ? 'h-8 w-8 rounded-xl' : 'h-9 w-9 rounded-2xl';
-  return (
-    <div className={`${sizeClass} overflow-hidden border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-white/10 flex items-center justify-center`}>
-      {brand.logoUrl ? (
-        <img src={brand.logoUrl} alt="Forma Training" className="h-full w-full object-contain p-1" />
-      ) : (
-        <span className="text-xs font-bold text-white bg-gradient-to-br from-violet-600 to-indigo-600 h-full w-full flex items-center justify-center">FT</span>
-      )}
-    </div>
-  );
-}
 
 function SidebarItems({ groups, onNavigate }) {
   return (
@@ -61,7 +49,7 @@ function DesktopSidebar({ groups, onLogout, user, roleLabel, appName, logoutLabe
     <aside className="hidden md:sticky md:top-0 md:flex md:h-screen md:flex-col w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/10 shrink-0">
       <div className="px-4 py-5 border-b border-slate-200 dark:border-white/10">
         <div className="flex items-center gap-3">
-          <BrandMark />
+          <BrandLogo showText={false} />
           <div className="min-w-0">
             <p className="font-semibold text-slate-900 dark:text-white text-sm leading-none">{appName}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">{roleLabel || user?.name}</p>
@@ -89,7 +77,7 @@ function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel, appNam
       <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/10 flex flex-col">
         <div className="px-4 py-5 border-b border-slate-200 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <BrandMark />
+            <BrandLogo showText={false} />
             <div className="min-w-0">
               <p className="font-semibold text-slate-900 dark:text-white text-sm leading-none">{appName}</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">{roleLabel || user?.name}</p>
@@ -128,8 +116,10 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
               <Menu size={20} />
             </button>
             <div className="md:hidden flex items-center gap-2 min-w-0">
-              <BrandMark size="sm" />
-              <span className="font-semibold text-slate-900 dark:text-white text-sm truncate">{brand.name || t('common.appName')}</span>
+              <BrandLogo size="sm" showText={false} />
+              <span className="font-semibold text-slate-900 dark:text-white text-sm truncate max-w-[150px]" title={brand.name || t('common.appName')}>
+                {brand.name || t('common.appName')}
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-2">

@@ -24,7 +24,10 @@ public class MediaController : ControllerBase
     public async Task<IActionResult> Upload([FromForm] IFormFile file, [FromForm] MediaCategory category, [FromForm] Guid? studentId = null, [FromForm] bool isPublic = false, CancellationToken cancellationToken = default)
     {
         var result = await _mediaService.UploadMediaAsync(file, category, _currentUser.UserId, _currentUser.TrainerId, studentId, isPublic, _currentUser.Role, _currentUser.StudentId, cancellationToken);
-        return result.Success ? Ok(result) : BadRequest(result);
+        if (result.Success) return Ok(result);
+        if ((result.Message ?? string.Empty).Contains("indisponível", StringComparison.OrdinalIgnoreCase))
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, result);
+        return BadRequest(result);
     }
 
     [HttpPost("upload/profile-photo")]

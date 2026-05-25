@@ -1,10 +1,11 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
 import { authService } from '../../services/authService';
 import { useAuth } from '../../contexts/AuthContext';
+import { BrandLogo } from '../../components/brand/BrandLogo';
 
 const empty = {
   fullName: '',
@@ -48,6 +49,7 @@ export function StudentRegisterPage() {
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-8">
       <div className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
+        <div className="mb-3 inline-flex"><BrandLogo showText={false} size="lg" /></div>
         <h1 className="text-2xl font-bold text-slate-900">Criar conta de aluno</h1>
         <p className="mt-1 text-sm text-slate-500">Entre como explorador para descobrir personais e conteúdos públicos.</p>
 
@@ -85,3 +87,4 @@ export function StudentRegisterPage() {
     </div>
   );
 }
+

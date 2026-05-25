@@ -125,7 +125,7 @@ public class ExploreController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to search explore trainers.");
-            return StatusCode(StatusCodes.Status500InternalServerError, ApiResponse<TrainerSearchResponseDto>.Fail("Explore unavailable right now."));
+            return Ok(ApiResponse<TrainerSearchResponseDto>.Ok(new(), "Explore temporariamente indisponível."));
         }
     }
 
@@ -169,7 +169,7 @@ public class ExploreController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load recommended trainers.");
-            return StatusCode(StatusCodes.Status500InternalServerError, ApiResponse<TrainerSearchResponseDto>.Fail("Explore unavailable right now."));
+            return Ok(ApiResponse<TrainerSearchResponseDto>.Ok(new(), "Explore temporariamente indisponível."));
         }
     }
 

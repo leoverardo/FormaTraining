@@ -1,10 +1,11 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Dumbbell, Zap, Users, BarChart2, ChevronRight } from 'lucide-react';
+import { BrandLogo } from '../../components/brand/BrandLogo';
+import { Zap, Users, BarChart2, ChevronRight } from 'lucide-react';
 
 const features = [
   { icon: Users, text: 'Gerencie alunos, treinos e metas em um só lugar' },
@@ -36,14 +37,8 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left column ? branding + benefits */}
       <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-12 text-white">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center">
-            <Dumbbell size={22} className="text-white" />
-          </div>
-          <span className="text-xl font-bold tracking-tight">FitPlatform</span>
-        </div>
+        <BrandLogo showText size="md" textClassName="text-xl font-bold tracking-tight text-white" />
 
         <div className="space-y-8">
           <div>
@@ -68,20 +63,13 @@ export function LoginPage() {
         </div>
 
         <p className="text-slate-600 text-sm">
-          © {new Date().getFullYear()} FitPlatform. Todos os direitos reservados.
+          © {new Date().getFullYear()} Forma Training. Todos os direitos reservados.
         </p>
       </div>
 
-      {/* Right column ? login form */}
       <div className="flex-1 flex items-center justify-center p-6 bg-slate-50">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
-              <Dumbbell size={20} className="text-white" />
-            </div>
-            <span className="text-lg font-bold text-slate-900">FitPlatform</span>
-          </div>
+          <BrandLogo className="mb-8 lg:hidden" size="sm" showText textClassName="text-lg font-bold text-slate-900 max-w-[170px]" />
 
           <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
             <div className="mb-6">
@@ -92,7 +80,7 @@ export function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input label="E-mail" type="email" placeholder="seu@email.com"
                 value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} required />
-              <Input label="Senha" type="password" placeholder="⬢⬢⬢⬢⬢⬢⬢⬢"
+              <Input label="Senha" type="password" placeholder="••••••••"
                 value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} required />
               <Button type="submit" loading={loading} className="w-full mt-2">
                 Entrar <ChevronRight size={16} />
@@ -109,7 +97,6 @@ export function LoginPage() {
             </p>
           </div>
 
-          {/* Dev credentials */}
           <div className="mt-4 bg-slate-100 rounded-2xl p-4">
             <p className="text-xs text-slate-500 font-semibold mb-2 uppercase tracking-wide">Credenciais de teste</p>
             <div className="space-y-1">
@@ -127,4 +114,3 @@ export function LoginPage() {
     </div>
   );
 }
-

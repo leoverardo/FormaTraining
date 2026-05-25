@@ -58,6 +58,17 @@ public class ExploreService
             _logger.LogWarning("Explore search fallback due to schema mismatch: {Message}", ex.Message);
             return await SearchTrainersLegacyAsync(query, studentProfileId);
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Explore search failed. Returning empty result.");
+            return ApiResponse<TrainerSearchResponseDto>.Ok(new TrainerSearchResponseDto
+            {
+                Items = new(),
+                Total = 0,
+                Page = Math.Max(1, query.Page),
+                PageSize = Math.Clamp(query.PageSize, 1, 50)
+            }, "Explore temporariamente indisponível. Tente novamente.");
+        }
     }
 
     private async Task<ApiResponse<TrainerSearchResponseDto>> SearchTrainersCoreAsync(ExploreTrainerQuery query, Guid? studentProfileId)
@@ -77,7 +88,7 @@ public class ExploreService
                                                               && s.EndDate >= DateTime.UtcNow));
 
         if (!string.IsNullOrWhiteSpace(normalizedSearch))
-            trainerQuery = trainerQuery.Where(t => t.User.Name.Contains(normalizedSearch) || t.BrandName.Contains(normalizedSearch));
+            trainerQuery = trainerQuery.Where(t => (t.User != null && t.User.Name != null && t.User.Name.Contains(normalizedSearch)) || (t.BrandName != null && t.BrandName.Contains(normalizedSearch)));
         if (!string.IsNullOrWhiteSpace(query.City))
             trainerQuery = trainerQuery.Where(t => t.City == query.City);
         if (!string.IsNullOrWhiteSpace(query.State))
@@ -145,18 +156,18 @@ public class ExploreService
             return new TrainerSearchResultDto
             {
                 TrainerId = t.Id,
-                Slug = t.PublicSlug,
-                FullName = t.User.Name,
-                BrandName = t.BrandName,
-                Headline = t.PublicHeadline,
-                Bio = t.Bio,
-                City = t.City,
-                State = t.State,
-                Neighborhood = t.Neighborhood,
+                Slug = t.PublicSlug ?? string.Empty,
+                FullName = t.User?.Name ?? "Personal",
+                BrandName = t.BrandName ?? t.User?.Name ?? "Personal",
+                Headline = t.PublicHeadline ?? string.Empty,
+                Bio = t.Bio ?? string.Empty,
+                City = t.City ?? string.Empty,
+                State = t.State ?? string.Empty,
+                Neighborhood = t.Neighborhood ?? string.Empty,
                 Specialties = ParseSpecialties(t.Specialties),
-                ServiceMode = t.ServiceMode,
-                ProfilePhotoUrl = t.ProfilePhotoUrl,
-                BannerUrl = t.BannerUrl,
+                ServiceMode = t.ServiceMode ?? string.Empty,
+                ProfilePhotoUrl = t.ProfilePhotoUrl ?? string.Empty,
+                BannerUrl = t.BannerUrl ?? string.Empty,
                 Rating = null,
                 ReviewsCount = 0,
                 PublicPostsCount = postsByTrainer.TryGetValue(t.Id, out var postCount) ? postCount : 0,
@@ -228,7 +239,7 @@ public class ExploreService
                                                               && s.EndDate >= DateTime.UtcNow));
 
         if (!string.IsNullOrWhiteSpace(normalizedSearch))
-            trainerQuery = trainerQuery.Where(t => t.User.Name.Contains(normalizedSearch) || t.BrandName.Contains(normalizedSearch));
+            trainerQuery = trainerQuery.Where(t => (t.User != null && t.User.Name != null && t.User.Name.Contains(normalizedSearch)) || (t.BrandName != null && t.BrandName.Contains(normalizedSearch)));
         if (!string.IsNullOrWhiteSpace(query.City))
             trainerQuery = trainerQuery.Where(t => t.City == query.City);
         if (!string.IsNullOrWhiteSpace(query.State))
@@ -253,18 +264,18 @@ public class ExploreService
         var allItems = trainers.Select(t => new TrainerSearchResultDto
         {
             TrainerId = t.Id,
-            Slug = t.PublicSlug,
-            FullName = t.User.Name,
-            BrandName = t.BrandName,
-            Headline = t.PublicHeadline,
-            Bio = t.Bio,
-            City = t.City,
-            State = t.State,
-            Neighborhood = t.Neighborhood,
+            Slug = t.PublicSlug ?? string.Empty,
+            FullName = t.User?.Name ?? "Personal",
+            BrandName = t.BrandName ?? t.User?.Name ?? "Personal",
+            Headline = t.PublicHeadline ?? string.Empty,
+            Bio = t.Bio ?? string.Empty,
+            City = t.City ?? string.Empty,
+            State = t.State ?? string.Empty,
+            Neighborhood = t.Neighborhood ?? string.Empty,
             Specialties = ParseSpecialties(t.Specialties),
             ServiceMode = null,
-            ProfilePhotoUrl = t.ProfilePhotoUrl,
-            BannerUrl = t.BannerUrl,
+            ProfilePhotoUrl = t.ProfilePhotoUrl ?? string.Empty,
+            BannerUrl = t.BannerUrl ?? string.Empty,
             PublicPostsCount = postsByTrainer.TryGetValue(t.Id, out var postCount) ? postCount : 0,
             IsFollowedByCurrentUser = followed.Contains(t.Id),
             IsSavedByCurrentUser = saved.Contains(t.Id),

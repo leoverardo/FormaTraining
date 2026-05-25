@@ -1,11 +1,11 @@
-/**
+﻿/**
  * Adapter layer for social feed.
  * Replace local interaction state with API endpoints when available.
  */
 export function mapPostToFeedItem(post, authorFallback = {}) {
   const media = [];
   if (post.imageUrl) media.push({ type: 'image', url: post.imageUrl, alt: post.title || 'Imagem do post' });
-  if (post.videoUrl) media.push({ type: 'video', url: post.videoUrl, alt: post.title || 'Vídeo do post' });
+  if (post.videoUrl) media.push({ type: 'video', url: post.videoUrl, alt: post.title || 'VÃ­deo do post' });
 
   const resolvedId =
     post.id
@@ -36,7 +36,7 @@ export const feedTabs = [
   { value: 'all', label: 'Todos' },
   { value: 'workout', label: 'Treinos' },
   { value: 'tips', label: 'Dicas' },
-  { value: 'progress', label: 'Evolução' },
+  { value: 'progress', label: 'EvoluÃ§Ã£o' },
   { value: 'class', label: 'Aulas' },
   { value: 'notice', label: 'Avisos' },
 ];
@@ -44,12 +44,12 @@ export const feedTabs = [
 export const mockFeedFallback = [
   {
     id: 'mock-1',
-    authorName: 'FitPlatform Coach',
+    authorName: 'Forma Training Coach',
     authorAvatarUrl: '',
     authorRole: 'Trainer',
     createdAt: new Date().toISOString(),
     title: 'Bem-vindo ao seu novo feed',
-    text: 'Aqui você verá treinos, dicas e avisos publicados pelo seu personal.',
+    text: 'Aqui vocÃª verÃ¡ treinos, dicas e avisos publicados pelo seu personal.',
     media: [],
     tags: ['dicas'],
     likesCount: 9,
@@ -59,5 +59,6 @@ export const mockFeedFallback = [
     visibility: 'Published',
   },
 ];
+
 
 
