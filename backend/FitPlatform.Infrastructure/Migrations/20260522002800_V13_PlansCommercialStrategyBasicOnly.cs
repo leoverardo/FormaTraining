@@ -12,12 +12,30 @@ namespace FitPlatform.Infrastructure.Migrations
         {
             migrationBuilder.Sql(
                 """
+                IF COL_LENGTH('PlatformPlans', 'Code') IS NULL
+                BEGIN
+                    ALTER TABLE PlatformPlans ADD Code nvarchar(450) NULL;
+                END;
+                """);
+
+            migrationBuilder.Sql(
+                """
                 UPDATE PlatformPlans
                 SET Code = CASE
                     WHEN UPPER(ISNULL(Code, '')) = '' AND UPPER(Name) IN ('STARTER','BASIC') THEN 'BASIC'
                     WHEN UPPER(ISNULL(Code, '')) = '' AND UPPER(Name) = 'PRO' THEN 'PRO'
                     WHEN UPPER(ISNULL(Code, '')) = '' AND UPPER(Name) = 'GROWTH' THEN 'GROWTH'
+                    WHEN UPPER(ISNULL(Code, '')) = '' AND UPPER(ISNULL(Name, '')) <> '' THEN UPPER(REPLACE(REPLACE(Name, ' ', '_'), '-', '_'))
+                    WHEN UPPER(ISNULL(Code, '')) = '' THEN CONCAT('PLAN_', REPLACE(CONVERT(varchar(36), Id), '-', ''))
                     ELSE UPPER(Code)
+                END;
+                """);
+
+            migrationBuilder.Sql(
+                """
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PlatformPlans_Code' AND object_id = OBJECT_ID('PlatformPlans'))
+                BEGIN
+                    CREATE UNIQUE INDEX IX_PlatformPlans_Code ON PlatformPlans(Code);
                 END;
                 """);
 
