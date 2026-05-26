@@ -82,7 +82,12 @@ public class PaymentService
             x => x.PlatformPlanId == plan.Id && x.BillingCycle == request.BillingCycle && x.IsActive,
             cancellationToken);
         if (option == null || string.IsNullOrWhiteSpace(option.AbacatePayProductId))
-            return ApiResponse<SubscriptionResponse>.Fail("Produto da AbacatePay nÃ£o configurado para esse plano/ciclo.");
+        {
+            _logger.LogError(
+                "AbacatePay product not configured. PlanId={PlanId} PlanName={PlanName} BillingCycle={BillingCycle} OptionFound={OptionFound} ProductIdEmpty={ProductIdEmpty}",
+                plan.Id, plan.Name, request.BillingCycle, option != null, option != null && string.IsNullOrWhiteSpace(option.AbacatePayProductId));
+            return ApiResponse<SubscriptionResponse>.Fail("Plano ou ciclo de cobrança indisponível para pagamento. Contate o suporte.");
+        }
 
         var onboarding = await _db.TrainerOnboardings
             .Where(x => x.Email == trainer.User.Email && x.Status == OnboardingStatus.WaitingPayment)
@@ -93,8 +98,11 @@ public class PaymentService
         if (pricing.CouponError != null) return ApiResponse<SubscriptionResponse>.Fail(pricing.CouponError);
         if (pricing.FinalAmountInCents != option.FinalPriceInCents)
         {
+            _logger.LogError(
+                "Price mismatch for AbacatePay product. PlanId={PlanId} BillingCycle={BillingCycle} CalculatedCents={CalculatedCents} ConfiguredCents={ConfiguredCents} HasCoupon={HasCoupon}",
+                plan.Id, request.BillingCycle, pricing.FinalAmountInCents, option.FinalPriceInCents, !string.IsNullOrWhiteSpace(request.CouponCode));
             return ApiResponse<SubscriptionResponse>.Fail(
-                "O valor final calculado difere do valor do produto recorrente configurado na AbacatePay para este plano/ciclo. Ajuste o produto externo ou prossiga sem cupom.");
+                "O valor calculado não corresponde ao produto configurado para este plano/ciclo. Tente sem cupom ou contate o suporte.");
         }
 
         await using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);

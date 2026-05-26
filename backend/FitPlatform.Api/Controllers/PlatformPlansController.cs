@@ -13,16 +13,19 @@ public class PlatformPlansController : ControllerBase
 
     public PlatformPlansController(PlatformPlanService service) => _service = service;
 
+    // Público: chamado pela tela de cadastro de treinador antes de o usuário ter token.
+    // Retorna apenas planos ativos/públicos; criação e gestão exigem Owner.
     [HttpGet]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll()
     {
         var result = await _service.GetAllAsync();
         return Ok(result);
     }
 
+    // Público: permite carregar detalhes de um plano específico durante o onboarding.
     [HttpGet("{id:guid}")]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _service.GetByIdAsync(id);

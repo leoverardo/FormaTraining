@@ -5,6 +5,7 @@ using FitPlatform.Domain.Entities;
 using FitPlatform.Domain.Enums;
 using FitPlatform.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FitPlatform.Infrastructure.Services;
 
@@ -14,13 +15,15 @@ public class OnboardingService
     private readonly PasswordSetupService _passwordSetup;
     private readonly PaymentService _paymentService;
     private readonly PrivacyLgpdService _privacyLgpdService;
+    private readonly ILogger<OnboardingService> _logger;
 
-    public OnboardingService(AppDbContext db, PasswordSetupService passwordSetup, PaymentService paymentService, PrivacyLgpdService privacyLgpdService)
+    public OnboardingService(AppDbContext db, PasswordSetupService passwordSetup, PaymentService paymentService, PrivacyLgpdService privacyLgpdService, ILogger<OnboardingService> logger)
     {
         _db = db;
         _passwordSetup = passwordSetup;
         _paymentService = paymentService;
         _privacyLgpdService = privacyLgpdService;
+        _logger = logger;
     }
 
     public async Task<ApiResponse<TrainerOnboardingResponse>> StartAsync(StartOnboardingRequest request)
@@ -212,12 +215,32 @@ public class OnboardingService
 
     public async Task<ApiResponse<SubscriptionResponse>> CreateCheckoutAsync(Guid onboardingId, CreateOnboardingCheckoutRequest request, CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation(
+            "Checkout iniciado. OnboardingId={OnboardingId} HasCoupon={HasCoupon}",
+            onboardingId, !string.IsNullOrWhiteSpace(request.CouponCode));
+
         var onboarding = await _db.TrainerOnboardings.FirstOrDefaultAsync(x => x.Id == onboardingId, cancellationToken);
-        if (onboarding == null) return ApiResponse<SubscriptionResponse>.Fail("Onboarding não encontrado.");
+        if (onboarding == null)
+        {
+            _logger.LogWarning("Checkout: onboarding não encontrado. OnboardingId={OnboardingId}", onboardingId);
+            return ApiResponse<SubscriptionResponse>.Fail("Onboarding não encontrado.");
+        }
         if (!onboarding.SelectedPlatformPlanId.HasValue || !onboarding.BillingCycle.HasValue)
+        {
+            _logger.LogWarning(
+                "Checkout: plano/ciclo não selecionado. OnboardingId={OnboardingId} Status={Status}",
+                onboardingId, onboarding.Status);
             return ApiResponse<SubscriptionResponse>.Fail("Selecione um plano/ciclo antes do checkout.");
+        }
         if (onboarding.Status == OnboardingStatus.Completed)
+        {
+            _logger.LogWarning("Checkout: onboarding já concluído. OnboardingId={OnboardingId}", onboardingId);
             return ApiResponse<SubscriptionResponse>.Fail("Onboarding já concluído.");
+        }
+
+        _logger.LogInformation(
+            "Checkout: criando subscription. OnboardingId={OnboardingId} PlanId={PlanId} BillingCycle={BillingCycle}",
+            onboardingId, onboarding.SelectedPlatformPlanId, onboarding.BillingCycle);
 
         var selectedPlan = await _db.PlatformPlans.FirstOrDefaultAsync(
             x => x.Id == onboarding.SelectedPlatformPlanId.Value && x.Active,
@@ -289,13 +312,24 @@ public class OnboardingService
         onboarding.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(cancellationToken);
 
-        return await _paymentService.CreateSubscriptionAsync(trainer.Id, new CreateSubscriptionRequest
+        var checkoutResult = await _paymentService.CreateSubscriptionAsync(trainer.Id, new CreateSubscriptionRequest
         {
             PlatformPlanId = onboarding.SelectedPlatformPlanId.Value,
             PlatformPlanPriceId = onboarding.SelectedPlatformPlanPriceId,
             BillingCycle = onboarding.BillingCycle.Value,
             CouponCode = request.CouponCode
         }, cancellationToken);
+
+        if (!checkoutResult.Success)
+            _logger.LogWarning(
+                "Checkout falhou. OnboardingId={OnboardingId} TrainerId={TrainerId} Reason={Reason}",
+                onboardingId, trainer.Id, checkoutResult.Message);
+        else
+            _logger.LogInformation(
+                "Checkout criado com sucesso. OnboardingId={OnboardingId} TrainerId={TrainerId} HasCheckoutUrl={HasUrl}",
+                onboardingId, trainer.Id, !string.IsNullOrWhiteSpace(checkoutResult.Data?.CheckoutUrl));
+
+        return checkoutResult;
     }
 
     public async Task<ApiResponse<TrainerOnboardingResponse>> SimulatePaymentApprovedAsync(Guid id)
