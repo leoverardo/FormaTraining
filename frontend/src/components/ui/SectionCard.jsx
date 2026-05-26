@@ -6,8 +6,8 @@ export function SectionCard({ title, description, children, className = '', acti
       {(title || description || action) && (
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            {title && <h3 className="text-base font-semibold text-slate-900">{title}</h3>}
-            {description && <p className="text-sm text-slate-500 mt-1">{description}</p>}
+            {title && <h3 className="text-base font-semibold text-slate-900 dark:text-white">{title}</h3>}
+            {description && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{description}</p>}
           </div>
           {action}
         </div>

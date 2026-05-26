@@ -1,35 +1,71 @@
 @import "tailwindcss";
 
+/*
+ * TAILWIND V4 — dark mode por classe.
+ * Esta linha faz com que todas as utilidades dark: respondam à classe .dark
+ * no elemento ancestral (html.dark), e NÃO ao prefers-color-scheme do SO.
+ * Alinhado com ThemeContext que aplica/remove .dark/.light em document.documentElement.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── CSS Tokens globais ─── */
+
 :root {
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-muted: #f8fafc;
-  --border: #e2e8f0;
-  --text: #0f172a;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --primary: #6366f1;
+  /* Cores base - light mode */
+  --background:        #f8fafc;
+  --foreground:        #0f172a;
+  --card:              #ffffff;
+  --card-foreground:   #0f172a;
+  --muted:             #f8fafc;
+  --muted-foreground:  #64748b;
+  --border:            #e2e8f0;
+  --input:             #e2e8f0;
+  --primary:           #6366f1;
+  --primary-foreground:#ffffff;
+
+  /* Aliases legados (mantidos para compatibilidade com body background) */
+  --bg:             var(--background);
+  --surface:        var(--card);
+  --surface-muted:  var(--muted);
+  --text:           var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-muted:     #94a3b8;
   --primary-strong: #4f46e5;
-  --focus-ring: #a5b4fc;
+  --focus-ring:     #a5b4fc;
+
   --radius-sm: 0.625rem;
   --radius-md: 0.875rem;
   --radius-lg: 1.125rem;
   --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.06);
 }
 
+/* Dark mode tokens — ativados via html.dark (ThemeContext) ou data-theme='dark' */
+.dark,
 :root[data-theme='dark'] {
-  --bg: #020617;
-  --surface: #0f172a;
-  --surface-muted: #111827;
-  --border: #1e293b;
-  --text: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --primary: #818cf8;
+  --background:        #020617;
+  --foreground:        #e2e8f0;
+  --card:              #0f172a;
+  --card-foreground:   #e2e8f0;
+  --muted:             #111827;
+  --muted-foreground:  #94a3b8;
+  --border:            #1e293b;
+  --input:             #1e293b;
+  --primary:           #818cf8;
+  --primary-foreground:#ffffff;
+
+  /* Aliases legados */
+  --bg:             var(--background);
+  --surface:        var(--card);
+  --surface-muted:  var(--muted);
+  --text:           var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-muted:     #64748b;
   --primary-strong: #6366f1;
-  --focus-ring: #818cf8;
+  --focus-ring:     #818cf8;
   --shadow-soft: 0 18px 40px rgba(2, 6, 23, 0.45);
 }
+
+/* ─── Reset ─── */
 
 *,
 *::before,
@@ -55,6 +91,7 @@ body {
   color: var(--text);
 }
 
+.dark body,
 :root[data-theme='dark'] body {
   background:
     radial-gradient(circle at top right, rgba(99, 102, 241, 0.16), transparent 45%),
@@ -82,78 +119,3 @@ a {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
-
-:root[data-theme='dark'] .bg-white,
-:root[data-theme='dark'] .bg-white\/95 {
-  background-color: #0f172a !important;
-}
-
-:root[data-theme='dark'] .bg-slate-50 {
-  background-color: #020617 !important;
-}
-
-:root[data-theme='dark'] .bg-slate-100 {
-  background-color: #111827 !important;
-}
-
-:root[data-theme='dark'] .hover\:bg-slate-50:hover,
-:root[data-theme='dark'] .hover\:bg-slate-100:hover {
-  background-color: #1f2937 !important;
-}
-
-:root[data-theme='dark'] .bg-indigo-50 {
-  background-color: rgba(99, 102, 241, 0.18) !important;
-}
-
-:root[data-theme='dark'] .text-slate-900 {
-  color: #f8fafc !important;
-}
-
-:root[data-theme='dark'] .text-gray-900,
-:root[data-theme='dark'] .text-zinc-900,
-:root[data-theme='dark'] .text-neutral-900,
-:root[data-theme='dark'] .text-black {
-  color: #f8fafc !important;
-}
-
-:root[data-theme='dark'] .text-slate-700 {
-  color: #cbd5e1 !important;
-}
-
-:root[data-theme='dark'] .text-slate-600,
-:root[data-theme='dark'] .text-slate-500 {
-  color: #94a3b8 !important;
-}
-
-:root[data-theme='dark'] .text-gray-700 {
-  color: #cbd5e1 !important;
-}
-
-:root[data-theme='dark'] .text-gray-600,
-:root[data-theme='dark'] .text-gray-500 {
-  color: #94a3b8 !important;
-}
-
-:root[data-theme='dark'] .text-slate-400 {
-  color: #64748b !important;
-}
-
-:root[data-theme='dark'] .text-indigo-700,
-:root[data-theme='dark'] .text-indigo-600 {
-  color: #a5b4fc !important;
-}
-
-:root[data-theme='dark'] .border-slate-200 {
-  border-color: #1e293b !important;
-}
-
-:root[data-theme='dark'] .border-gray-200,
-:root[data-theme='dark'] .border-gray-300 {
-  border-color: #1e293b !important;
-}
-
-:root[data-theme='dark'] .shadow-sm,
-:root[data-theme='dark'] .shadow {
-  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35) !important;
-}
-

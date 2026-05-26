@@ -6,7 +6,8 @@
       "PowerShell(sqlcmd -S localhost -d FitPlatformDb -E -C -i \"D:\\\\AppTreino\\\\backend\\\\FitPlatform.Infrastructure\\\\Migrations\\\\_scripts\\\\20260509_explore_leads_slice2.sql\"; Write-Host \"Exit: $LASTEXITCODE\")",
       "PowerShell(sqlcmd -S localhost -d FitPlatformDb -E -C -Q \"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME IN \\('StudentProfiles','TrainerFollowers','SavedTrainers','TrainerLeads'\\) ORDER BY TABLE_NAME\")",
       "Bash(dotnet restore *)",
-      "Bash(dotnet test *)"
+      "Bash(dotnet test *)",
+      "Bash(dir d:/AppTreino/frontend/)"
     ]
   }
 }

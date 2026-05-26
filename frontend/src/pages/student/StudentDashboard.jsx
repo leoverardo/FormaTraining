@@ -13,6 +13,7 @@ import { WorkoutCard, CheckInCard, WeeklyScheduleCard, ProgressMetricCard } from
 import { mapPostToFeedItem, mockFeedFallback } from '../../features/feed/feedAdapter';
 import { AlertCircle, FileText } from 'lucide-react';
 import { useI18n } from '../../i18n';
+import { normalizeDisplayText } from '../../utils/textEncoding';
 
 const weekDays = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];
 
@@ -99,9 +100,9 @@ export function StudentDashboard() {
   return (
     <PageContainer className="space-y-5">
       <section className="rounded-3xl border border-slate-200 bg-gradient-to-r from-indigo-600 to-violet-600 p-5 sm:p-6 text-white shadow-[0_16px_36px_rgba(79,70,229,0.32)]">
-        <p className="text-indigo-100 text-sm">Ola, {data?.studentName?.split(' ')[0]}</p>
-        <h1 className="text-2xl sm:text-3xl font-bold mt-1">Seu plano de hoje esta pronto</h1>
-        <p className="text-indigo-100 mt-2 text-sm">Acompanhamento de {data?.trainerBrand || 'seu personal'} com treino, progresso e check-ins.</p>
+        <p className="text-indigo-100 text-sm">Olá, {normalizeDisplayText(data?.studentName?.split(' ')[0])}</p>
+        <h1 className="text-2xl sm:text-3xl font-bold mt-1">Seu plano de hoje está pronto</h1>
+        <p className="text-indigo-100 mt-2 text-sm">Acompanhamento de {normalizeDisplayText(data?.trainerBrand || 'seu personal')} com treino, progresso e check-ins.</p>
       </section>
 
       <ContentGrid>
@@ -144,7 +145,7 @@ export function StudentDashboard() {
               <p className="text-sm text-slate-500">Seu personal ainda nao agendou um compromisso.</p>
             ) : (
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{data.nextAppointment.title}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{normalizeDisplayText(data.nextAppointment.title)}</p>
                 <p className="text-xs text-slate-500">{data.nextAppointment.type} • {data.nextAppointment.status}</p>
                 {data.nextAppointment.location && <p className="text-xs text-slate-500">Local: {data.nextAppointment.location}</p>}
                 <button onClick={() => navigate('/student/appointments')} className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
@@ -166,7 +167,7 @@ export function StudentDashboard() {
                     disabled={updatingHabitId === item.habitId}
                     className={`w-full rounded-xl border px-3 py-2 text-left transition ${item.isCompleted ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10' : 'border-slate-200 bg-white dark:border-white/10 dark:bg-slate-900'}`}
                   >
-                    <p className="text-sm font-medium text-slate-800">{item.title}</p>
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{item.title}</p>
                     <p className="text-xs text-slate-500">{item.targetValue ? `${item.targetValue} ${item.targetUnit || ''}` : item.category}</p>
                   </button>
                 ))}
@@ -179,8 +180,9 @@ export function StudentDashboard() {
               <p className="text-sm text-slate-500">Seu personal ainda nao registrou orientacoes.</p>
             ) : (
               <div className="space-y-2">
-                <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-200">{nutrition.guidanceText}</p>
-                {nutrition.strategicNotes && <p className="rounded-lg bg-amber-50 p-2 text-xs text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">{nutrition.strategicNotes}</p>}
+                {/* normalizeDisplayText: proteção visual contra mojibake de payloads da API */}
+                <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-200">{normalizeDisplayText(nutrition.guidanceText)}</p>
+                {nutrition.strategicNotes && <p className="rounded-lg bg-amber-50 p-2 text-xs text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">{normalizeDisplayText(nutrition.strategicNotes)}</p>}
               </div>
             )}
           </SectionCard>
@@ -218,11 +220,11 @@ export function StudentDashboard() {
                   const ratio = goal.target > 0 ? Math.min(100, Math.round((goal.value / goal.target) * 100)) : 0;
                   return (
                     <div key={goal.label}>
-                      <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
+                      <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
                         <span>{goal.label}</span>
                         <span>{goal.value}/{goal.target}</span>
                       </div>
-                      <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                         <div className="h-2 rounded-full bg-indigo-500" style={{ width: `${ratio}%` }} />
                       </div>
                     </div>
@@ -238,9 +240,9 @@ export function StudentDashboard() {
             ) : (
               <div className="space-y-2">
                 {achievements.map((item) => (
-                  <div key={item.code} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
-                    <p className="text-sm font-semibold text-amber-900">{item.title}</p>
-                    <p className="text-xs text-amber-700">{item.description}</p>
+                  <div key={item.code} className="rounded-xl border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-3 py-2">
+                    <p className="text-sm font-semibold text-amber-900 dark:text-amber-300">{item.title}</p>
+                    <p className="text-xs text-amber-700 dark:text-amber-400">{item.description}</p>
                   </div>
                 ))}
               </div>

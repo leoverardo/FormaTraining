@@ -373,7 +373,7 @@
       "privateRecords": "{{value}} private records",
       "progressPhoto": "Progress photo",
       "addProgressPhoto": "Add progress photo",
-      "uploadHint": "JPG, PNG ? max 5 MB",
+      "uploadHint": "JPG, PNG • max 5 MB",
       "privateHint": "Your photos are private and visible only to you and your trainer.",
       "photoDate": "Photo date",
       "descriptionOptional": "Description (optional)",

@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -6,10 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Plataforma de gestão de treinos para personal trainers e alunos." />
     <title>Forma Training</title>
+    <!--
+      Script anti-FOUC: aplica o tema ANTES do primeiro render do React.
+      Usa a chave canônica 'forma-training-theme'; padrão: dark.
+      Deve ser executado de forma síncrona e inline (não defer/async).
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('forma-training-theme');
+          var theme = (stored === 'light' || stored === 'dark') ? stored : 'dark';
+          var root = document.documentElement;
+          root.classList.remove('dark', 'light');
+          root.classList.add(theme);
+          root.dataset.theme = theme;
+          root.style.colorScheme = theme;
+        } catch (e) {
+          // Se localStorage não estiver disponível, aplica dark por padrão
+          document.documentElement.classList.add('dark');
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
-

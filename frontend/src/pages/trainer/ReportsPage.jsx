@@ -22,8 +22,8 @@ export function ReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Relatórios</h1>
-        <p className="text-gray-500 text-sm mt-1">Visão geral do engajamento dos seus alunos</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Relatórios</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Visão geral do engajamento dos seus alunos</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -37,44 +37,44 @@ export function ReportsPage() {
       </div>
 
       {data.studentEngagement?.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h3 className="font-semibold text-gray-900 text-sm">Engajamento dos alunos este mês</h3>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 dark:border-white/10">
+            <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Engajamento dos alunos este mês</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Aluno</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">?ltimo acesso</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">?ltimo check-in</th>
-                  <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 uppercase">Check-ins</th>
-                  <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 uppercase">Treinos</th>
+                <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-white/10">
+                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Aluno</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Status</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase hidden md:table-cell">Último acesso</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase hidden md:table-cell">Último check-in</th>
+                  <th className="text-center px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Check-ins</th>
+                  <th className="text-center px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Treinos</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                 {data.studentEngagement.map(s => (
-                  <tr key={s.studentId} className="hover:bg-gray-50 transition-colors">
+                  <tr key={s.studentId} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                     <td className="px-6 py-3">
-                      <p className="font-medium text-gray-900 text-sm">{s.name}</p>
+                      <p className="font-medium text-slate-900 dark:text-white text-sm">{s.name}</p>
                     </td>
                     <td className="px-6 py-3">
                       <Badge variant={monitoringBadge[s.monitoringStatus] || 'gray'}>
                         {monitoringLabel[s.monitoringStatus] || s.monitoringStatus}
                       </Badge>
                     </td>
-                    <td className="px-6 py-3 hidden md:table-cell text-xs text-gray-500">
-                      {s.lastLogin ? new Date(s.lastLogin).toLocaleDateString('pt-BR') : '?'}
+                    <td className="px-6 py-3 hidden md:table-cell text-xs text-slate-500 dark:text-slate-400">
+                      {s.lastLogin ? new Date(s.lastLogin).toLocaleDateString('pt-BR') : '—'}
                     </td>
-                    <td className="px-6 py-3 hidden md:table-cell text-xs text-gray-500">
-                      {s.lastCheckIn ? new Date(s.lastCheckIn).toLocaleDateString('pt-BR') : '?'}
-                    </td>
-                    <td className="px-6 py-3 text-center">
-                      <span className="text-sm font-medium text-gray-700">{s.checkInsThisMonth}</span>
+                    <td className="px-6 py-3 hidden md:table-cell text-xs text-slate-500 dark:text-slate-400">
+                      {s.lastCheckIn ? new Date(s.lastCheckIn).toLocaleDateString('pt-BR') : '—'}
                     </td>
                     <td className="px-6 py-3 text-center">
-                      <span className="text-sm font-medium text-gray-700">{s.workoutsCompletedThisMonth}</span>
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{s.checkInsThisMonth}</span>
+                    </td>
+                    <td className="px-6 py-3 text-center">
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{s.workoutsCompletedThisMonth}</span>
                     </td>
                   </tr>
                 ))}
@@ -86,4 +86,3 @@ export function ReportsPage() {
     </div>
   );
 }
-

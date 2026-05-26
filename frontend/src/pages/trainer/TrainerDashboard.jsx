@@ -51,8 +51,8 @@ export function TrainerDashboard() {
       <section className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 p-6 shadow-[0_12px_32px_rgba(15,23,42,0.08)] dark:shadow-[0_16px_36px_rgba(2,6,23,0.45)]">
         <div className="flex flex-wrap gap-3 items-start justify-between">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">{t('trainer.dashboard.title')}</h1>
-            <p className="text-sm text-slate-500 mt-1">{t('trainer.dashboard.subtitle')}</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{t('trainer.dashboard.title')}</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{t('trainer.dashboard.subtitle')}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button size="sm" onClick={() => navigate('/trainer/students')}><Plus size={14} />{t('trainer.dashboard.newStudent')}</Button>
