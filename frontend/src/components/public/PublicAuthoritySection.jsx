@@ -15,7 +15,7 @@ export function PublicAuthoritySection() {
       <p className="mt-3 max-w-3xl text-sm text-slate-600 sm:text-base">Treinos, acompanhamento e conteudos organizados para voce treinar com clareza, consistencia e evolucao real.</p>
       <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {valueCards.map((card) => (
-          <article key={card.title} className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 transition hover:-translate-y-0.5 hover:border-cyan-200 hover:bg-white hover:shadow-lg">
+          <article key={card.title} className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 transition hover:border-cyan-200 hover:bg-white hover:shadow-lg">
             <card.icon className="text-cyan-700" size={20} />
             <h3 className="mt-3 text-sm font-semibold text-slate-900">{card.title}</h3>
             <p className="mt-1 text-sm text-slate-600">{card.description}</p>

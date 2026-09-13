@@ -37,6 +37,55 @@
   --radius-md: 0.875rem;
   --radius-lg: 1.125rem;
   --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.06);
+
+  /* Sistema semântico Forma — valores usados em páginas novas sem quebrar os aliases legados. */
+  --color-canvas: var(--background);
+  --color-surface: var(--card);
+  --color-surface-subtle: var(--muted);
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+  --color-text-tertiary: #94a3b8;
+  --color-border-subtle: var(--border);
+  --color-brand: var(--primary);
+  --color-brand-strong: var(--primary-strong);
+  --color-accent: #22d3ee;
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+
+  --font-sans: "Plus Jakarta Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  --type-display: clamp(3rem, 7vw, 6.5rem);
+  --type-heading-xl: clamp(2.5rem, 5vw, 4.5rem);
+  --type-heading-lg: clamp(1.8rem, 4vw, 2.8rem);
+  --type-heading-md: 1.65rem;
+  --type-body-lg: 1.125rem;
+  --type-body: 1rem;
+  --type-body-sm: 0.875rem;
+  --type-caption: 0.75rem;
+  --tracking-display: -0.06em;
+  --tracking-heading: -0.045em;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  --radius-xl: 1.5rem;
+  --radius-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --shadow-2: 0 12px 28px rgba(15, 23, 42, 0.08);
+  --shadow-3: 0 24px 56px rgba(15, 23, 42, 0.14);
+  --duration-fast: 160ms;
+  --duration-normal: 280ms;
+  --duration-slow: 600ms;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --content-width: 75rem;
 }
 
 /* Dark mode tokens — ativados via html.dark (ThemeContext) ou data-theme='dark' */
@@ -63,6 +112,10 @@
   --primary-strong: #6366f1;
   --focus-ring:     #818cf8;
   --shadow-soft: 0 18px 40px rgba(2, 6, 23, 0.45);
+  --color-text-tertiary: #64748b;
+  --shadow-1: 0 1px 2px rgba(2, 6, 23, 0.22), 0 4px 12px rgba(2, 6, 23, 0.16);
+  --shadow-2: 0 12px 28px rgba(2, 6, 23, 0.3);
+  --shadow-3: 0 24px 56px rgba(2, 6, 23, 0.42);
 }
 
 /* ─── Reset ─── */
@@ -81,7 +134,7 @@ body,
 
 body {
   margin: 0;
-  font-family: "Plus Jakarta Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background:

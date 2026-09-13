@@ -52,6 +52,8 @@ import { TrainerPublicPage } from './pages/public/TrainerPublicPage';
 import { PrivacyPolicyPage, TermsOfUsePage } from './pages/public/LegalPages';
 import { PrivacySettingsPage } from './pages/shared/PrivacySettingsPage';
 import { OwnerPrivacyPage } from './pages/owner/OwnerPrivacyPage';
+import { LandingPage } from './pages/marketing/LandingPage';
+import { DesignSystemPage } from './pages/marketing/DesignSystemPage';
 
 function HomeRedirect() {
   const { user, loading, isExplorerStudent, isLinkedStudent } = useAuth();
@@ -77,6 +79,9 @@ export default function App() {
           <ToastProvider>
             <Routes>
             <Route path="/" element={<HomeRedirect />} />
+            <Route path="/landing" element={<LandingPage />} />
+            {/* Rota interna: intencionalmente fora de menus e da navegação pública. */}
+            <Route path="/design-system" element={<DesignSystemPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/student/register" element={<StudentRegisterPage />} />

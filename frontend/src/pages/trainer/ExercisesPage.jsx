@@ -185,7 +185,7 @@ export function ExercisesPage() {
           {filtered.map((exercise) => {
             const level = levelFromApi(exercise.level);
             return (
-              <article key={exercise.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-slate-900 dark:shadow-[0_14px_30px_rgba(2,6,23,0.45)]">
+              <article key={exercise.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-slate-900 dark:shadow-[0_14px_30px_rgba(2,6,23,0.45)]">
                 <CardMedia imageUrl={exercise.imageUrl} name={exercise.name} />
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">

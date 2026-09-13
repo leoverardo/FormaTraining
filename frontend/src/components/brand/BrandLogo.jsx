@@ -25,8 +25,8 @@ export function BrandLogo({
             className={`h-full w-full object-contain p-1 ${imageClassName}`}
           />
         ) : (
-          <span className="text-xs font-black text-white bg-gradient-to-br from-indigo-600 to-cyan-500 h-full w-full flex items-center justify-center">
-            F
+          <span className="text-[0.62rem] tracking-[-0.12em] font-black text-white bg-gradient-to-br from-indigo-600 to-cyan-500 h-full w-full flex items-center justify-center">
+            FT
           </span>
         )}
       </div>

@@ -16,7 +16,7 @@ export function PublicSpecialtiesSection() {
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {helpCards.map((card) => (
-          <article key={card.title} className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-[0_12px_26px_rgba(15,23,42,0.1)]">
+          <article key={card.title} className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-cyan-200 hover:shadow-[0_12px_26px_rgba(15,23,42,0.1)]">
             <card.icon size={20} className="text-cyan-700" />
             <h3 className="mt-3 text-base font-semibold text-slate-900">{card.title}</h3>
             <p className="mt-1 text-sm text-slate-600">{card.description}</p>

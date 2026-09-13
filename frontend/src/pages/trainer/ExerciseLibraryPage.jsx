@@ -118,7 +118,7 @@ export function ExerciseLibraryPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((item) => (
-            <article key={item.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-slate-900 dark:shadow-[0_14px_30px_rgba(2,6,23,0.45)]">
+            <article key={item.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-slate-900 dark:shadow-[0_14px_30px_rgba(2,6,23,0.45)]">
               {item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover" /> : <Placeholder name={item.name} />}
               <div className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
