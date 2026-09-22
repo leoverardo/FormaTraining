@@ -1,0 +1,52 @@
+/* Motion — rápido, natural, discreto. Respeita prefers-reduced-motion. */
+
+.ds-transition {
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard),
+    opacity var(--duration-fast) var(--ease-standard);
+}
+
+.ds-pressable {
+  transition: transform var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.ds-pressable:active {
+  transform: scale(0.985);
+}
+
+.ds-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+.ds-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.ds-fade { transition: opacity var(--duration-normal) var(--ease-standard); }
+.ds-scale-in { transition: transform var(--duration-normal) var(--ease-out), opacity var(--duration-normal) var(--ease-out); }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ds-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,44 @@
+/* Layout — container, ritmo vertical, grid. */
+
+.ds-container {
+  width: min(100% - (var(--gutter) * 2), var(--content-width));
+  margin-inline: auto;
+}
+
+.ds-container--narrow {
+  width: min(100% - (var(--gutter) * 2), var(--content-narrow));
+  margin-inline: auto;
+}
+
+.ds-container--wide {
+  width: min(100% - (var(--gutter) * 2), var(--content-wide));
+  margin-inline: auto;
+}
+
+.ds-section {
+  padding-block: var(--section-y);
+}
+
+.ds-section--sm {
+  padding-block: var(--section-y-sm);
+}
+
+.ds-stack > * + * {
+  margin-top: var(--space-4);
+}
+
+.ds-stack-lg > * + * {
+  margin-top: var(--space-6);
+}
+
+.ds-grid-2 { display: grid; gap: var(--space-5); }
+.ds-grid-3 { display: grid; gap: var(--space-4); }
+
+@media (min-width: 768px) {
+  .ds-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .ds-grid-3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+.ds-center { text-align: center; }
+.ds-max-prose { max-width: 44rem; }
+.ds-max-hero-copy { max-width: 46rem; }

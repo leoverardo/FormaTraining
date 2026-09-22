@@ -58,7 +58,7 @@ import { DesignSystemPage } from './pages/marketing/DesignSystemPage';
 function HomeRedirect() {
   const { user, loading, isExplorerStudent, isLinkedStudent } = useAuth();
   if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <LandingPage />;
   if (user.role === 'Owner') return <Navigate to="/owner" replace />;
   if (user.role === 'Trainer') return <Navigate to="/trainer/dashboard" replace />;
   if (isLinkedStudent) return <Navigate to="/student/dashboard" replace />;

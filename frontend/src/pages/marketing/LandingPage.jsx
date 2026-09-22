@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
-  Activity, ArrowRight, BarChart3, CalendarDays, Check, ChevronRight, CirclePlay, Clock3,
+  Activity, ArrowRight, BarChart3, CalendarDays, Check, ChevronRight, Clock3,
   ClipboardCheck, Dumbbell, Gauge, HeartPulse, Layers3, LineChart, Menu, MessageCircle,
-  ShieldCheck, Sparkles, UsersRound, X
+  ShieldCheck, Sparkles, UsersRound, X, Zap
 } from 'lucide-react';
 import { BrandLogo } from '../../components/brand/BrandLogo';
 import './marketing.css';
@@ -31,10 +31,24 @@ const routineViews = [
   { icon: LineChart, label: 'Acompanhe', eyebrow: 'Resultado que não fica solto', title: 'Evolução deixa de ser uma conversa perdida.', text: 'Check-ins, fotos e registros criam uma linha do tempo que ajuda você e o aluno a enxergarem a constância.', notes: ['Check-ins que convidam à resposta', 'Histórico visual de progresso', 'Conversas com contexto real'] },
 ];
 
+const plans = [
+  { name: 'Starter', price: 'R$ 97/mês', detail: 'Até 20 alunos · ideal para começar a operação.', cta: 'Começar no Starter' },
+  { name: 'Pro', price: 'R$ 197/mês', detail: 'Até 50 alunos · para quem já acompanha todos os dias.', cta: 'Assinar o Pro', featured: true },
+  { name: 'Growth', price: 'R$ 297/mês', detail: 'Até 100 alunos · para escalar sem perder presença.', cta: 'Falar sobre Growth' },
+];
+
+const faqs = [
+  { q: 'Os meus alunos pagam pela plataforma?', a: 'Não. Só o personal assina. O acesso do aluno depende da sua assinatura ativa.' },
+  { q: 'Posso usar minha identidade visual?', a: 'Sim. Marca, logo, cores da sua operação e página pública com seu slug.' },
+  { q: 'Como o aluno recebe acesso?', a: 'Você cadastra o aluno e ele recebe um link seguro para definir a senha.' },
+  { q: 'E se minha assinatura vencer?', a: 'O painel e o acesso dos alunos são pausados até a regularização — sem perder dados.' },
+];
+
 export function LandingPage() {
   const pageRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeRoutineView, setActiveRoutineView] = useState(0);
+  const [openFaq, setOpenFaq] = useState(0);
   const activeView = routineViews[activeRoutineView];
   const ActiveViewIcon = activeView.icon;
 
@@ -42,16 +56,13 @@ export function LandingPage() {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion) return undefined;
     const context = gsap.context(() => {
-      gsap.from('.landing-hero-copy > *', { y: 28, opacity: 0, duration: 0.8, stagger: 0.09, ease: 'power3.out' });
-      gsap.from('.landing-hero-visual', { scale: 0.9, opacity: 0, duration: 1.15, delay: 0.1, ease: 'power3.out' });
-      gsap.to('.landing-orb', { yPercent: -16, xPercent: 8, ease: 'none', scrollTrigger: { trigger: '.landing-hero', scrub: 1.2 } });
       gsap.utils.toArray('.landing-reveal').forEach((element) => {
         gsap.from(element, {
           y: 32,
           opacity: 0,
           duration: 0.72,
           ease: 'power3.out',
-          scrollTrigger: { trigger: element, start: 'top 84%' },
+          scrollTrigger: { trigger: element, start: 'top 86%' },
         });
       });
     }, pageRef);
@@ -64,7 +75,7 @@ export function LandingPage() {
         <div className="landing-header">
         <Link to="/" aria-label="Forma Training — início"><BrandLogo size="sm" textClassName="text-white font-bold" imageClassName="" /></Link>
         <nav className="hidden md:flex items-center gap-7 text-sm text-slate-300" aria-label="Navegação principal">
-          <a href="#produto">Produto</a><a href="#como-funciona">Como funciona</a><a href="#para-personais">Para personal trainers</a>
+          <a href="#produto">Produto</a><a href="#como-funciona">Como funciona</a><a href="#planos">Planos</a><a href="#faq">FAQ</a>
         </nav>
         <Link to="/login" className="landing-nav-login">Entrar <ArrowRight size={15} /></Link>
         </div>
@@ -87,30 +98,45 @@ export function LandingPage() {
       </header>
 
       <main>
-        <section className="landing-hero overflow-hidden">
+        <section className="landing-hero landing-hero--premium overflow-hidden">
           <div className="landing-grid" aria-hidden="true" />
           <div className="landing-orb" aria-hidden="true" />
-          <div className="landing-shell grid lg:grid-cols-[1.05fr_.95fr] gap-12 items-center min-h-screen pt-36 pb-16 lg:pt-40 lg:pb-24">
-            <div className="landing-hero-copy relative z-10 max-w-3xl">
-              <div className="landing-eyebrow"><Sparkles size={14} /> Gestão que acompanha sua evolução</div>
-              <h1 className="landing-display mt-6">O seu método merece uma <span>operação à altura.</span></h1>
-              <p className="mt-6 text-lg sm:text-xl leading-8 text-slate-300 max-w-2xl">A Forma Training reúne alunos, treinos, agenda, evolução e conteúdo em uma experiência feita para personal trainers que querem cuidar melhor — e crescer com clareza.</p>
-              <div className="mt-9 flex flex-col sm:flex-row gap-3">
-                <Link to="/register" className="landing-primary-cta">Começar minha operação <ArrowRight size={18} /></Link>
-                <a href="#produto" className="landing-secondary-cta"><CirclePlay size={18} /> Conhecer a plataforma</a>
+          <div className="landing-glow" aria-hidden="true" />
+          <div className="landing-shell landing-hero-split">
+            <div className="landing-hero-copy relative z-10">
+              <div className="landing-eyebrow landing-pill"><Sparkles size={14} /> Gestão para personal trainers</div>
+              <h1 className="landing-display mt-6 text-left">O seu método merece<br />uma <span>operação à altura.</span></h1>
+              <p className="mt-6 text-lg leading-8 text-slate-300" style={{ maxWidth: '30rem' }}>Alunos, treinos, agenda e evolução em uma experiência feita para cuidar melhor — e crescer com clareza.</p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                <Link to="/register" className="landing-primary-cta landing-cta-pill">Começar minha operação <ArrowRight size={18} /></Link>
+                <a href="#produto" className="landing-secondary-link">Conhecer a plataforma <ChevronRight size={17} /></a>
               </div>
-              <div className="mt-12 flex flex-wrap gap-x-7 gap-y-3 text-sm text-slate-300">
-                {['Uma visão por aluno', 'Treinos e rotina em um fluxo', 'Marca com a sua identidade'].map((item) => <span key={item} className="flex items-center gap-2"><Check size={16} className="text-cyan-300" />{item}</span>)}
+              <div className="mt-10 grid grid-cols-2 gap-5 max-w-md">
+                <div className="landing-mini-proof"><span className="landing-mini-icon"><Zap size={17} /></span><div><strong>Rápido de operar</strong><small>Prescreva em minutos, não em dias.</small></div></div>
+                <div className="landing-mini-proof"><span className="landing-mini-icon"><ShieldCheck size={17} /></span><div><strong>Confiança visível</strong><small>O aluno percebe cada entrega.</small></div></div>
               </div>
             </div>
-            <div className="landing-hero-visual relative min-h-[420px] sm:min-h-[520px]">
-              <div className="landing-photo-card">
-                <img src="/images/forma-training-hero.png" alt="Personal trainer acompanhando o treino de uma aluna" />
-                <div className="landing-photo-shade" />
-                <div className="landing-photo-caption"><span>FORMA / 01</span><strong>Treino com contexto.<br />Evolução com constância.</strong></div>
+            <div className="landing-hero-visual landing-product-compo relative" aria-label="Prévia do painel Forma Training">
+              <div className="landing-dash-window">
+                <div className="landing-canvas-top"><span /><span /><span /><b>Forma Training · painel</b><em><BarChart3 size={14} /> Hoje</em></div>
+                <div className="landing-dash-body">
+                  <p className="landing-dash-label">Constância da semana</p>
+                  <p className="landing-dash-value">4 de 5 treinos</p>
+                  <svg viewBox="0 0 320 110" className="landing-dash-chart" aria-hidden="true">
+                    <defs><linearGradient id="formaArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#818cf8" stopOpacity=".45" /><stop offset="1" stopColor="#818cf8" stopOpacity="0" /></linearGradient></defs>
+                    <path d="M0,85 L25,78 L50,82 L75,60 L100,64 L125,45 L150,52 L175,35 L200,42 L225,28 L250,34 L275,20 L300,26 L320,16 L320,110 L0,110 Z" fill="url(#formaArea)" />
+                    <path d="M0,85 L25,78 L50,82 L75,60 L100,64 L125,45 L150,52 L175,35 L200,42 L225,28 L250,34 L275,20 L300,26 L320,16" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+                  </svg>
+                  <div className="landing-dash-stats"><div><small>Alunos ativos</small><strong>24</strong></div><div><small>Check-ins</small><strong>94%</strong></div><div><small>Próximo</small><strong>Treino A</strong></div></div>
+                </div>
               </div>
-              <div className="landing-float-card landing-float-card--top"><span className="landing-pulse" /><div><small>Check-in semanal</small><strong>94% concluído</strong></div><BarChart3 size={20} /></div>
-              <div className="landing-float-card landing-float-card--bottom"><div className="landing-avatar-stack"><i /><i /><i /></div><div><small>Alunos ativos</small><strong>Seu acompanhamento, perto.</strong></div></div>
+              <div className="landing-phone-window">
+                <div className="landing-phone-notch" />
+                <p className="landing-dash-label">Sua semana</p>
+                <p className="landing-phone-value">Treino A · 45 min</p>
+                <div className="landing-phone-card"><Dumbbell size={16} /><div><small>Hoje</small><strong>Inferiores · 6 exercícios</strong></div></div>
+                <div className="landing-phone-card"><Clock3 size={16} /><div><small>Check-in</small><strong>Em 2 dias</strong></div></div>
+              </div>
             </div>
           </div>
         </section>
@@ -183,6 +209,38 @@ export function LandingPage() {
 
         <section id="como-funciona" className="landing-section landing-section--cream">
           <div className="landing-shell"><div className="landing-reveal max-w-2xl"><p className="landing-kicker">COMECE COM O ESSENCIAL</p><h2 className="landing-heading">Uma rotina mais profissional começa em três movimentos.</h2></div><div className="grid md:grid-cols-3 gap-6 mt-14">{workflow.map(([number, title, text]) => <article key={number} className="landing-step landing-reveal"><span>{number}</span><h3>{title}</h3><p>{text}</p><div><ArrowRight size={20} /></div></article>)}</div></div>
+        </section>
+
+        <section id="planos" className="landing-section landing-section--light">
+          <div className="landing-shell">
+            <div className="landing-reveal max-w-2xl"><p className="landing-kicker">PLANOS PARA CADA FASE</p><h2 className="landing-heading">Só o personal assina. O aluno não paga nada.</h2><p className="mt-5 text-slate-600 text-lg leading-8">Ciclos mensal, trimestral e anual. Troque de plano quando sua base crescer.</p></div>
+            <div className="grid md:grid-cols-3 gap-5 mt-12">
+              {plans.map((plan) => (
+                <article key={plan.name} className={`landing-step landing-reveal ${plan.featured ? 'ring-2 ring-indigo-500' : ''}`}>
+                  <span>{plan.name.toUpperCase()}</span>
+                  <h3 className="text-2xl">{plan.price}</h3>
+                  <p>{plan.detail}</p>
+                  <div className="mt-6"><Link to="/register" className="landing-primary-cta !bg-indigo-600 !text-white w-full">{plan.cta} <ArrowRight size={17} /></Link></div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="faq" className="landing-section landing-section--light !pt-0">
+          <div className="landing-shell grid lg:grid-cols-[.9fr_1.1fr] gap-10">
+            <div className="landing-reveal"><p className="landing-kicker">PERGUNTAS FREQUENTES</p><h2 className="landing-heading">Claro desde o primeiro contato.</h2></div>
+            <div className="ds-stack">
+              {faqs.map((item, i) => (
+                <div key={item.q} className="ds-card p-5">
+                  <button type="button" onClick={() => setOpenFaq(i)} aria-expanded={openFaq === i} className="w-full flex justify-between items-center gap-4 text-left font-bold">
+                    <span>{item.q}</span><ChevronRight size={18} className={openFaq === i ? 'rotate-90 transition' : 'transition'} />
+                  </button>
+                  {openFaq === i && <p className="mt-3 text-slate-600 leading-7">{item.a}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="landing-rhythm-section">

@@ -110,9 +110,9 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
       <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} groups={groups} onLogout={onLogout} user={user} roleLabel={roleLabel} appName={brand.name || t('common.appName')} logoutLabel={t('common.logout')} closeMenuLabel={t('common.closeMenu')} />
 
       <div className="min-h-screen flex-1 min-w-0 flex flex-col">
-        <header className="bg-white/95 dark:bg-slate-950/95 backdrop-blur border-b border-slate-200 dark:border-white/10 px-4 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-40">
+        <header className="ds-material border-x-0 border-t-0 px-4 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-3 min-w-0">
-            <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 dark:text-slate-300" aria-label={t('common.openMenu')}>
+            <button onClick={() => setMobileOpen(true)} className="ds-focus-visible md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 dark:text-slate-300" aria-label={t('common.openMenu')}>
               <Menu size={20} />
             </button>
             <div className="md:hidden flex items-center gap-2 min-w-0">

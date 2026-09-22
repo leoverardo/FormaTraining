@@ -1,0 +1,4 @@
+/* Re-exports de primitivas do DS (camada CSS).
+ * Componentes React continuam em src/components/ui com API preservada. */
+@import "../tokens.css";
+@import "../components.css";
