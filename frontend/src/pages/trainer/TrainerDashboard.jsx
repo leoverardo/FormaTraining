@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { trainerService } from '../../services/trainerService';
-import { LoadingState } from '../../components/ui/LoadingState';
+import { DashboardSkeleton } from '../../components/ui/DashboardSkeleton';
 import { Button } from '../../components/ui/Button';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { ContentGrid } from '../../components/ui/ContentGrid';
@@ -39,7 +39,7 @@ export function TrainerDashboard() {
     loadDashboard();
   }, []);
 
-  if (loading) return <LoadingState />;
+  if (loading) return <DashboardSkeleton stats={5} />;
   if (!data) return null;
 
   const feed = (data.recentActivities || []).map((post) => mapPostToFeedItem(post, { name: user?.name || 'Personal', role: 'Trainer' }));

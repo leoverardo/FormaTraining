@@ -44,7 +44,7 @@ export const feedTabs = [
 export const mockFeedFallback = [
   {
     id: 'mock-1',
-    authorName: 'FitPlatform Coach',
+    authorName: 'UpCoach',
     authorAvatarUrl: '',
     authorRole: 'Trainer',
     createdAt: new Date().toISOString(),

@@ -5,6 +5,7 @@ import { platformPlanService } from '../../services/platformPlanService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { BrandLogo } from '../../components/brand/BrandLogo';
 import { CheckCircle, CreditCard, MapPin, User, Briefcase, Zap } from 'lucide-react';
 
 const STEPS = [
@@ -206,8 +207,10 @@ export function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         <div className="text-center mb-6">
-          <h1 className="text-xl font-bold text-gray-900">FitPlatform</h1>
-          <p className="text-gray-500 text-sm">Cadastro de personal trainer</p>
+          <div className="flex justify-center">
+            <BrandLogo size="md" />
+          </div>
+          <p className="text-gray-500 text-sm mt-2">Cadastro de personal trainer</p>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
@@ -218,7 +221,7 @@ export function RegisterPage() {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados pessoais</h2>
               <Input label="Nome completo" value={personal.fullName} onChange={e => setPersonal(p => ({ ...p, fullName: e.target.value }))} required />
               <Input label="E-mail" type="email" value={personal.email} onChange={e => setPersonal(p => ({ ...p, email: e.target.value }))} required />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input label="Telefone" value={personal.phone} onChange={e => setPersonal(p => ({ ...p, phone: e.target.value }))} />
                 <Input label="CPF" value={personal.cpf} onChange={e => setPersonal(p => ({ ...p, cpf: e.target.value }))} />
               </div>
@@ -234,7 +237,7 @@ export function RegisterPage() {
             <form onSubmit={handleProfessional} className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados profissionais</h2>
               <Input label="Nome da marca / consultoria" value={professional.brandName} onChange={e => setProfessional(p => ({ ...p, brandName: e.target.value }))} required />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input label="CREF (opcional)" value={professional.cref} onChange={e => setProfessional(p => ({ ...p, cref: e.target.value }))} />
                 <Input label="Instagram (opcional)" value={professional.instagram} onChange={e => setProfessional(p => ({ ...p, instagram: e.target.value }))} />
               </div>
@@ -248,7 +251,7 @@ export function RegisterPage() {
           {step === 3 && (
             <form onSubmit={handleAddress} className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Endereco (opcional)</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input label="CEP" value={address.zipCode} onChange={e => setAddress(p => ({ ...p, zipCode: e.target.value }))} />
                 <Input label="Estado" value={address.state} onChange={e => setAddress(p => ({ ...p, state: e.target.value }))} maxLength={2} />
               </div>

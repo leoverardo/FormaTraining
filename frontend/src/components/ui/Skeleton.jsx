@@ -1,5 +1,5 @@
-export function Skeleton({ className = '' }) {
-  return <div className={`animate-pulse rounded-xl bg-slate-200/80 ${className}`} />;
+export function Skeleton({ className = '', shimmer = true }) {
+  return <div className={`${shimmer ? 'uc-shimmer' : 'animate-pulse bg-slate-200/80'} rounded-xl ${className}`} />;
 }
 
 

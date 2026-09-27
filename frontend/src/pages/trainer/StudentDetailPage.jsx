@@ -7,6 +7,7 @@ import { habitService } from '../../services/habitService';
 import { gamificationService } from '../../services/gamificationService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
+import { CountUp } from '../../components/ui/CountUp';
 import { Input } from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
@@ -406,9 +407,9 @@ export function StudentDetailPage() {
                     { label: 'Habitos', value: gamification.habitStreak?.current ?? 0 },
                     { label: 'Check-ins', value: gamification.checkInStreak?.current ?? 0 },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-lg bg-gray-50 border border-gray-200 px-2 py-2 text-center">
+                    <div key={`${item.label}-${item.value}`} className="rounded-lg bg-gray-50 border border-gray-200 px-2 py-2 text-center uc-streak-pop">
                       <p className="text-[11px] text-gray-500">{item.label}</p>
-                      <p className="text-base font-bold text-gray-900">{item.value}</p>
+                      <p className="text-base font-bold text-gray-900"><CountUp value={item.value} /></p>
                     </div>
                   ))}
                 </div>
@@ -430,12 +431,12 @@ export function StudentDetailPage() {
           ) : (
             <div className="space-y-2">
               {habits.map((habit) => (
-                <div key={habit.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
-                  <div>
+                <div key={habit.id} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap items-center justify-between gap-3">
+                  <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-900">{habit.title}</p>
                     <p className="text-xs text-gray-500">{habit.category} {habit.targetValue ? `• ${habit.targetValue} ${habit.targetUnit || ''}` : ''}</p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={habit.isActive ? 'success' : 'gray'}>{habit.isActive ? 'Ativo' : 'Inativo'}</Badge>
                     <Button size="sm" variant="secondary" onClick={() => openEditHabit(habit)}>Editar</Button>
                     <Button size="sm" variant="secondary" onClick={() => toggleHabitStatus(habit)}>{habit.isActive ? 'Inativar' : 'Ativar'}</Button>

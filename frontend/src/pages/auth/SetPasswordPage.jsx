@@ -4,7 +4,8 @@ import api from '../../services/api';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Dumbbell, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
+import { BrandLogo } from '../../components/brand/BrandLogo';
 
 export function SetPasswordPage() {
   const { toast } = useToast();
@@ -49,8 +50,8 @@ export function SetPasswordPage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-indigo-600 rounded-2xl mb-3">
-            <Dumbbell size={22} className="text-white" />
+          <div className="flex justify-center mb-3">
+            <BrandLogo variant="symbol" size="md" />
           </div>
           <h1 className="text-xl font-bold text-gray-900">Definir senha</h1>
           <p className="text-gray-500 text-sm mt-1">Escolha uma senha para acessar a plataforma</p>

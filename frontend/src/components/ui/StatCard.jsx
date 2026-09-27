@@ -1,3 +1,5 @@
+import { CountUp } from './CountUp';
+
 export function StatCard({ title, value, subtitle, icon: Icon, color = 'indigo' }) {
   const colors = {
     indigo: 'bg-indigo-100/70 text-indigo-600',
@@ -8,11 +10,13 @@ export function StatCard({ title, value, subtitle, icon: Icon, color = 'indigo' 
     blue: 'bg-cyan-100/70 text-cyan-600',
   };
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
+    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-slate-500 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-slate-900">{value}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-900">
+            {typeof value === 'number' && Number.isFinite(value) ? <CountUp value={value} /> : value}
+          </p>
           {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
         </div>
         {Icon && (

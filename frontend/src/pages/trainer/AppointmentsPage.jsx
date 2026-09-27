@@ -140,12 +140,12 @@ export function AppointmentsPage() {
           {sorted.map((item) => (
             <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-start justify-between gap-3">
-                <div>
+                <div className="min-w-0">
                   <p className="font-semibold text-gray-900">{item.title}</p>
                   <p className="text-xs text-gray-500">{item.type} • {new Date(item.startAt).toLocaleString('pt-BR')} - {new Date(item.endAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
                   <p className="text-xs text-gray-500">{item.studentName || 'Sem aluno vinculado'}</p>
                 </div>
-                <span className="text-xs px-2 py-1 rounded-lg bg-slate-100 text-slate-700">{item.status}</span>
+                <span className="shrink-0 text-xs px-2 py-1 rounded-lg bg-slate-100 text-slate-700">{item.status}</span>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Button size="sm" variant="secondary" onClick={() => openEdit(item)}>Editar</Button>
@@ -165,7 +165,7 @@ export function AppointmentsPage() {
           <input className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" placeholder="Título" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} required />
           <select className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}>{types.map((t) => <option key={t} value={t}>{t}</option>)}</select>
           <textarea className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" rows={2} placeholder="Descrição" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <input type="datetime-local" className="rounded-xl border border-gray-300 px-3 py-2 text-sm" value={form.startAt} onChange={(e) => setForm((p) => ({ ...p, startAt: e.target.value }))} required />
             <input type="datetime-local" className="rounded-xl border border-gray-300 px-3 py-2 text-sm" value={form.endAt} onChange={(e) => setForm((p) => ({ ...p, endAt: e.target.value }))} required />
           </div>

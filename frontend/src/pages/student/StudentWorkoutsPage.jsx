@@ -82,11 +82,11 @@ export function StudentWorkoutsPage() {
           {workouts.map((w) => (
             <button key={w.id} onClick={() => navigate(`/student/workouts/${w.id}`)} className="w-full bg-white rounded-2xl border border-gray-200 p-5 text-left hover:shadow-sm hover:border-indigo-200 transition-all">
               <div className="flex items-center justify-between">
-                <div>
+                <div className="min-w-0">
                   <p className="font-semibold text-gray-900">{w.name}</p>
                   <p className="text-gray-400 text-sm mt-0.5">{w.exercises?.length || 0} exercicios · {w.goal || 'Treino geral'}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-2">
                   <Badge variant={levelBadge[w.level] || 'gray'}>{levelLabel[w.level] || w.level}</Badge>
                   <ChevronRight size={18} className="text-gray-400" />
                 </div>

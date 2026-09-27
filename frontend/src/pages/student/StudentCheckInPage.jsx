@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { checkInService } from '../../services/checkInService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
+import { SuccessCheck } from '../../components/ui/SuccessCheck';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Modal } from '../../components/ui/Modal';
@@ -31,6 +32,16 @@ export function StudentCheckInPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
+  const savedTimer = useRef(null);
+
+  useEffect(() => () => { if (savedTimer.current) clearTimeout(savedTimer.current); }, []);
+
+  const closeModal = () => {
+    if (savedTimer.current) clearTimeout(savedTimer.current);
+    setJustSaved(false);
+    setModalOpen(false);
+  };
 
   const load = async () => {
     setLoading(true);
@@ -53,8 +64,8 @@ export function StudentCheckInPage() {
       };
       if (currentWeek) { await checkInService.update(currentWeek.id, payload); toast('Check-in atualizado!'); }
       else { await checkInService.create(payload); toast('Check-in enviado!'); }
-      setModalOpen(false);
-      load();
+      setJustSaved(true);
+      savedTimer.current = setTimeout(() => { closeModal(); load(); }, 1500);
     } catch (err) { toast(err.response?.data?.message || 'Erro ao salvar', 'error'); }
     finally { setSaving(false); }
   };
@@ -147,7 +158,14 @@ export function StudentCheckInPage() {
         <EmptyState icon={CalendarCheck} title="Nenhum check-in ainda" description="Faça seu primeiro check-in semanal." action={<Button size="sm" onClick={openModal}><Plus size={14} />Fazer check-in</Button>} />
       )}
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={currentWeek ? 'Atualizar check-in' : 'Check-in desta semana'} size="lg">
+      <Modal open={modalOpen} onClose={closeModal} title={justSaved ? 'Check-in registrado' : (currentWeek ? 'Atualizar check-in' : 'Check-in desta semana')} size="lg">
+        {justSaved ? (
+          <div className="flex flex-col items-center py-8 text-center">
+            <SuccessCheck size={72} />
+            <p className="mt-4 font-bold text-gray-900">Tudo certo!</p>
+            <p className="mt-1 text-sm text-gray-500">Seu personal já pode acompanhar sua semana.</p>
+          </div>
+        ) : (
         <form onSubmit={handleSave} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
@@ -181,10 +199,11 @@ export function StudentCheckInPage() {
             <textarea className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" rows={3} value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} />
           </div>
           <div className="flex gap-3">
-            <Button variant="secondary" type="button" onClick={() => setModalOpen(false)} className="flex-1">Cancelar</Button>
+            <Button variant="secondary" type="button" onClick={closeModal} className="flex-1">Cancelar</Button>
             <Button type="submit" loading={saving} className="flex-1">Enviar check-in</Button>
           </div>
         </form>
+        )}
       </Modal>
     </div>
   );

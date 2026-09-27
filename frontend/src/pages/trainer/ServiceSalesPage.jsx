@@ -107,13 +107,13 @@ export function ServiceSalesPage() {
           <div className="flex justify-end"><Button onClick={openCreate}>Nova oferta</Button></div>
           {offers.length === 0 ? <EmptyState title="Nenhuma oferta cadastrada" description="Crie o primeiro serviço para começar a vender." /> : offers.map((item) => (
             <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
                   <p className="font-semibold text-slate-900">{item.title}</p>
                   <p className="text-sm text-slate-500">{item.description || 'Sem descrição'}</p>
                   <p className="text-sm text-slate-700 mt-1">R$ {Number(item.price).toFixed(2)}</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button size="sm" variant="outline" onClick={() => openEdit(item)}>Editar</Button>
                   <Button size="sm" variant="outline" onClick={() => serviceSalesService.updateOfferStatus(item.id, !item.isActive).then(load)}>{item.isActive ? 'Inativar' : 'Ativar'}</Button>
                 </div>
@@ -128,7 +128,7 @@ export function ServiceSalesPage() {
           {orders.length === 0 ? <EmptyState title="Nenhuma venda registrada" description="As contratações aparecerão aqui." /> : orders.map((item) => (
             <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
               <p className="font-semibold text-slate-900">{item.serviceTitle}</p>
-              <p className="text-sm text-slate-600">{item.buyerName} • {item.buyerEmail}</p>
+              <p className="text-sm text-slate-600 break-all">{item.buyerName} • {item.buyerEmail}</p>
               <p className="text-sm text-slate-600">R$ {Number(item.amount).toFixed(2)} • {item.status}</p>
             </div>
           ))}

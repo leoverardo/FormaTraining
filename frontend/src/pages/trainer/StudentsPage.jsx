@@ -123,12 +123,12 @@ export function StudentsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 justify-end">
-                        <button onClick={() => toggleStatus(s)} className={`p-1.5 rounded-lg transition-colors ${s.status === 'Active' ? 'hover:bg-amber-50 text-amber-500' : 'hover:bg-emerald-50 text-emerald-500'}`} title={s.status === 'Active' ? 'Desativar' : 'Ativar'}>
+                        <button onClick={() => toggleStatus(s)} className={`p-2 rounded-lg transition-colors ${s.status === 'Active' ? 'hover:bg-amber-50 text-amber-500' : 'hover:bg-emerald-50 text-emerald-500'}`} title={s.status === 'Active' ? 'Desativar' : 'Ativar'}>
                           {s.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
                         </button>
-                        <button onClick={() => openEdit(s)} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"><Pencil size={16} /></button>
-                        <button onClick={() => setDeleteTarget(s)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors"><Trash2 size={16} /></button>
-                        <button onClick={() => navigate(`/trainer/students/${s.id}`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors" title="Ver detalhes"><ChevronRight size={16} /></button>
+                        <button onClick={() => openEdit(s)} className="p-2 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"><Pencil size={16} /></button>
+                        <button onClick={() => setDeleteTarget(s)} className="p-2 rounded-lg hover:bg-red-50 text-red-500 transition-colors"><Trash2 size={16} /></button>
+                        <button onClick={() => navigate(`/trainer/students/${s.id}`)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors" title="Ver detalhes"><ChevronRight size={16} /></button>
                       </div>
                     </td>
                   </tr>

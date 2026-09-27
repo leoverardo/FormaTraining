@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, LogOut, Moon, Sun } from 'lucide-react';
+import { BrandLogo } from '../components/brand/BrandLogo';
 import { NotificationBell } from '../components/ui/NotificationBell';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -44,12 +45,9 @@ function DesktopSidebar({ groups, onLogout, user, roleLabel }) {
   return (
     <aside className="hidden md:sticky md:top-0 md:flex md:h-screen md:flex-col w-64 bg-white border-r border-slate-200 shrink-0">
       <div className="px-4 py-5 border-b border-slate-200">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">FP</div>
-          <div className="min-w-0">
-            <p className="font-semibold text-slate-900 text-sm leading-none">FitPlatform</p>
-            <p className="text-xs text-slate-500 mt-1 truncate">{roleLabel || user?.name}</p>
-          </div>
+        <div className="min-w-0">
+          <BrandLogo size="sm" />
+          <p className="text-xs text-slate-500 mt-1.5 truncate">{roleLabel || user?.name}</p>
         </div>
       </div>
       <div className="flex-1 min-h-0">
@@ -72,12 +70,9 @@ function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel }) {
       <button className="absolute inset-0 bg-slate-900/35 backdrop-blur-[1px]" onClick={onClose} aria-label="Fechar menu" />
       <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-white border-r border-slate-200 flex flex-col">
         <div className="px-4 py-5 border-b border-slate-200">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">FP</div>
-            <div className="min-w-0">
-              <p className="font-semibold text-slate-900 text-sm leading-none">FitPlatform</p>
-              <p className="text-xs text-slate-500 mt-1 truncate">{roleLabel || user?.name}</p>
-            </div>
+          <div className="min-w-0">
+            <BrandLogo size="sm" />
+            <p className="text-xs text-slate-500 mt-1.5 truncate">{roleLabel || user?.name}</p>
           </div>
         </div>
         <div className="flex-1 min-h-0">
@@ -111,8 +106,7 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
               <Menu size={20} />
             </button>
             <div className="md:hidden flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">FP</div>
-              <span className="font-semibold text-slate-900 text-sm truncate">FitPlatform</span>
+              <BrandLogo size="xs" />
             </div>
           </div>
           <div className="flex items-center gap-2">

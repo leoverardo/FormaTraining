@@ -50,12 +50,12 @@ export function StudentAppointmentsPage() {
           {items.sort((a, b) => new Date(a.startAt) - new Date(b.startAt)).map((item) => (
             <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-start justify-between gap-2">
-                <div>
+                <div className="min-w-0">
                   <p className="font-semibold text-gray-900">{item.title}</p>
                   <p className="text-xs text-gray-500">{item.type} • {new Date(item.startAt).toLocaleString('pt-BR')}</p>
                   {item.location && <p className="text-xs text-gray-500 mt-1">Local: {item.location}</p>}
                 </div>
-                <span className="text-xs px-2 py-1 rounded-lg bg-slate-100 text-slate-700">{item.status}</span>
+                <span className="shrink-0 text-xs px-2 py-1 rounded-lg bg-slate-100 text-slate-700">{item.status}</span>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {item.status === 'Scheduled' && <Button size="sm" onClick={() => confirm(item.id)}>Confirmar presença</Button>}

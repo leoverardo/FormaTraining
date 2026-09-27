@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { studentAreaService } from '../../services/studentAreaService';
 import { habitService } from '../../services/habitService';
 import { gamificationService } from '../../services/gamificationService';
-import { LoadingState } from '../../components/ui/LoadingState';
+import { DashboardSkeleton } from '../../components/ui/DashboardSkeleton';
+import { CountUp } from '../../components/ui/CountUp';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { ContentGrid } from '../../components/ui/ContentGrid';
 import { SectionCard } from '../../components/ui/SectionCard';
@@ -69,7 +70,7 @@ export function StudentDashboard() {
     return mapped.length ? mapped : mockFeedFallback;
   }, [posts, data?.trainerBrand]);
 
-  if (loading) return <LoadingState />;
+  if (loading) return <DashboardSkeleton stats={2} />;
 
   if (!access?.allowed) {
     return (
@@ -193,9 +194,9 @@ export function StudentDashboard() {
                   { label: 'Habitos', value: gamification.habitStreak?.current ?? 0, unit: 'dias' },
                   { label: 'Check-in', value: gamification.checkInStreak?.current ?? 0, unit: 'sem' },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-3 text-center">
+                  <div key={`${item.label}-${item.value}`} className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-3 text-center uc-streak-pop">
                     <p className="text-[11px] uppercase tracking-wide text-slate-500">{item.label}</p>
-                    <p className="text-lg font-bold text-slate-900">{item.value}</p>
+                    <p className="text-lg font-bold text-slate-900"><CountUp value={item.value} /></p>
                     <p className="text-[11px] text-slate-500">{item.unit}</p>
                   </div>
                 ))}

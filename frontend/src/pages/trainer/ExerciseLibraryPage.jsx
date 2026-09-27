@@ -117,7 +117,7 @@ export function ExerciseLibraryPage() {
               {item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover" /> : <Placeholder name={item.name} />}
               <div className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <Badge variant="info">Base FitPlatform</Badge>
+                  <Badge variant="info">Base UpCoach</Badge>
                   <Badge variant="gray">{item.level || 'Nivel livre'}</Badge>
                 </div>
                 <h3 className="truncate text-sm font-semibold text-slate-900">{item.name}</h3>

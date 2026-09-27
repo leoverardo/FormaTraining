@@ -4,7 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Dumbbell, Zap, Users, BarChart2, ChevronRight } from 'lucide-react';
+import { Zap, Users, BarChart2, ChevronRight } from 'lucide-react';
+import { BrandLogo } from '../../components/brand/BrandLogo';
 
 const features = [
   { icon: Users, text: 'Gerencie alunos, treinos e metas em um só lugar' },
@@ -38,12 +39,7 @@ export function LoginPage() {
     <div className="min-h-screen flex">
       {/* Left column ? branding + benefits */}
       <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-12 text-white">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center">
-            <Dumbbell size={22} className="text-white" />
-          </div>
-          <span className="text-xl font-bold tracking-tight">FitPlatform</span>
-        </div>
+        <BrandLogo tone="dark" size="md" />
 
         <div className="space-y-8">
           <div>
@@ -68,7 +64,7 @@ export function LoginPage() {
         </div>
 
         <p className="text-slate-600 text-sm">
-          © {new Date().getFullYear()} FitPlatform. Todos os direitos reservados.
+          © {new Date().getFullYear()} UpCoach. Todos os direitos reservados.
         </p>
       </div>
 
@@ -77,10 +73,7 @@ export function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
-              <Dumbbell size={20} className="text-white" />
-            </div>
-            <span className="text-lg font-bold text-slate-900">FitPlatform</span>
+            <BrandLogo size="sm" />
           </div>
 
           <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
