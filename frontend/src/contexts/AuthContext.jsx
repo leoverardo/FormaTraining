@@ -3,7 +3,14 @@ import { authService } from '../services/authService';
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children, previewUser }) {
+  if (import.meta.env.DEV && previewUser) {
+    return <AuthContext.Provider value={{ user: previewUser, loading: false, isTrainer: previewUser.role === 'Trainer', isOwner: previewUser.role === 'Owner', isStudent: previewUser.role === 'Student', isExplorerStudent: previewUser.isExplorer, isLinkedStudent: previewUser.hasActiveTrainerLink, logout: () => window.location.assign('/design-preview'), refreshMe: async () => previewUser, login: async () => { throw new Error('Prévia visual: entre pela aplicação para acessar sua conta.'); } }}>{children}</AuthContext.Provider>;
+  }
+  return <LiveAuthProvider>{children}</LiveAuthProvider>;
+}
+
+function LiveAuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
   });

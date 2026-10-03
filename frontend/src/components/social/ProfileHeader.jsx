@@ -5,8 +5,8 @@ import { SocialStats } from './SocialStats';
 
 export function ProfileHeader({ profile, onPrimaryClick, onSecondaryClick }) {
   return (
-    <section className="rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-[0_12px_36px_rgba(15,23,42,0.09)]">
-      <div className="h-40 sm:h-56 bg-gradient-to-r from-indigo-500 via-cyan-500 to-emerald-400 relative">
+    <section className="rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-none">
+      <div className="h-40 sm:h-56 ds-gallery-banner relative">
         {profile.bannerUrl && <img src={profile.bannerUrl} alt="Banner" className="absolute inset-0 w-full h-full object-cover opacity-55" />}
       </div>
       <div className="px-5 sm:px-8 pb-6">

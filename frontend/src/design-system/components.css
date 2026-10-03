@@ -1,15 +1,15 @@
-/* Componentes — refinados sobre os tokens, sem reinventar cor da marca. */
+/* Forma Gallery: shared controls, flat surfaces and compact actions. */
 
 .ds-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  min-height: 2.9rem;
+  min-height: 2.5rem;
   padding: 0.7rem 1.1rem;
-  border-radius: var(--radius-md);
-  font-size: 0.92rem;
-  font-weight: 700;
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  font-weight: 500;
   letter-spacing: -0.01em;
   border: 1px solid transparent;
   cursor: pointer;
@@ -23,23 +23,23 @@
 
 .ds-btn--primary {
   color: var(--primary-foreground);
-  background: var(--color-brand-strong);
-  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.25);
+  background: var(--primary);
+  box-shadow: none;
 }
-.ds-btn--primary:hover { background: #4338ca; }
+.ds-btn--primary:hover { background: var(--primary-strong); }
 
 .ds-btn--secondary {
-  color: #fff;
-  background: #0f172a;
+  color: var(--background);
+  background: var(--foreground);
 }
-.ds-btn--secondary:hover { background: #1e293b; }
+.ds-btn--secondary:hover { background: #424245; }
 
 .ds-btn--outline {
   color: var(--color-text-primary);
   background: var(--color-surface);
   border-color: var(--color-border-subtle);
 }
-.ds-btn--outline:hover { border-color: #cbd5e1; background: #f8fafc; }
+.ds-btn--outline:hover { border-color: var(--color-text-tertiary); background: var(--muted); }
 
 .ds-btn--ghost {
   color: var(--color-text-secondary);
@@ -49,7 +49,7 @@
 
 .ds-card {
   background: var(--color-surface);
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid transparent;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
 }
@@ -62,11 +62,11 @@
 .ds-textarea {
   width: 100%;
   padding: 0.7rem 0.9rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   border: 1px solid var(--color-border-subtle);
   background: var(--color-surface);
   color: var(--color-text-primary);
-  font-size: 0.92rem;
+  font-size: 0.875rem;
   transition: border-color var(--duration-fast) var(--ease-standard),
     box-shadow var(--duration-fast) var(--ease-standard);
 }
@@ -89,7 +89,7 @@
 .ds-label-sm {
   display: block;
   font-size: 0.85rem;
-  font-weight: 650;
+  font-weight: 500;
   color: var(--color-text-primary);
   margin-bottom: 0.4rem;
 }
@@ -104,7 +104,7 @@
   padding: 0.3rem 0.65rem;
   border-radius: var(--radius-pill);
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .ds-badge--success { color: #047857; background: #d1fae5; }
@@ -120,17 +120,30 @@
 }
 
 .ds-skeleton {
-  border-radius: var(--radius-md);
-  background: linear-gradient(90deg, rgba(148,163,184,.18), rgba(148,163,184,.08), rgba(148,163,184,.18));
+  border-radius: var(--radius-pill);
+  background: var(--border);
   background-size: 200% 100%;
   animation: ds-shimmer 1.4s linear infinite;
 }
 
 @keyframes ds-shimmer {
-  to { background-position: -200% 0; }
+  50% { opacity: .45; }
 }
 
 .ds-focus-visible:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
+
+.ds-textarea { border-radius: 20px; min-height: 7rem; }
+.ds-btn--danger { color: white; background: var(--color-danger); }
+.ds-btn--success { color: white; background: var(--color-success); }
+.ds-gallery-banner { background: var(--card); color: var(--foreground); border: 1px solid var(--border); }
+.ds-gallery-banner :is(h1,h2,h3) { color: var(--foreground); }
+.ds-gallery-banner p { color: var(--muted-foreground); }
+.ds-gallery-banner .text-indigo-100, .ds-gallery-banner .text-white\/70, .ds-gallery-banner .text-white\/80 { color: var(--muted-foreground); }
+.app-shell > div > main { padding-top: 36px; }
+.app-shell aside nav a[aria-current="page"] { color: var(--foreground); background: var(--muted); box-shadow: none; }
+.app-shell aside nav a { border-radius: 12px; }
+.app-shell h1 { font-weight: 600; letter-spacing: -.025em; }
+@media (min-width: 1024px) { .app-shell > div > main { padding-inline: 40px; } }

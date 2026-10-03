@@ -22,7 +22,7 @@ export function ExploreFollowingPage() {
       } catch (err) {
         if (!mounted) return;
         setItems([]);
-        setError(err?.response?.status === 404 ? t('student.following.notAvailable') : t('student.following.loadError'));
+        setError(err?.response?.status === 404 ? t('student.followingPage.notAvailable') : t('student.followingPage.loadError'));
       }
     };
     load();
@@ -31,9 +31,9 @@ export function ExploreFollowingPage() {
 
   return (
     <PageContainer className="space-y-4">
-      <SectionCard title={t('student.following.title')} description={t('student.following.description')}>
+      <SectionCard title={t('student.followingPage.title')} description={t('student.followingPage.description')}>
         {items.length === 0 ? (
-          <EmptyState icon={HeartHandshake} title={t('student.following.emptyTitle')} description={error || t('student.following.emptyDescription')} />
+          <EmptyState icon={HeartHandshake} title={t('student.followingPage.emptyTitle')} description={error || t('student.followingPage.emptyDescription')} />
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((trainer) => (

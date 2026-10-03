@@ -27,7 +27,7 @@ export function FeedCard({ item }) {
   };
 
   return (
-    <Card className="p-4 sm:p-5 space-y-3 transition-all duration-300 hover:shadow-[0_14px_34px_rgba(15,23,42,0.1)]">
+    <Card className="p-4 sm:p-5 space-y-3 transition-all duration-300 shadow-none">
       <div className="flex items-start gap-3">
         <Avatar src={item.authorAvatarUrl} name={item.authorName} className="h-11 w-11" />
         <div className="min-w-0 flex-1">

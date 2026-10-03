@@ -4,11 +4,11 @@ export function StatCard({ title, value, subtitle, icon: Icon, color = 'indigo' 
     emerald: 'bg-emerald-100/70 text-emerald-600',
     amber: 'bg-amber-100/70 text-amber-600',
     red: 'bg-red-100/70 text-red-600',
-    purple: 'bg-violet-100/70 text-violet-600',
-    blue: 'bg-cyan-100/70 text-cyan-600',
+    purple: 'bg-indigo-100/70 text-indigo-600',
+    blue: 'bg-indigo-100/70 text-indigo-600',
   };
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 shadow-[0_10px_24px_rgba(15,23,42,0.06)] dark:shadow-[0_12px_28px_rgba(2,6,23,0.45)]">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 shadow-none shadow-none">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{title}</p>

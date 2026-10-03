@@ -209,7 +209,7 @@ export function PublicPageSettingsPage() {
           <div className={`space-y-4 lg:sticky lg:top-6 lg:self-start ${tab === 'edit' ? 'hidden lg:block' : ''}`}>
             <PreviewCard title={t('trainer.publicPage.previewTitle')} subtitle={t('trainer.publicPage.previewSubtitle')}>
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <div className="relative h-36 bg-[linear-gradient(120deg,_#0f172a,_#0e7490,_#14532d)]">
+                <div className="relative h-36 bg-slate-100 text-slate-700">
                   {form.publicBannerUrl ? <img src={form.publicBannerUrl} alt="Banner" className="absolute inset-0 h-full w-full object-cover" /> : null}
                   <div className="absolute inset-0 bg-black/30" />
                 </div>
@@ -221,7 +221,7 @@ export function PublicPageSettingsPage() {
                     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${formatWhatsapp(form.whatsappNumber) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500 dark:text-slate-400'}`}>
                       {formatWhatsapp(form.whatsappNumber) ? 'CTA WhatsApp ativo' : 'CTA WhatsApp inativo'}
                     </span>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${form.publicPageEnabled ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-100 text-slate-500 dark:text-slate-400'}`}>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${form.publicPageEnabled ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500 dark:text-slate-400'}`}>
                       {form.publicPageEnabled ? <Eye size={12} className="mr-1" /> : <EyeOff size={12} className="mr-1" />}
                       {form.publicPageEnabled ? 'Pública' : 'Oculta'}
                     </span>

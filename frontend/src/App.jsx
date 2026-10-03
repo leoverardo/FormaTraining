@@ -54,6 +54,9 @@ import { PrivacySettingsPage } from './pages/shared/PrivacySettingsPage';
 import { OwnerPrivacyPage } from './pages/owner/OwnerPrivacyPage';
 import { LandingPage } from './pages/marketing/LandingPage';
 import { DesignSystemPage } from './pages/marketing/DesignSystemPage';
+import { lazy, Suspense } from 'react';
+
+const DesignPreviewPage = import.meta.env.DEV ? lazy(() => import('./preview/DesignPreviewPage')) : null;
 
 function HomeRedirect() {
   const { user, loading, isExplorerStudent, isLinkedStudent } = useAuth();
@@ -71,15 +74,16 @@ const S = ({ children }) => <ProtectedRoute roles={['Student']}><StudentLayout>{
 const O = ({ children }) => <ProtectedRoute roles={['Owner']}><OwnerLayout>{children}</OwnerLayout></ProtectedRoute>;
 const SL = ({ children }) => <ProtectedStudentAreaRoute><StudentLayout>{children}</StudentLayout></ProtectedStudentAreaRoute>;
 
-export default function App() {
+export default function App({ previewUser }) {
   return (
     <BrowserRouter>
-      <ThemeProvider>
-        <AuthProvider>
+      <ThemeProvider preview={Boolean(previewUser)}>
+        <AuthProvider previewUser={previewUser}>
           <ToastProvider>
             <Routes>
             <Route path="/" element={<HomeRedirect />} />
             <Route path="/landing" element={<LandingPage />} />
+            {import.meta.env.DEV && <Route path="/design-preview" element={<Suspense fallback={<p className="p-8">Abrindo galeria…</p>}><DesignPreviewPage /></Suspense>} />}
             {/* Rota interna: intencionalmente fora de menus e da navegação pública. */}
             <Route path="/design-system" element={<DesignSystemPage />} />
             <Route path="/login" element={<LoginPage />} />

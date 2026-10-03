@@ -154,7 +154,7 @@ export function TrainerPublicPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_#cffafe,_transparent_40%),linear-gradient(180deg,_#f8fafc,_#eef2ff_50%,_#f8fafc)]">
+    <div className="min-h-screen bg-slate-100 text-slate-700">
       <main className="mx-auto max-w-6xl space-y-5 px-4 py-5 sm:space-y-6 sm:py-8">
         <PublicProfileHero profile={profile} onPrimaryClick={openWhatsapp} onSecondaryClick={() => setLeadOpen(true)} hasWhatsapp={hasWhatsapp} />
         <PublicAuthoritySection />

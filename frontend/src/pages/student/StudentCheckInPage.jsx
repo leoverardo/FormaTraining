@@ -96,7 +96,7 @@ export function StudentCheckInPage() {
       </div>
 
       {currentWeek ? (
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-5 text-white">
+        <div className="ds-gallery-banner rounded-2xl p-5 text-white">
           <p className="text-emerald-100 text-xs font-medium uppercase tracking-wide mb-2">{t('student.checkIn.thisWeek')}</p>
           <div className="grid grid-cols-3 gap-3">
             {[[t('student.checkIn.mood'), currentWeek.moodLevel], [t('student.checkIn.energy'), currentWeek.energyLevel], [t('student.checkIn.diet'), currentWeek.dietAdherence]].map(([label, value]) =>

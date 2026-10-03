@@ -1,22 +1,32 @@
-/* Forma Training — Design Tokens (Apple-inspired principles, identidade própria)
- * CORES PRESERVADAS — não alterar hex da marca sem aprovação.
- * Intenção semântica: componente usa var(--...), decisão visual fica aqui. */
+/* Forma Training - Gallery. Shared visual foundations. */
 
 :root {
-  /* ——— Brand / cores do projeto (inalteradas) ——— */
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  /* ——— Gallery / cores semantics ——— */
+  --color-gallery-white: #ffffff;
+  --color-studio-mist: #f5f5f7;
+  --color-paper-frost: #fafafc;
+  --color-ink: #1d1d1f;
+  --color-apple-blue: #0066cc;
+  --color-pricing-blue: #0071e3;
+  --bg: var(--background);
+  --surface: var(--card);
+  --surface-muted: var(--muted);
+  --text: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-muted: #86868b;
+  --background: #f5f5f7;
+  --foreground: #1d1d1f;
   --card: #ffffff;
-  --card-foreground: #0f172a;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --primary: #6366f1;
+  --card-foreground: #1d1d1f;
+  --muted: #f5f5f7;
+  --muted-foreground: #707070;
+  --border: #d6d6d6;
+  --input: #d6d6d6;
+  --primary: #0071e3;
   --primary-foreground: #ffffff;
-  --primary-strong: #4f46e5;
-  --focus-ring: #a5b4fc;
-  --accent-cyan: #22d3ee;
+  --primary-strong: #0066cc;
+  --focus-ring: #4098eb;
+  --accent-cyan: #0066cc;
   --success: #059669;
   --warning: #d97706;
   --danger: #dc2626;
@@ -27,7 +37,7 @@
   --color-surface-subtle: var(--muted);
   --color-text-primary: var(--foreground);
   --color-text-secondary: var(--muted-foreground);
-  --color-text-tertiary: #94a3b8;
+  --color-text-tertiary: #86868b;
   --color-border-subtle: var(--border);
   --color-brand: var(--primary);
   --color-brand-strong: var(--primary-strong);
@@ -37,26 +47,25 @@
   --color-danger: var(--danger);
 
   /* ——— Tipografia (system stack, sem fonte proprietária Apple) ——— */
-  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "SF Pro Text", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display-weight: 800;
-  --type-display: clamp(2.75rem, 6.5vw, 5.5rem);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --font-display-weight: 600;
+  --type-display: clamp(2.75rem, 6.5vw, 5rem);
   --type-hero: clamp(2.5rem, 5.5vw, 4.5rem);
   --type-h1: clamp(1.75rem, 3.5vw, 2.5rem);
   --type-h2: clamp(1.4rem, 2.6vw, 1.9rem);
   --type-h3: 1.2rem;
-  --type-body-lg: 1.125rem;
+  --type-body-lg: 1.0625rem;
   --type-body: 1rem;
   --type-body-sm: 0.875rem;
   --type-caption: 0.78rem;
   --type-label: 0.75rem;
   --leading-tight: 1.05;
   --leading-snug: 1.25;
-  --leading-normal: 1.6;
+  --leading-normal: 1.47;
   --leading-relaxed: 1.75;
-  --tracking-display: -0.055em;
-  --tracking-heading: -0.035em;
-  --tracking-body: -0.011em;
+  --tracking-display: -0.015em;
+  --tracking-heading: -0.025em;
+  --tracking-body: -0.022em;
 
   /* ——— Spacing (múltiplos de 4) ——— */
   --space-1: 0.25rem;
@@ -80,15 +89,15 @@
   --radius-none: 0;
   --radius-sm: 0.5rem;
   --radius-md: 0.875rem;
-  --radius-lg: 1.125rem;
-  --radius-xl: 1.5rem;
+  --radius-lg: 1.75rem;
+  --radius-xl: 1.75rem;
   --radius-pill: 999px;
 
   /* ——— Sombras (suaves, sem exagero) ——— */
-  --shadow-1: 0 1px 2px rgba(15, 23, 42, 0.05), 0 4px 14px rgba(15, 23, 42, 0.05);
-  --shadow-2: 0 12px 28px rgba(15, 23, 42, 0.09);
-  --shadow-3: 0 24px 56px rgba(15, 23, 42, 0.14);
-  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.06);
+  --shadow-1: none;
+  --shadow-2: none;
+  --shadow-3: none;
+  --shadow-soft: none;
 
   /* ——— Motion ——— */
   --duration-fast: 160ms;
@@ -109,21 +118,21 @@
 
 .dark,
 :root[data-theme="dark"] {
-  --background: #020617;
-  --foreground: #e2e8f0;
-  --card: #0f172a;
-  --card-foreground: #e2e8f0;
-  --muted: #111827;
-  --muted-foreground: #94a3b8;
-  --border: #1e293b;
-  --input: #1e293b;
-  --primary: #818cf8;
+  --background: #141414;
+  --foreground: #d6d6d6;
+  --card: #1d1d1f;
+  --card-foreground: #d6d6d6;
+  --muted: #2c2c2e;
+  --muted-foreground: #86868b;
+  --border: #424245;
+  --input: #424245;
+  --primary: #4098eb;
   --primary-foreground: #ffffff;
-  --primary-strong: #6366f1;
-  --focus-ring: #818cf8;
-  --color-text-tertiary: #64748b;
-  --shadow-1: 0 1px 2px rgba(2, 6, 23, 0.25), 0 4px 14px rgba(2, 6, 23, 0.18);
-  --shadow-2: 0 12px 28px rgba(2, 6, 23, 0.32);
-  --shadow-3: 0 24px 56px rgba(2, 6, 23, 0.45);
-  --shadow-soft: 0 18px 40px rgba(2, 6, 23, 0.45);
+  --primary-strong: #0071e3;
+  --focus-ring: #4098eb;
+  --color-text-tertiary: #707070;
+  --shadow-1: none;
+  --shadow-2: none;
+  --shadow-3: none;
+  --shadow-soft: none;
 }

@@ -7,7 +7,7 @@ export function FormField({ label, required, helper, error, children }) {
       {label ? (
         <label className="block text-sm font-semibold text-slate-700">
           {label}
-          {required ? <span className="ml-1 text-cyan-600">*</span> : null}
+          {required ? <span className="ml-1 text-indigo-600">*</span> : null}
         </label>
       ) : null}
       {children}

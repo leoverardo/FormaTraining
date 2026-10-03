@@ -122,7 +122,7 @@ export function PostsPage() {
                 <div className="flex items-center justify-between">
                   <Badge variant={cfg.badge}>{cfg.label}</Badge>
                   <div className="flex gap-1">
-                    <button onClick={() => openEdit(post)} className="px-3 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil size={14} className="inline mr-1" />{t('common.edit')}</button>
+                    <button onClick={() => openEdit(post)} className="px-3 py-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded-lg"><Pencil size={14} className="inline mr-1" />{t('common.edit')}</button>
                     <button onClick={() => setDeleteTarget(post)} className="px-3 py-1.5 text-xs text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={14} className="inline mr-1" />{t('common.delete')}</button>
                   </div>
                 </div>

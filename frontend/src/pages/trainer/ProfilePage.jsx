@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { trainerService } from '../../services/trainerService';
 import { useToast } from '../../components/ui/Toast';
 import { Input } from '../../components/ui/Input';
@@ -21,7 +21,7 @@ import { useI18n } from '../../i18n';
 const initialForm = {
   name: '', brandName: '', phone: '', cpf: '', birthDate: '',
   cref: '', bio: '', specialties: '', instagram: '', profilePhotoUrl: '', logoUrl: '',
-  primaryColor: '#0f766e', secondaryColor: '#0891b2',
+  primaryColor: '#1d1d1f', secondaryColor: '#707070',
   zipCode: '', street: '', addressNumber: '', complement: '', neighborhood: '', city: '', state: '',
 };
 
@@ -59,8 +59,8 @@ export function ProfilePage() {
         instagram: profile.instagram || '',
         profilePhotoUrl: profile.profilePhotoUrl || '',
         logoUrl: profile.logoUrl || '',
-        primaryColor: profile.primaryColor || '#0f766e',
-        secondaryColor: profile.secondaryColor || '#0891b2',
+        primaryColor: profile.primaryColor || '#1d1d1f',
+        secondaryColor: profile.secondaryColor || '#707070',
         zipCode: profile.zipCode || '',
         street: profile.street || '',
         addressNumber: profile.addressNumber || '',
@@ -94,10 +94,7 @@ export function ProfilePage() {
     }
   };
 
-  const previewGradient = useMemo(
-    () => `linear-gradient(130deg, ${form.primaryColor || '#0f766e'}, ${form.secondaryColor || '#0891b2'})`,
-    [form.primaryColor, form.secondaryColor],
-  );
+  const previewColor = form.primaryColor || "#1d1d1f";
 
   if (loading) return <LoadingState />;
 
@@ -122,7 +119,7 @@ export function ProfilePage() {
                 <div className="md:col-span-2"><Input label="Nome da marca" required {...f('brandName')} /></div>
                 <Input label="CREF" placeholder="000000-G/SP" {...f('cref')} />
                 <FormField label={t('trainer.profile.instagram')} helper={t('trainer.profile.instagramHelper')}>
-                  <div className="flex items-center rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus-within:ring-2 focus-within:ring-cyan-200">
+                  <div className="flex items-center rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus-within:ring-2 focus-within:ring-indigo-200">
                     <span className="text-slate-400">@</span>
                     <input value={form.instagram} onChange={(e) => setForm((p) => ({ ...p, instagram: e.target.value }))} className="ml-1 w-full border-0 p-0 text-slate-800 focus:outline-none" />
                   </div>
@@ -184,14 +181,14 @@ export function ProfilePage() {
           <div className="space-y-4 xl:sticky xl:top-6 xl:self-start">
             <PreviewCard title={t('trainer.profile.brandPreviewTitle')} subtitle={t('trainer.profile.brandPreviewSubtitle')}>
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-                <div className="h-28 p-4" style={{ background: previewGradient }}>
+                <div className="h-28 p-4" style={{ background: previewColor }}>
                   <div className="inline-flex rounded-full bg-white/20 px-2 py-1 text-xs font-semibold text-white">Consultoria</div>
                 </div>
                 <div className="-mt-8 px-4 pb-4">
                   {form.profilePhotoUrl ? (
                     <img src={form.profilePhotoUrl} alt="Perfil" className="h-16 w-16 rounded-full border-4 border-white object-cover" />
                   ) : (
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-cyan-100 text-sm font-semibold text-cyan-800">{getInitials(form.name || form.brandName)}</div>
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-indigo-100 text-sm font-semibold text-indigo-800">{getInitials(form.name || form.brandName)}</div>
                   )}
                   <p className="mt-2 font-semibold text-slate-900">{form.brandName || 'Sua marca'}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{form.specialties || 'Especialidades em fitness e performance'}</p>

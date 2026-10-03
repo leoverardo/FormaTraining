@@ -17,7 +17,7 @@ export function PublicFeedCard({ item, fallbackName, fallbackAvatar }) {
   };
 
   return (
-    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.07)] transition hover:shadow-[0_18px_40px_rgba(15,23,42,0.12)]">
+    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-none transition shadow-none">
       <header className="flex items-center gap-3">
         <Avatar src={item.authorAvatarUrl || fallbackAvatar} name={item.authorName || fallbackName} className="h-11 w-11" />
         <div className="min-w-0">
@@ -35,7 +35,7 @@ export function PublicFeedCard({ item, fallbackName, fallbackAvatar }) {
         ) : media?.url ? (
           <img src={media.url} alt={media.alt || 'Midia do post'} className="h-60 w-full object-cover" />
         ) : (
-          <div className="flex h-52 items-center justify-center bg-[linear-gradient(120deg,_#0f172a,_#155e75,_#14532d)] text-cyan-50">
+          <div className="flex h-52 items-center justify-center bg-slate-100 text-slate-700 text-indigo-50">
             <div className="text-center">
               <ImageIcon className="mx-auto" size={28} />
               <p className="mt-2 text-sm">Conteudo em destaque</p>
@@ -47,7 +47,7 @@ export function PublicFeedCard({ item, fallbackName, fallbackAvatar }) {
       {!!tags.length && (
         <div className="mt-4 flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <span key={tag} className="rounded-full bg-cyan-50 px-2.5 py-1 text-xs font-semibold text-cyan-700">#{tag}</span>
+            <span key={tag} className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">#{tag}</span>
           ))}
         </div>
       )}

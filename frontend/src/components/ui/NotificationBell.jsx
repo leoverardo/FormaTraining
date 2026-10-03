@@ -73,7 +73,7 @@ export function NotificationBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-10 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-900">
+          <div className="absolute right-0 top-10 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-none dark:border-white/10 dark:bg-slate-900">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-white/10">
               <span className="text-sm font-semibold text-slate-900 dark:text-white">{t('common.notifications')}</span>
               {count > 0 && (

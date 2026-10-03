@@ -125,7 +125,7 @@ export function StudentAnamnesisPage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 pb-20 sm:pb-0">
-      <header className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-indigo-50 p-6 shadow-sm sm:p-7">
+      <header className="rounded-3xl border border-slate-200 ds-gallery-banner p-6 shadow-sm sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-4">
             <div className="mt-0.5 rounded-2xl bg-indigo-600 p-2.5 text-white shadow-lg shadow-indigo-200">
@@ -265,12 +265,12 @@ export function StudentAnamnesisPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50/80 via-white to-white p-5 shadow-sm sm:p-6">
+          <section className="rounded-3xl border border-amber-200 ds-gallery-banner p-5 shadow-sm sm:p-6">
             <div className="mb-5 flex items-start gap-3">
-              <div className="rounded-xl bg-amber-100 p-2 text-amber-700">
+              <div className="shrink-0 rounded-xl bg-amber-100 p-2 text-amber-700">
                 <ShieldAlert size={18} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <h2 className="text-lg font-semibold text-slate-900">{t('student.anamnesis.healthAndCareTitle')}</h2>
                 <p className="mt-1 text-sm text-slate-600">{t('student.anamnesis.healthAndCareDescription')}</p>
               </div>

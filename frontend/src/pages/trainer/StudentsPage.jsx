@@ -131,7 +131,7 @@ export function StudentsPage() {
                         <button onClick={() => toggleStatus(s)} className={`p-1.5 rounded-lg transition-colors ${s.status === 'Active' ? 'hover:bg-amber-50 text-amber-500' : 'hover:bg-emerald-50 text-emerald-500'}`} title={s.status === 'Active' ? 'Desativar' : 'Ativar'}>
                           {s.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
                         </button>
-                        <button onClick={() => openEdit(s)} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"><Pencil size={16} /></button>
+                        <button onClick={() => openEdit(s)} className="p-1.5 rounded-lg hover:bg-indigo-50 text-indigo-500 transition-colors"><Pencil size={16} /></button>
                         <button onClick={() => setDeleteTarget(s)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors"><Trash2 size={16} /></button>
                         <button onClick={() => navigate(`/trainer/students/${s.id}`)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400 dark:text-slate-500 transition-colors" title="Ver detalhes"><ChevronRight size={16} /></button>
                       </div>

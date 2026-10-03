@@ -89,7 +89,7 @@ export function StudentPhotosPage() {
 
   return (
     <PageContainer className="space-y-5 pb-20 sm:pb-0">
-      <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-900 to-cyan-800 p-5 sm:p-6 text-white shadow-[0_16px_38px_rgba(15,23,42,0.32)]">
+      <section className="rounded-3xl ds-gallery-banner p-5 sm:p-6 text-white shadow-none">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">{t('student.photos.title')}</h1>
@@ -133,7 +133,7 @@ export function StudentPhotosPage() {
             {photos.map((p) => (
               <div key={p.id} className="relative group rounded-2xl overflow-hidden border border-slate-200 aspect-square">
                 <img src={p.imageUrl} alt={p.description || t('student.photos.progressPhoto')} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-2">
                     <div>
                       <p className="text-white text-xs font-semibold">{new Date(p.photoDate).toLocaleDateString(language)}</p>

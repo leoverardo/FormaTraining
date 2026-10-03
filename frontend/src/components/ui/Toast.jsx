@@ -21,7 +21,7 @@ export function ToastProvider({ children }) {
         {toasts.map(t => (
           <div
             key={t.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-2xl shadow-[0_12px_30px_rgba(15,23,42,0.2)] text-white text-sm max-w-sm border backdrop-blur-sm ${t.type === 'success' ? 'bg-emerald-600/95 border-emerald-400/50' : 'bg-red-600/95 border-red-400/50'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-2xl shadow-none text-white text-sm max-w-sm border backdrop-blur-sm ${t.type === 'success' ? 'bg-emerald-600/95 border-emerald-400/50' : 'bg-red-600/95 border-red-400/50'}`}
           >
             {t.type === 'success' ? <CheckCircle size={18} /> : <XCircle size={18} />}
             <span className="flex-1">{t.message}</span>

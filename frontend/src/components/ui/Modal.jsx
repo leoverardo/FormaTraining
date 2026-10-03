@@ -6,7 +6,7 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className={`relative w-full ${sizes[size]} max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl`}>
+      <div className={`relative w-full ${sizes[size]} max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-none`}>
         <div className="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-white/10 px-6 py-4">
           <div>
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>

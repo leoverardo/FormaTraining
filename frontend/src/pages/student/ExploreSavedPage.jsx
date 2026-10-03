@@ -22,7 +22,7 @@ export function ExploreSavedPage() {
       } catch (err) {
         if (!mounted) return;
         setItems([]);
-        setError(err?.response?.status === 404 ? t('student.saved.notAvailable') : t('student.saved.loadError'));
+        setError(err?.response?.status === 404 ? t('student.savedPage.notAvailable') : t('student.savedPage.loadError'));
       }
     };
     load();
@@ -31,9 +31,9 @@ export function ExploreSavedPage() {
 
   return (
     <PageContainer className="space-y-4">
-      <SectionCard title={t('student.saved.title')} description={t('student.saved.description')}>
+      <SectionCard title={t('student.savedPage.title')} description={t('student.savedPage.description')}>
         {items.length === 0 ? (
-          <EmptyState icon={Bookmark} title={t('student.saved.emptyTitle')} description={error || t('student.saved.emptyDescription')} />
+          <EmptyState icon={Bookmark} title={t('student.savedPage.emptyTitle')} description={error || t('student.savedPage.emptyDescription')} />
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((trainer) => (

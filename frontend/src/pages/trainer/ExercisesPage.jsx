@@ -48,7 +48,7 @@ function normalized(value) {
 function CardMedia({ imageUrl, name }) {
   if (imageUrl) return <img src={imageUrl} alt={name} className="h-40 w-full object-cover" />;
   return (
-    <div className="flex h-40 items-center justify-center bg-[linear-gradient(135deg,_#0f172a,_#0e7490,_#155e75)] text-cyan-100">
+    <div className="flex h-40 items-center justify-center bg-slate-100 text-slate-700">
       <div className="text-center">
         <Dumbbell className="mx-auto" size={24} />
         <p className="mt-2 text-xs">Sem imagem</p>
@@ -185,7 +185,7 @@ export function ExercisesPage() {
           {filtered.map((exercise) => {
             const level = levelFromApi(exercise.level);
             return (
-              <article key={exercise.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-slate-900 dark:shadow-[0_14px_30px_rgba(2,6,23,0.45)]">
+              <article key={exercise.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-none transition shadow-none dark:border-white/10 dark:bg-slate-900 shadow-none">
                 <CardMedia imageUrl={exercise.imageUrl} name={exercise.name} />
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
@@ -201,7 +201,7 @@ export function ExercisesPage() {
                     {exercise.videoUrl ? t('trainer.exercises.videoAvailable') : t('trainer.exercises.noVideo')}
                   </div>
                   <div className="mt-4 flex gap-2 border-t border-slate-100 dark:border-white/10 pt-3">
-                    <button onClick={() => openEdit(exercise)} className="flex-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"><Pencil size={13} className="mr-1 inline" />{t('common.edit')}</button>
+                    <button onClick={() => openEdit(exercise)} className="flex-1 rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100"><Pencil size={13} className="mr-1 inline" />{t('common.edit')}</button>
                     <button onClick={() => setDeleteTarget(exercise)} className="flex-1 rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"><Trash2 size={13} className="mr-1 inline" />{t('common.delete')}</button>
                   </div>
                 </div>

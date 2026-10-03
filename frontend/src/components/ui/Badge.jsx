@@ -2,9 +2,9 @@ const variants = {
   success: 'bg-emerald-100/90 text-emerald-700 border-emerald-200',
   warning: 'bg-amber-100/90 text-amber-700 border-amber-200',
   danger: 'bg-red-100/90 text-red-700 border-red-200',
-  info: 'bg-cyan-100/90 text-cyan-700 border-cyan-200',
+  info: 'bg-indigo-100/90 text-indigo-700 border-indigo-200',
   gray: 'bg-slate-100 text-slate-600 border-slate-200',
-  purple: 'bg-violet-100/90 text-violet-700 border-violet-200',
+  purple: 'bg-indigo-100/90 text-indigo-700 border-indigo-200',
 };
 
 export function Badge({ children, variant = 'gray' }) {

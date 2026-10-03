@@ -21,7 +21,7 @@ const LEGACY_KEYS = [
 const VALID_THEMES = ['dark', 'light'];
 
 function normalizeTheme(value) {
-  return VALID_THEMES.includes(value) ? value : 'dark';
+  return VALID_THEMES.includes(value) ? value : 'light';
 }
 
 /**
@@ -30,7 +30,7 @@ function normalizeTheme(value) {
  * Padrão: 'dark'.
  */
 function getInitialTheme() {
-  if (typeof window === 'undefined') return 'dark';
+  if (typeof window === 'undefined') return 'light';
 
   // 1. Chave canônica
   const stored = window.localStorage.getItem(THEME_KEY);
@@ -43,7 +43,7 @@ function getInitialTheme() {
   }
 
   // 3. Padrão: dark
-  return 'dark';
+  return 'light';
 }
 
 /**
@@ -62,17 +62,18 @@ function applyTheme(theme) {
 
 const ThemeContext = createContext(null);
 
-export function ThemeProvider({ children }) {
-  const [theme, setThemeState] = useState(getInitialTheme);
+export function ThemeProvider({ children, preview = false }) {
+  const [theme, setThemeState] = useState(() => preview ? 'light' : getInitialTheme());
 
   // Aplica no DOM e persiste sempre que o tema muda
   useEffect(() => {
     applyTheme(theme);
+    if (preview) return;
     window.localStorage.setItem(THEME_KEY, theme);
 
     // Remove chaves legadas para evitar confusão em sessões futuras
     LEGACY_KEYS.forEach((key) => window.localStorage.removeItem(key));
-  }, [theme]);
+  }, [theme, preview]);
 
   const setTheme = (value) => {
     setThemeState(normalizeTheme(value));

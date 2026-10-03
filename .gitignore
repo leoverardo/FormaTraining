@@ -59,3 +59,6 @@ coverage/
 *.coverage
 *.coveragexml
 .nyc_output/
+
+# Referencia visual local (nao versionar)
+/docs/gallery-design.md

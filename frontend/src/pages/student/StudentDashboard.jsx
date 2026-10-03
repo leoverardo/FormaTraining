@@ -99,7 +99,7 @@ export function StudentDashboard() {
 
   return (
     <PageContainer className="space-y-5">
-      <section className="rounded-3xl border border-slate-200 bg-gradient-to-r from-indigo-600 to-violet-600 p-5 sm:p-6 text-white shadow-[0_16px_36px_rgba(79,70,229,0.32)]">
+      <section className="rounded-3xl border border-slate-200 ds-gallery-banner p-5 sm:p-6 text-white shadow-none">
         <p className="text-indigo-100 text-sm">Olá, {normalizeDisplayText(data?.studentName?.split(' ')[0])}</p>
         <h1 className="text-2xl sm:text-3xl font-bold mt-1">Seu plano de hoje está pronto</h1>
         <p className="text-indigo-100 mt-2 text-sm">Acompanhamento de {normalizeDisplayText(data?.trainerBrand || 'seu personal')} com treino, progresso e check-ins.</p>

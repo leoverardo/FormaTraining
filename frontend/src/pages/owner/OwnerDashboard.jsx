@@ -53,8 +53,8 @@ function SectionHeader({ icon: Icon, title, description, accent = 'indigo' }) {
     indigo: 'text-indigo-600 bg-indigo-50',
     emerald: 'text-emerald-600 bg-emerald-50',
     amber: 'text-amber-600 bg-amber-50',
-    sky: 'text-sky-600 bg-sky-50',
-    violet: 'text-violet-600 bg-violet-50',
+    sky: 'text-indigo-600 bg-indigo-50',
+    violet: 'text-indigo-600 bg-indigo-50',
     rose: 'text-rose-600 bg-rose-50',
     slate: 'text-slate-600 bg-slate-100',
   };
@@ -85,8 +85,8 @@ function KpiCard({ title, value, subtitle, icon: Icon, tone = 'indigo', badge })
     emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-100' },
     amber: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-100' },
     rose: { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-100' },
-    sky: { bg: 'bg-sky-50', text: 'text-sky-600', border: 'border-sky-100' },
-    violet: { bg: 'bg-violet-50', text: 'text-violet-600', border: 'border-violet-100' },
+    sky: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100' },
+    violet: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100' },
     slate: { bg: 'bg-slate-100', text: 'text-slate-600', border: 'border-slate-200' },
   };
   const t = tones[tone] || tones.indigo;
@@ -269,7 +269,7 @@ export function OwnerDashboard() {
     <PageContainer className="space-y-5">
 
       {/* "? Cabeçalho "? */}
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900 shadow-[0_8px_24px_rgba(15,23,42,0.07)]">
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900 shadow-none">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
@@ -390,7 +390,7 @@ export function OwnerDashboard() {
                     label={billingCycleLabel(item.billingCycle)}
                     value={item.count}
                     max={subscriptions.active || 1}
-                    color="bg-cyan-500"
+                    color="bg-indigo-500"
                     suffix={`${item.count} · ${money(item.revenue)}/mês eq.`}
                     extra={`${pct(item.percentage)} do MRR`}
                   />
@@ -548,7 +548,7 @@ export function OwnerDashboard() {
                   label={t.brandName}
                   value={t.activeStudents}
                   max={topTrainersByStudents[0]?.activeStudents || 1}
-                  color="bg-sky-500"
+                  color="bg-indigo-500"
                   suffix={`${num(t.activeStudents)} alunos${t.maxStudents > 0 ? ` / ${num(t.maxStudents)}` : ''}`}
                   extra={t.maxStudents > 0 ? `${pct(t.occupancyRate)} de ocupação` : undefined}
                 />
@@ -575,7 +575,7 @@ export function OwnerDashboard() {
             <p className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-3">Leads por status (total histórico)</p>
             {leadFunnel.totalAllTime === 0 ? <EmptyState message="Nenhum lead registrado ainda" /> : (
               <div className="space-y-2.5">
-                <BarRow label={leadStatusLabel('New')} value={leadFunnel.newLeads} max={leadFunnel.totalAllTime || 1} color="bg-sky-400" />
+                <BarRow label={leadStatusLabel('New')} value={leadFunnel.newLeads} max={leadFunnel.totalAllTime || 1} color="bg-indigo-400" />
                 <BarRow label={leadStatusLabel('Contacted')} value={leadFunnel.contactedLeads} max={leadFunnel.totalAllTime || 1} color="bg-amber-400" />
                 <BarRow label={leadStatusLabel('Converted')} value={leadFunnel.convertedLeads} max={leadFunnel.totalAllTime || 1} color="bg-emerald-500" />
                 <BarRow label={leadStatusLabel('Archived')} value={leadFunnel.archivedLeads} max={leadFunnel.totalAllTime || 1} color="bg-slate-300" />

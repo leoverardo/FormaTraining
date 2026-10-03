@@ -24,7 +24,7 @@ export function PublicTestimonialsSection({ testimonials = [] }) {
             const name = item.studentName || 'Aluno';
             const rating = ratingValue(item.rating);
             return (
-              <article key={`${name}-${idx}`} className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_28px_rgba(15,23,42,0.08)]">
+              <article key={`${name}-${idx}`} className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-none">
                 <Quote className="absolute right-4 top-4 text-slate-200" size={24} />
                 <div className="flex items-center gap-3">
                   <Avatar name={name} className="h-10 w-10" />

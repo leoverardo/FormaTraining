@@ -36,7 +36,7 @@ export function RegisterPage() {
   const [pricing, setPricing] = useState(null);
 
   const [personal, setPersonal] = useState({ fullName: '', email: '', phone: '', cpf: '', birthDate: '', acceptPrivacyPolicy: false, acceptTermsOfUse: false });
-  const [professional, setProfessional] = useState({ brandName: '', cref: '', bio: '', specialties: '', instagram: '', profilePhotoUrl: '', logoUrl: '', primaryColor: '#6366f1', secondaryColor: '#a855f7' });
+  const [professional, setProfessional] = useState({ brandName: '', cref: '', bio: '', specialties: '', instagram: '', profilePhotoUrl: '', logoUrl: '', primaryColor: '#1d1d1f', secondaryColor: '#707070' });
   const [address, setAddress] = useState({ zipCode: '', street: '', addressNumber: '', complement: '', neighborhood: '', city: '', state: '' });
 
   useEffect(() => {
@@ -204,7 +204,7 @@ export function RegisterPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen ds-gallery-banner flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         <div className="text-center mb-6">
           <div className="inline-flex mb-3"><BrandLogo showText={false} size="lg" /></div>

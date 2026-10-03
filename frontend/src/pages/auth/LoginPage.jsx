@@ -38,8 +38,8 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-12 text-white">
-        <BrandLogo showText size="md" textClassName="text-xl font-bold tracking-tight text-white" />
+      <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 ds-gallery-banner p-12 text-white">
+        <BrandLogo showText size="md" textClassName="text-xl font-bold tracking-tight text-slate-900" />
 
         <div className="space-y-8">
           <div>

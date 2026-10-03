@@ -28,7 +28,7 @@ function SidebarItems({ groups, onNavigate }) {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-200 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.16)]'
+                      ? 'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white'
                       : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                   }`
                 }
@@ -72,7 +72,7 @@ function DesktopSidebar({ groups, onLogout, user, roleLabel, appName, logoutLabe
 function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel, appName, logoutLabel, closeMenuLabel }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 sm:hidden">
+    <div className="fixed inset-0 z-50 md:hidden">
       <button className="absolute inset-0 bg-slate-900/35 backdrop-blur-[1px]" onClick={onClose} aria-label={closeMenuLabel} />
       <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/10 flex flex-col">
         <div className="px-4 py-5 border-b border-slate-200 dark:border-white/10">
@@ -105,7 +105,7 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
   const { t } = useI18n();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 md:flex">
+    <div className="app-shell min-h-screen bg-slate-50 dark:bg-slate-950 md:flex">
       <DesktopSidebar groups={groups} onLogout={onLogout} user={user} roleLabel={roleLabel} appName={brand.name || t('common.appName')} logoutLabel={t('common.logout')} />
       <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} groups={groups} onLogout={onLogout} user={user} roleLabel={roleLabel} appName={brand.name || t('common.appName')} logoutLabel={t('common.logout')} closeMenuLabel={t('common.closeMenu')} />
 

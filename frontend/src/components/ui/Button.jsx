@@ -5,8 +5,8 @@
     secondary: 'ds-btn--secondary',
     outline: 'ds-btn--outline',
     ghost: 'ds-btn--ghost',
-    danger: 'ds-btn--primary bg-[var(--color-danger)] shadow-none',
-    success: 'ds-btn--primary bg-[var(--color-success)] shadow-none',
+    danger: 'ds-btn--danger',
+    success: 'ds-btn--success',
   };
   const sizes = {
     sm: 'px-3 py-2 text-sm',
