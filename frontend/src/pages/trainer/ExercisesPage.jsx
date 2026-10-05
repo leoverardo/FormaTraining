@@ -45,7 +45,7 @@ function normalized(value) {
 function CardMedia({ imageUrl, name }) {
   if (imageUrl) return <img src={imageUrl} alt={name} className="h-40 w-full object-cover" />;
   return (
-    <div className="flex h-40 items-center justify-center bg-[linear-gradient(135deg,_#0f172a,_#0e7490,_#155e75)] text-cyan-100">
+    <div className="flex h-40 items-center justify-center bg-[var(--brand-ink)] text-indigo-100">
       <div className="text-center">
         <Dumbbell className="mx-auto" size={24} />
         <p className="mt-2 text-xs">Sem imagem</p>
@@ -180,7 +180,7 @@ export function ExercisesPage() {
           {filtered.map((exercise) => {
             const level = levelFromApi(exercise.level);
             return (
-              <article key={exercise.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)]">
+              <article key={exercise.id} className="overflow-hidden ds-card transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
                 <CardMedia imageUrl={exercise.imageUrl} name={exercise.name} />
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">

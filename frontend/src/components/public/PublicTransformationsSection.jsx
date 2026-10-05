@@ -3,7 +3,7 @@ import { Images } from 'lucide-react';
 
 function PlaceholderImage({ label }) {
   return (
-    <div className="flex h-52 items-center justify-center bg-[linear-gradient(140deg,_#0f172a,_#334155,_#155e75)] text-slate-100 sm:h-60">
+    <div className="flex h-52 items-center justify-center bg-[var(--brand-ink)] text-slate-100 sm:h-60">
       <div className="rounded-xl border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">{label}</div>
     </div>
   );

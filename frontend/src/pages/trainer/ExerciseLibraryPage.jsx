@@ -27,7 +27,7 @@ function normalized(value) {
 
 function Placeholder({ name }) {
   return (
-    <div className="flex h-40 items-center justify-center bg-[linear-gradient(130deg,_#0f172a,_#0c4a6e,_#14532d)] text-cyan-100">
+    <div className="flex h-40 items-center justify-center bg-[var(--brand-ink)] text-indigo-100">
       <div className="text-center">
         <Dumbbell className="mx-auto" size={24} />
         <p className="mt-2 text-xs">{name || 'Exercicio base'}</p>
@@ -113,7 +113,7 @@ export function ExerciseLibraryPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((item) => (
-            <article key={item.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_22px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)]">
+            <article key={item.id} className="overflow-hidden ds-card transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
               {item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover" /> : <Placeholder name={item.name} />}
               <div className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">

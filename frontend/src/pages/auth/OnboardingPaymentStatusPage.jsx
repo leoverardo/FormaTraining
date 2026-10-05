@@ -33,8 +33,8 @@ export function OnboardingPaymentStatusPage() {
   const confirmed = status?.isPaymentConfirmed;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4">
+      <div className="ds-card w-full max-w-md p-6 space-y-4">
         <h1 className="text-xl font-semibold text-gray-900">{confirmed ? 'Pagamento confirmado' : 'Aguardando confirmação do pagamento'}</h1>
         <p className="text-sm text-gray-600">
           {confirmed
@@ -48,7 +48,7 @@ export function OnboardingPaymentStatusPage() {
         </div>
         <div className="flex gap-2">
           <Button onClick={load} loading={loading} className="flex-1">Atualizar status</Button>
-          {status?.checkoutUrl && !confirmed && <a href={status.checkoutUrl} className="flex-1 text-center px-3 py-2 rounded-lg border border-gray-300 text-sm">Voltar ao pagamento</a>}
+          {status?.checkoutUrl && !confirmed && <a href={status.checkoutUrl} className="flex-1 text-center px-3 py-2 rounded-full border border-[var(--border)] text-sm">Voltar ao pagamento</a>}
         </div>
         {confirmed && <Link to="/login" className="block text-center text-sm text-indigo-600">Ir para login</Link>}
       </div>

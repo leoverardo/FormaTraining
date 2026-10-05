@@ -118,7 +118,7 @@ export function StudentProgressPage() {
 
   return (
     <PageContainer className="space-y-5 pb-20 sm:pb-0">
-      <section className="rounded-3xl bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 p-5 sm:p-6 text-white shadow-[0_16px_38px_rgba(79,70,229,0.32)]">
+      <section className="rounded-[var(--radius-card)] bg-[var(--primary-strong)] p-5 sm:p-6 text-white">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-indigo-100 text-sm">Acompanhe sua evolução</p>

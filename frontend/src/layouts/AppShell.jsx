@@ -25,7 +25,7 @@ function SidebarItems({ groups, onNavigate }) {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-indigo-50 text-indigo-700 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.16)]'
+                      ? 'bg-[var(--primary-soft)] text-indigo-700 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2)]'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   }`
                 }
@@ -95,7 +95,7 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
   const { isDark, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-slate-50 md:flex">
+    <div className="app-shell min-h-screen md:flex">
       <DesktopSidebar groups={groups} onLogout={onLogout} user={user} roleLabel={roleLabel} />
       <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} groups={groups} onLogout={onLogout} user={user} roleLabel={roleLabel} />
 

@@ -36,9 +36,9 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="auth-screen min-h-screen flex">
       {/* Left column ? branding + benefits */}
-      <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-12 text-white">
+      <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 bg-[var(--brand-ink)] p-12 text-white">
         <BrandLogo tone="dark" size="md" />
 
         <div className="space-y-8">
@@ -69,14 +69,14 @@ export function LoginPage() {
       </div>
 
       {/* Right column ? login form */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-slate-50">
+      <div className="flex-1 flex items-center justify-center p-6 bg-[var(--surface-muted)]">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
             <BrandLogo size="sm" />
           </div>
 
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
+          <div className="ds-card p-8">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-slate-900">Bem-vindo de volta</h2>
               <p className="text-slate-500 text-sm mt-1">Entre com suas credenciais para continuar.</p>

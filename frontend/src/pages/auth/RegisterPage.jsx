@@ -204,7 +204,7 @@ export function RegisterPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         <div className="text-center mb-6">
           <div className="flex justify-center">
@@ -213,7 +213,7 @@ export function RegisterPage() {
           <p className="text-gray-500 text-sm mt-2">Cadastro de personal trainer</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+        <div className="ds-card p-6 sm:p-8">
           <StepIndicator />
 
           {step === 1 && (

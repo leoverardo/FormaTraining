@@ -46,8 +46,8 @@ export function StudentRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 sm:p-8">
-      <div className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
+    <div className="min-h-screen bg-[var(--surface-muted)] p-4 sm:p-8">
+      <div className="ds-card mx-auto max-w-2xl p-6 sm:p-8">
         <h1 className="text-2xl font-bold text-slate-900">Criar conta de aluno</h1>
         <p className="mt-1 text-sm text-slate-500">Entre como explorador para descobrir personais e conteúdos públicos.</p>
 
@@ -65,7 +65,7 @@ export function StudentRegisterPage() {
           <Input label="Nível de treino" value={form.trainingLevel} onChange={(e) => setForm((p) => ({ ...p, trainingLevel: e.target.value }))} />
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Modalidade preferida</label>
-            <select className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" value={form.preferredTrainingMode} onChange={(e) => setForm((p) => ({ ...p, preferredTrainingMode: e.target.value }))}>
+            <select className="ds-control text-sm" value={form.preferredTrainingMode} onChange={(e) => setForm((p) => ({ ...p, preferredTrainingMode: e.target.value }))}>
               <option value="online">Online</option>
               <option value="presencial">Presencial</option>
               <option value="hibrido">Híbrido</option>

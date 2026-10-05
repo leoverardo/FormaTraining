@@ -35,7 +35,7 @@ export function PublicFeedCard({ item, fallbackName, fallbackAvatar }) {
         ) : media?.url ? (
           <img src={media.url} alt={media.alt || 'Midia do post'} className="h-60 w-full object-cover" />
         ) : (
-          <div className="flex h-52 items-center justify-center bg-[linear-gradient(120deg,_#0f172a,_#155e75,_#14532d)] text-cyan-50">
+          <div className="flex h-52 items-center justify-center bg-[var(--brand-ink)] text-indigo-100">
             <div className="text-center">
               <ImageIcon className="mx-auto" size={28} />
               <p className="mt-2 text-sm">Conteudo em destaque</p>

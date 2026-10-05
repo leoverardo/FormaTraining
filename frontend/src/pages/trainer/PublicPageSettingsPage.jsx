@@ -207,7 +207,7 @@ export function PublicPageSettingsPage() {
           <div className={`space-y-4 lg:sticky lg:top-6 lg:self-start ${tab === 'edit' ? 'hidden lg:block' : ''}`}>
             <PreviewCard title="Preview da página" subtitle="Visual resumido da sua página pública.">
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <div className="relative h-36 bg-[linear-gradient(120deg,_#0f172a,_#0e7490,_#14532d)]">
+                <div className="relative h-36 bg-[var(--brand-ink)]">
                   {form.publicBannerUrl ? <img src={form.publicBannerUrl} alt="Banner" className="absolute inset-0 h-full w-full object-cover" /> : null}
                   <div className="absolute inset-0 bg-black/30" />
                 </div>

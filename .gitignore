@@ -58,3 +58,6 @@ coverage/
 *.coverage
 *.coveragexml
 .nyc_output/
+
+# Local visual reference (kept only on each developer's machine)
+docs/gallery-design.md

@@ -7,7 +7,7 @@ export function Tabs({ tabs, value, onChange, className = '' }) {
           <button
             key={tab.value}
             onClick={() => onChange(tab.value)}
-            className={`px-3 py-1.5 text-sm rounded-lg transition ${active ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'}`}
+            className={`px-3 py-1.5 text-sm rounded-full transition-colors ${active ? 'bg-[var(--primary)] text-white' : 'text-[var(--text-secondary)] hover:bg-[var(--surface-muted)]'}`}
           >
             {tab.label}
           </button>

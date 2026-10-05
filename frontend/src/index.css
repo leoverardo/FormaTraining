@@ -1,30 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f8fafc;
+  /* UpCoach UI foundation: the /brand page is the visual source of truth. */
+  --bg: #fafafc;
   --surface: #ffffff;
-  --surface-muted: #f8fafc;
-  --border: #e2e8f0;
+  --surface-muted: #f4f4f6;
+  --surface-subtle: #ededf0;
+  --border: #dedee5;
+  --border-strong: #c9c9d3;
   --text: #0f172a;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
+  --text-secondary: #5c6270;
+  --text-muted: #858b98;
   --primary: #6366f1;
   --primary-strong: #4f46e5;
+  --primary-soft: #eef0ff;
+  --on-primary: #ffffff;
+  --danger: #dc2626;
+  --success: #059669;
   --focus-ring: #a5b4fc;
-  --radius-sm: 0.625rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.125rem;
-  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.06);
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --radius-card: 28px;
+  --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.06);
+  --shadow-float: 0 18px 48px rgba(15, 23, 42, 0.10);
 }
 
 :root[data-theme='dark'] {
-  --bg: #020617;
-  --surface: #0f172a;
-  --surface-muted: #111827;
-  --border: #1e293b;
-  --text: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --bg: #0b1020;
+  --surface: #12192a;
+  --surface-muted: #171f32;
+  --surface-subtle: #20293d;
+  --border: #2d374d;
+  --border-strong: #424e66;
+  --text: #f5f7ff;
+  --text-secondary: #b3bdcf;
+  --text-muted: #7f8aa0;
   --primary: #818cf8;
   --primary-strong: #6366f1;
   --focus-ring: #818cf8;
@@ -48,18 +59,12 @@ body {
   font-family: "Plus Jakarta Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background:
-    radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 42%),
-    radial-gradient(circle at top left, rgba(6, 182, 212, 0.05), transparent 28%),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
 }
 
 :root[data-theme='dark'] body {
-  background:
-    radial-gradient(circle at top right, rgba(99, 102, 241, 0.16), transparent 45%),
-    radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 30%),
-    var(--bg);
+  background: var(--bg);
 }
 
 button,
@@ -128,12 +133,12 @@ a {
 }
 
 :root[data-theme='dark'] .border-slate-200 {
-  border-color: #1e293b !important;
+  border-color: var(--border) !important;
 }
 
 :root[data-theme='dark'] .shadow-sm,
 :root[data-theme='dark'] .shadow {
-  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35) !important;
+  box-shadow: var(--shadow-soft) !important;
 }
 
 :root {
@@ -262,6 +267,64 @@ a {
   position: relative;
   overflow: hidden;
   background: #e2e8f0;
+}
+
+/* Shared application surfaces. These selectors also normalize legacy Tailwind
+   utility combinations while individual screens are progressively composed from
+   the primitives below. */
+.app-shell { background: var(--bg); color: var(--text); }
+.app-shell .bg-white, .app-shell .bg-white\/95 { background-color: var(--surface); }
+.app-shell .bg-slate-50 { background-color: var(--surface-muted); }
+.app-shell .bg-slate-100 { background-color: var(--surface-subtle); }
+.app-shell .bg-gray-50, .app-shell .bg-gray-100 { background-color: var(--surface-muted); }
+.app-shell .border-slate-100, .app-shell .border-slate-200, .app-shell .border-gray-100, .app-shell .border-gray-200, .app-shell .border-gray-300 { border-color: var(--border); }
+.app-shell .text-slate-900, .app-shell .text-gray-900, .app-shell .text-gray-800 { color: var(--text); }
+.app-shell .text-slate-700, .app-shell .text-slate-600, .app-shell .text-gray-700, .app-shell .text-gray-600 { color: var(--text-secondary); }
+.app-shell .text-slate-500, .app-shell .text-slate-400, .app-shell .text-gray-500, .app-shell .text-gray-400 { color: var(--text-muted); }
+.app-shell .rounded-2xl { border-radius: var(--radius-card); }
+.app-shell .rounded-3xl { border-radius: var(--radius-card); }
+.app-shell .rounded-xl { border-radius: var(--radius-md); }
+.app-shell :is(.shadow-sm, .shadow) { box-shadow: none; }
+.app-shell :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
+  min-height: 44px;
+  border-color: var(--border);
+  background-color: var(--surface);
+  color: var(--text);
+}
+.app-shell :is(input, select):not([type='checkbox']):not([type='radio']) { border-radius: var(--radius-pill); }
+.app-shell textarea { border-radius: var(--radius-md); }
+.app-shell :is(input, select, textarea):not([type='checkbox']):not([type='radio']):focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, .16);
+}
+.app-shell table { border-color: var(--border); }
+.app-shell thead { background: var(--surface-muted); color: var(--text-secondary); }
+.app-shell :is(th, td) { border-color: var(--border); }
+
+.public-page .bg-white, .public-page .bg-white\/90 { background-color: var(--surface); }
+.public-page .bg-slate-50, .public-page .bg-slate-100 { background-color: var(--surface-muted); }
+.public-page .border-slate-100, .public-page .border-slate-200 { border-color: var(--border); }
+.public-page .rounded-2xl, .public-page .rounded-3xl { border-radius: var(--radius-card); }
+.public-page :is(input, select):not([type='checkbox']):not([type='radio']) { min-height: 44px; border-radius: var(--radius-pill); }
+.public-page textarea { border-radius: var(--radius-md); }
+
+.ds-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.ds-control {
+  width: 100%; min-height: 44px; padding: 10px 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  background: var(--surface); color: var(--text); transition: border-color var(--duration-fast), box-shadow var(--duration-fast), background-color var(--duration-fast);
+}
+.ds-control:hover { border-color: var(--border-strong); }
+.ds-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, .16); }
+.ds-control[aria-invalid='true'] { border-color: var(--danger); background: #fff8f8; }
+.ds-control--textarea { border-radius: var(--radius-md); min-height: 112px; resize: vertical; }
+
+@media (max-width: 640px) {
+  :root { --radius-card: 22px; }
 }
 
 .uc-shimmer::after {

@@ -112,7 +112,7 @@ export function ExploreFeedPage() {
 
   return (
     <PageContainer className="space-y-4">
-      <section className="rounded-3xl border border-slate-200 bg-gradient-to-r from-cyan-500 to-indigo-600 p-6 text-white">
+      <section className="rounded-[var(--radius-card)] border border-indigo-700 bg-[var(--primary-strong)] p-6 text-white">
         <h1 className="text-2xl font-bold">Descubra personais e conteudos para evoluir</h1>
         <p className="mt-1 text-sm text-cyan-100">Feed publico com dicas, aulas e publicacoes abertas.</p>
       </section>

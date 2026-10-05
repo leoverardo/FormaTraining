@@ -152,7 +152,7 @@ export function TrainerPublicPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_#cffafe,_transparent_40%),linear-gradient(180deg,_#f8fafc,_#eef2ff_50%,_#f8fafc)]">
+    <div className="public-page min-h-screen bg-[var(--bg)]">
       <main className="mx-auto max-w-6xl space-y-5 px-4 py-5 sm:space-y-6 sm:py-8">
         <PublicProfileHero
           profile={profile}
@@ -177,7 +177,7 @@ export function TrainerPublicPage() {
         <PublicTransformationsSection transformations={data.transformations || []} />
 
         {Array.isArray(data.serviceOffers) && data.serviceOffers.length > 0 && (
-          <section className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur">
+          <section className="ds-card p-5">
             <div className="flex items-center justify-between gap-2">
               <div>
                 <h2 className="text-xl font-semibold text-slate-900">Serviços</h2>
@@ -223,7 +223,7 @@ export function TrainerPublicPage() {
           <Input label="Objetivo" value={leadForm.goal} onChange={(e) => setLeadForm((p) => ({ ...p, goal: e.target.value }))} />
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Mensagem</label>
-            <textarea className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" rows={4} value={leadForm.message} onChange={(e) => setLeadForm((p) => ({ ...p, message: e.target.value }))} />
+            <textarea className="ds-control ds-control--textarea text-sm" rows={4} value={leadForm.message} onChange={(e) => setLeadForm((p) => ({ ...p, message: e.target.value }))} />
           </div>
           <Button type="submit" className="w-full" loading={sendingLead}>Enviar interesse</Button>
         </form>

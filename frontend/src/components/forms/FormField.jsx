@@ -5,9 +5,9 @@ export function FormField({ label, required, helper, error, children }) {
   return (
     <div className="space-y-1.5">
       {label ? (
-        <label className="block text-sm font-semibold text-slate-700">
+        <label className="block text-sm font-semibold text-[var(--text)]">
           {label}
-          {required ? <span className="ml-1 text-cyan-600">*</span> : null}
+          {required ? <span className="ml-1 text-[var(--primary)]">*</span> : null}
         </label>
       ) : null}
       {children}

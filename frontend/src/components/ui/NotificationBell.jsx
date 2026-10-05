@@ -60,7 +60,7 @@ export function NotificationBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-10 w-80 bg-white rounded-2xl border border-gray-200 shadow-xl z-50 overflow-hidden">
+          <div className="absolute right-0 top-10 w-80 ds-card shadow-[var(--shadow-float)] z-50 overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
               <span className="font-semibold text-sm text-gray-900">Notificações</span>
               {count > 0 && (

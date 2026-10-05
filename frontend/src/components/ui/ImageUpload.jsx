@@ -95,7 +95,7 @@ export function ImageUpload({
           onClick={() => !disabled && !uploading && inputRef.current?.click()}
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
-          className={`border-2 border-dashed rounded-2xl px-4 py-8 text-center cursor-pointer transition-all ${
+          className={`border-2 border-dashed rounded-[var(--radius-card)] px-4 py-8 text-center cursor-pointer transition-colors ${
             disabled || uploading ? 'opacity-50 cursor-not-allowed border-gray-200' :
             'border-gray-300 hover:border-indigo-400 hover:bg-indigo-50/30'
           }`}
