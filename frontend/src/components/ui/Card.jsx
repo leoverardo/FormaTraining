@@ -7,10 +7,10 @@ export function Card({ children, className = '' }) {
 }
 
 export function CardHeader({ children, className = '' }) {
-  return <div className={`px-6 py-5 border-b border-[var(--border)] ${className}`}>{children}</div>;
+  return <div className={`p-[var(--card-padding)] border-b border-[var(--border)] ${className}`}>{children}</div>;
 }
 
 export function CardContent({ children, className = '' }) {
-  return <div className={`px-6 py-5 ${className}`}>{children}</div>;
+  return <div className={`p-[var(--card-padding)] ${className}`}>{children}</div>;
 }
 

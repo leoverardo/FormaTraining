@@ -149,9 +149,9 @@ export function PublicPageSettingsPage() {
       <FormHeader title="Editor da Página Pública" description="Configure seu link público, CTA e conteúdos visíveis para captação." />
 
       <div className="grid gap-4 lg:hidden">
-        <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1">
-          <button onClick={() => setTab('edit')} className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium ${tab === 'edit' ? 'bg-slate-900 text-white' : 'text-slate-600'}`}>Editar</button>
-          <button onClick={() => setTab('preview')} className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium ${tab === 'preview' ? 'bg-slate-900 text-white' : 'text-slate-600'}`}>Preview</button>
+        <div className="inline-flex rounded-xl border border-slate-200 bg-[var(--surface)] p-1">
+          <button onClick={() => setTab('edit')} className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium ${tab === 'edit' ? 'bg-[var(--brand-ink)] text-white' : 'text-slate-600'}`}>Editar</button>
+          <button onClick={() => setTab('preview')} className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium ${tab === 'preview' ? 'bg-[var(--brand-ink)] text-white' : 'text-slate-600'}`}>Preview</button>
         </div>
       </div>
 
@@ -170,7 +170,7 @@ export function PublicPageSettingsPage() {
               <FormGrid>
                 <Input label="Slug" placeholder="carlos-trainer" value={form.publicSlug} onChange={(e) => patchForm({ publicSlug: e.target.value })} />
                 <FormField label="URL final">
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700">{pageUrl || `${window.location.origin}/p/seu-slug`}</div>
+                  <div className="rounded-xl border border-slate-200 bg-[var(--surface-muted)] px-3 py-2.5 text-sm text-slate-700">{pageUrl || `${window.location.origin}/p/seu-slug`}</div>
                 </FormField>
               </FormGrid>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -206,7 +206,7 @@ export function PublicPageSettingsPage() {
 
           <div className={`space-y-4 lg:sticky lg:top-6 lg:self-start ${tab === 'edit' ? 'hidden lg:block' : ''}`}>
             <PreviewCard title="Preview da página" subtitle="Visual resumido da sua página pública.">
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+              <div className="overflow-hidden ds-card">
                 <div className="relative h-36 bg-[var(--brand-ink)]">
                   {form.publicBannerUrl ? <img src={form.publicBannerUrl} alt="Banner" className="absolute inset-0 h-full w-full object-cover" /> : null}
                   <div className="absolute inset-0 bg-black/30" />
@@ -216,10 +216,10 @@ export function PublicPageSettingsPage() {
                   <p className="mt-1 text-sm text-slate-600">{form.publicHeadline || 'Consultoria personalizada para sua evolução.'}</p>
                   <p className="mt-1 text-xs text-slate-500">{form.publicDescription || 'Adicione uma descrição para melhorar conversão.'}</p>
                   <div className="mt-4 flex gap-2">
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${formatWhatsapp(form.whatsappNumber) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${formatWhatsapp(form.whatsappNumber) ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)]' : 'bg-[var(--surface-subtle)] text-slate-500'}`}>
                       {formatWhatsapp(form.whatsappNumber) ? 'CTA WhatsApp ativo' : 'CTA WhatsApp inativo'}
                     </span>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${form.publicPageEnabled ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-100 text-slate-500'}`}>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${form.publicPageEnabled ? 'bg-[var(--status-info-bg)] text-[var(--status-info-text)]' : 'bg-[var(--surface-subtle)] text-slate-500'}`}>
                       {form.publicPageEnabled ? <Eye size={12} className="mr-1" /> : <EyeOff size={12} className="mr-1" />}
                       {form.publicPageEnabled ? 'Pública' : 'Oculta'}
                     </span>

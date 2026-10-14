@@ -1,3 +1,4 @@
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { onboardingService } from '../../services/onboardingService';
@@ -27,15 +28,17 @@ export function OnboardingPaymentStatusPage() {
   }, [onboardingId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!onboardingId) {
-    return <div className="min-h-screen p-6 flex items-center justify-center text-sm text-gray-600">Não foi possível localizar sua contratação. Volte ao cadastro.</div>;
+    return <div className="min-h-screen p-6 flex items-center justify-center text-sm text-gray-600">
+      <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />Não foi possível localizar sua contratação. Volte ao cadastro.</div>;
   }
 
   const confirmed = status?.isPaymentConfirmed;
 
   return (
-    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4 pt-20 pb-12">
+      <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />
       <div className="ds-card w-full max-w-md p-6 space-y-4">
-        <h1 className="text-xl font-semibold text-gray-900">{confirmed ? 'Pagamento confirmado' : 'Aguardando confirmação do pagamento'}</h1>
+        <h1 className="font-semibold text-gray-900 uc-heading">{confirmed ? 'Pagamento confirmado' : 'Aguardando confirmação do pagamento'}</h1>
         <p className="text-sm text-gray-600">
           {confirmed
             ? 'Sua assinatura foi ativada com sucesso. Confira seu e-mail para concluir o acesso.'
@@ -50,7 +53,7 @@ export function OnboardingPaymentStatusPage() {
           <Button onClick={load} loading={loading} className="flex-1">Atualizar status</Button>
           {status?.checkoutUrl && !confirmed && <a href={status.checkoutUrl} className="flex-1 text-center px-3 py-2 rounded-full border border-[var(--border)] text-sm">Voltar ao pagamento</a>}
         </div>
-        {confirmed && <Link to="/login" className="block text-center text-sm text-indigo-600">Ir para login</Link>}
+        {confirmed && <Link to="/login" className="block text-center text-sm text-[var(--link)]">Ir para login</Link>}
       </div>
     </div>
   );

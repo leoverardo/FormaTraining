@@ -51,6 +51,7 @@ import { ExploreFollowingPage } from './pages/student/ExploreFollowingPage';
 import { TrainerPublicPage } from './pages/public/TrainerPublicPage';
 import { PrivacyPolicyPage, TermsOfUsePage } from './pages/public/LegalPages';
 import { BrandPage } from './pages/brand/BrandPage';
+import { LandingPage } from './pages/marketing/LandingPage';
 import { PrivacySettingsPage } from './pages/shared/PrivacySettingsPage';
 import { OwnerPrivacyPage } from './pages/owner/OwnerPrivacyPage';
 
@@ -78,6 +79,7 @@ export default function App() {
           <ToastProvider>
             <Routes>
             <Route path="/" element={<HomeRedirect />} />
+            <Route path="/landing" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/student/register" element={<StudentRegisterPage />} />
@@ -86,6 +88,7 @@ export default function App() {
             <Route path="/onboarding/success" element={<OnboardingPaymentStatusPage />} />
             <Route path="/p/:slug" element={<TrainerPublicPage />} />
             <Route path="/brand" element={<BrandPage />} />
+            <Route path="/branding" element={<BrandPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/terms-of-use" element={<TermsOfUsePage />} />
 

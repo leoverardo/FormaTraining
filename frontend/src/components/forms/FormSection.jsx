@@ -1,6 +1,6 @@
 export function FormSection({ icon: Icon, title, description, children, className = '' }) {
   return (
-    <section className={`ds-card p-5 sm:p-6 ${className}`}>
+    <section className={`ds-card p-[var(--card-padding)] ${className}`}>
       <div className="mb-4">
         <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900">
           {Icon ? <Icon size={16} className="text-[var(--primary)]" /> : null}

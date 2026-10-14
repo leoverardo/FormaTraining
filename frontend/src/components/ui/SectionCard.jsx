@@ -2,7 +2,7 @@ import { Card } from './Card';
 
 export function SectionCard({ title, description, children, className = '', action }) {
   return (
-    <Card className={`p-5 sm:p-6 ${className}`}>
+    <Card className={`p-[var(--card-padding)] ${className}`}>
       {(title || description || action) && (
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>

@@ -13,7 +13,7 @@ export function Input({ label, error, hint, className = '', ...props }) {
         {...props}
       />
       {hint && !error && <p className="text-xs text-slate-500">{hint}</p>}
-      {error && <p className="text-xs font-medium text-red-600">{error}</p>}
+      {error && <p className="text-xs font-medium text-[var(--status-danger-text)]">{error}</p>}
     </div>
   );
 }

@@ -69,9 +69,9 @@ export function WorkoutsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Treinos</h1>
+      <div className="uc-page-header flex flex-wrap items-start justify-between gap-5">
+        <div className="min-w-0">
+          <h1 className="font-semibold text-gray-900 uc-heading">Treinos</h1>
           <p className="text-gray-500 text-sm mt-1">{workouts.length} treinos criados</p>
         </div>
         <Button onClick={() => { setEditWorkout(null); setForm(emptyWorkout); setModalOpen(true); }}>
@@ -84,7 +84,7 @@ export function WorkoutsPage() {
       ) : (
         <div className="space-y-3">
           {workouts.map(w => (
-            <div key={w.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div key={w.id} className="ds-card overflow-hidden">
               <div className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <button onClick={() => setExpandedId(expandedId === w.id ? null : w.id)} className="text-gray-400 hover:text-gray-600">
@@ -97,25 +97,25 @@ export function WorkoutsPage() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Badge variant={w.status === 'Active' ? 'success' : 'gray'}>{w.status === 'Active' ? 'Ativo' : 'Inativo'}</Badge>
-                  <button onClick={() => { setAddExModal(w); setExForm({ exerciseId: exercises[0]?.id || '', sets: 3, reps: '12', suggestedLoad: '', restSeconds: 60, notes: '', orderIndex: (w.exercises?.length || 0) + 1 }); }} className="p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-colors" title="Adicionar exercício"><Plus size={16} /></button>
+                  <button onClick={() => { setAddExModal(w); setExForm({ exerciseId: exercises[0]?.id || '', sets: 3, reps: '12', suggestedLoad: '', restSeconds: 60, notes: '', orderIndex: (w.exercises?.length || 0) + 1 }); }} className="p-1.5 rounded-lg hover:bg-[var(--status-success-bg)] text-[var(--status-success-text)] transition-colors" title="Adicionar exercício"><Plus size={16} /></button>
                   <button onClick={() => { setEditWorkout(w); const lm = { Beginner: 1, Intermediate: 2, Advanced: 3 }; setForm({ name: w.name, goal: w.goal || '', level: lm[w.level] || 1, description: w.description || '', status: w.status === 'Active' ? 1 : 2 }); setModalOpen(true); }} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"><Pencil size={16} /></button>
-                  <button onClick={() => setDeleteTarget(w)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors"><Trash2 size={16} /></button>
+                  <button onClick={() => setDeleteTarget(w)} className="p-1.5 rounded-lg hover:bg-[var(--status-danger-bg)] text-[var(--status-danger-text)] transition-colors"><Trash2 size={16} /></button>
                 </div>
               </div>
               {expandedId === w.id && (
-                <div className="border-t border-gray-100 px-6 py-4 bg-gray-50">
+                <div className="border-t border-gray-100 px-6 py-4 bg-[var(--surface-muted)]">
                   {w.exercises?.length === 0 ? (
                     <p className="text-sm text-gray-400 text-center py-4">Nenhum exercício adicionado.</p>
                   ) : (
                     <div className="space-y-2">
                       {w.exercises?.sort((a, b) => a.orderIndex - b.orderIndex).map(we => (
-                        <div key={we.id} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-gray-200">
+                        <div key={we.id} className="flex items-center gap-3 bg-[var(--surface)] rounded-xl px-4 py-3 border border-gray-200">
                           <GripVertical size={16} className="text-gray-300" />
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm text-gray-900">{we.exercise?.name}</p>
                             <p className="text-xs text-gray-400">{we.sets}x{we.reps} · {we.suggestedLoad || 'Carga livre'} · Descanso: {we.restSeconds}s</p>
                           </div>
-                          <button onClick={() => removeExercise(w.id, we.id)} className="p-1 rounded-lg hover:bg-red-50 text-red-400 transition-colors"><Trash2 size={14} /></button>
+                          <button onClick={() => removeExercise(w.id, we.id)} className="p-1 rounded-lg hover:bg-[var(--status-danger-bg)] text-red-400 transition-colors"><Trash2 size={14} /></button>
                         </div>
                       ))}
                     </div>

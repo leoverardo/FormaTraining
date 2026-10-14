@@ -6,7 +6,7 @@ export function PublicFeedSection({ items, fallbackName, fallbackAvatar, feedRef
   return (
     <section ref={feedRef} className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">Conteudos e dicas recentes</h2>
+        <h2 className="font-semibold text-slate-900  uc-heading">Conteudos e dicas recentes</h2>
         <p className="mt-1 text-sm text-slate-600 sm:text-base">Acompanhe dicas, treinos e orientacoes publicadas pelo personal.</p>
       </div>
 

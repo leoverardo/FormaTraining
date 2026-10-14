@@ -82,13 +82,13 @@ export function ServiceSalesPage() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-slate-200 bg-white p-4">
-        <h1 className="text-xl font-bold text-slate-900">Comercial</h1>
+      <div className="ds-card p-[var(--card-padding)]">
+        <h1 className="font-semibold text-slate-900 uc-heading">Comercial</h1>
         <p className="text-sm text-slate-500">Gerencie serviços e acompanhe contratações.</p>
         {summary && (
           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
             {[['Pedidos', summary.totalOrders], ['Aprovados', summary.approvedOrders], ['Pendentes', summary.pendingOrders], ['Rejeitados', summary.rejectedOrders], ['Volume', `R$ ${Number(summary.approvedVolume || 0).toFixed(2)}`]].map(([k, v]) => (
-              <div key={k} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+              <div key={k} className="rounded-xl border border-slate-200 bg-[var(--surface-muted)] px-3 py-2">
                 <p className="text-xs text-slate-500">{k}</p>
                 <p className="text-sm font-semibold text-slate-900">{v}</p>
               </div>
@@ -106,7 +106,7 @@ export function ServiceSalesPage() {
         <div className="space-y-3">
           <div className="flex justify-end"><Button onClick={openCreate}>Nova oferta</Button></div>
           {offers.length === 0 ? <EmptyState title="Nenhuma oferta cadastrada" description="Crie o primeiro serviço para começar a vender." /> : offers.map((item) => (
-            <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div key={item.id} className="ds-card p-[var(--card-padding)]">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-slate-900">{item.title}</p>
@@ -126,7 +126,7 @@ export function ServiceSalesPage() {
       {tab === 'orders' && (
         <div className="space-y-2">
           {orders.length === 0 ? <EmptyState title="Nenhuma venda registrada" description="As contratações aparecerão aqui." /> : orders.map((item) => (
-            <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div key={item.id} className="ds-card p-[var(--card-padding)]">
               <p className="font-semibold text-slate-900">{item.serviceTitle}</p>
               <p className="text-sm text-slate-600 break-all">{item.buyerName} • {item.buyerEmail}</p>
               <p className="text-sm text-slate-600">R$ {Number(item.amount).toFixed(2)} • {item.status}</p>

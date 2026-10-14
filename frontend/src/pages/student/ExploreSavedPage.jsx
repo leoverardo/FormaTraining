@@ -37,7 +37,7 @@ export function ExploreSavedPage() {
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((trainer) => (
-              <article key={trainer.trainerId} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <article key={trainer.trainerId} className="ds-card p-[var(--card-padding)]">
                 <p className="text-sm font-semibold text-slate-900">{trainer.brandName || trainer.fullName}</p>
                 <p className="text-xs text-slate-500">{trainer.city || '-'}{trainer.state ? `, ${trainer.state}` : ''}</p>
               </article>

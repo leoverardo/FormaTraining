@@ -22,6 +22,14 @@ using FitPlatform.Api.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration
+        .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
+        .AddCommandLine(args);
+}
+
 builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
 {
     ["Cloudinary:CloudName"] = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME"),

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { trainerService } from '../../services/trainerService';
 import { DashboardSkeleton } from '../../components/ui/DashboardSkeleton';
@@ -46,10 +46,10 @@ export function TrainerDashboard() {
 
   return (
     <PageContainer className="space-y-5">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_32px_rgba(15,23,42,0.08)]">
+      <section className="ds-card p-[var(--card-padding)]">
         <div className="flex flex-wrap gap-3 items-start justify-between">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Painel do personal</h1>
+            <h1 className="font-semibold text-slate-900 uc-heading">Painel do personal</h1>
             <p className="text-sm text-slate-500 mt-1">Resumo da consultoria e acoes rapidas.</p>
           </div>
           <div className="flex flex-wrap gap-2">

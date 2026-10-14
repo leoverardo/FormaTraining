@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapPin, Users } from 'lucide-react';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { Input } from '../../components/ui/Input';
@@ -144,8 +144,8 @@ export function ExploreTrainersPage() {
 
   return (
     <PageContainer className="space-y-4">
-      <section className="rounded-3xl border border-slate-200 bg-white p-5">
-        <h1 className="text-2xl font-bold text-slate-900">Encontre o personal ideal</h1>
+      <section className="ds-card p-[var(--card-padding)]">
+        <h1 className="font-semibold text-slate-900 uc-heading">Encontre o personal ideal</h1>
         <p className="mt-1 text-sm text-slate-500">Pesquise por nome, cidade, estado, especialidade e modalidade.</p>
         <form onSubmit={handleSearch} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           <Input label="Busca" value={query.search} onChange={(e) => setQuery((prev) => ({ ...prev, search: e.target.value }))} />
@@ -163,7 +163,7 @@ export function ExploreTrainersPage() {
           <Button variant="ghost" onClick={handleOnlyOnline}>Ver personais online</Button>
         </div>
         {showGeoPrompt && (
-          <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm">
+          <div className="mt-3 rounded-xl border border-[var(--primary-soft)] bg-[var(--primary-soft)] p-3 text-sm">
             <p>Usamos sua localizacao aproximada apenas para sugerir trainers proximos. Voce pode continuar sem permitir.</p>
             <div className="mt-2 flex gap-2">
               <Button onClick={confirmUseMyLocation} loading={locationLoading}>Permitir localizacao</Button>
@@ -179,13 +179,13 @@ export function ExploreTrainersPage() {
       {items.length ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((trainer) => (
-            <article key={trainer.trainerId} className="rounded-2xl border border-slate-200 bg-white p-4">
+            <article key={trainer.trainerId} className="ds-card p-[var(--card-padding)]">
               <p className="text-sm font-semibold text-slate-900">{trainer.brandName || trainer.fullName}</p>
               <p className="mt-1 text-xs text-slate-500">{trainer.headline || trainer.bio || 'Personal trainer'}</p>
               <div className="mt-2 flex flex-wrap gap-1">
-                {trainer.serviceMode && <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700">{trainer.serviceMode}</span>}
-                {trainer.acceptingStudents && <span className="rounded bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">Aceitando alunos</span>}
-                {trainer.distanceKm != null && <span className="rounded bg-indigo-100 px-2 py-0.5 text-[11px] text-indigo-700">A {trainer.distanceKm} km de voce</span>}
+                {trainer.serviceMode && <span className="rounded bg-[var(--surface-subtle)] px-2 py-0.5 text-[11px] text-slate-700">{trainer.serviceMode}</span>}
+                {trainer.acceptingStudents && <span className="rounded bg-[var(--status-success-bg)] px-2 py-0.5 text-[11px] text-[var(--status-success-text)]">Aceitando alunos</span>}
+                {trainer.distanceKm != null && <span className="rounded bg-[var(--primary-soft)] px-2 py-0.5 text-[11px] text-[var(--link)]">A {trainer.distanceKm} km de voce</span>}
               </div>
               <p className="mt-2 text-xs text-slate-400">{trainer.city || '-'}{trainer.state ? `, ${trainer.state}` : ''}</p>
               <div className="mt-3 flex gap-2">
@@ -193,14 +193,14 @@ export function ExploreTrainersPage() {
                 <button
                   disabled={actionLoadingId === trainer.trainerId}
                   onClick={() => toggleFollow(trainer)}
-                  className="rounded-lg bg-indigo-600 px-3 py-1 text-xs text-white disabled:opacity-60"
+                  className="rounded-lg bg-[var(--primary-strong)] px-3 py-1 text-xs text-white disabled:opacity-60"
                 >
                   {trainer.isFollowedByCurrentUser ? 'Seguindo' : 'Seguir'}
                 </button>
                 <button
                   disabled={actionLoadingId === trainer.trainerId}
                   onClick={() => toggleSave(trainer)}
-                  className="rounded-lg border border-indigo-300 px-3 py-1 text-xs text-indigo-700 disabled:opacity-60"
+                  className="rounded-lg border border-[var(--primary)] px-3 py-1 text-xs text-[var(--link)] disabled:opacity-60"
                 >
                   {trainer.isSavedByCurrentUser ? 'Salvo' : 'Salvar'}
                 </button>

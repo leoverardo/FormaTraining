@@ -48,10 +48,10 @@ export function NotificationBell() {
 
   return (
     <div className="relative">
-      <button onClick={handleOpen} className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
+      <button onClick={handleOpen} aria-label="Notificações" aria-expanded={open} className="uc-icon-button relative transition-colors">
         <Bell size={20} />
         {count > 0 && (
-          <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center leading-none">
+          <span className="absolute top-1 right-1 w-4 h-4 bg-[var(--danger-fill)] text-white text-xs rounded-full flex items-center justify-center leading-none">
             {count > 9 ? '9+' : count}
           </span>
         )}
@@ -60,7 +60,7 @@ export function NotificationBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-10 w-80 ds-card shadow-[var(--shadow-float)] z-50 overflow-hidden">
+          <div className="absolute right-0 top-12 w-80 max-w-[calc(100vw-40px)] ds-card border border-[var(--border)] z-50 overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
               <span className="font-semibold text-sm text-gray-900">Notificações</span>
               {count > 0 && (
@@ -68,7 +68,7 @@ export function NotificationBell() {
                   try { await notificationService.markAllRead(); } catch { return; }
                   setNotifications(p => p.map(n => ({ ...n, isRead: true })));
                   setCount(0);
-                }} className="text-xs text-indigo-600 hover:underline">
+                }} className="text-xs text-[var(--link)] hover:underline">
                   Marcar todas como lidas
                 </button>
               )}
@@ -78,13 +78,13 @@ export function NotificationBell() {
                 <p className="text-center text-sm text-gray-400 py-8">Nenhuma notificação</p>
               ) : notifications.map((n, index) => (
                 <div key={resolveNotificationId(n) ?? `notification-${index}`} onClick={() => markRead(resolveNotificationId(n))}
-                  className={`px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors ${!n.isRead ? 'bg-indigo-50/40' : ''}`}>
+                  className={`px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-[var(--surface-muted)] transition-colors ${!n.isRead ? 'bg-[var(--primary-soft)]/40' : ''}`}>
                   <div className="flex items-start gap-2">
-                    {!n.isRead && <div className="w-2 h-2 bg-indigo-500 rounded-full mt-1.5 shrink-0" />}
+                    {!n.isRead && <div className="w-2 h-2 bg-[var(--brand-indigo)] rounded-full mt-1.5 shrink-0" />}
                     <div className={!n.isRead ? '' : 'ml-4'}>
                       <p className="text-sm font-medium text-gray-900">{n.title}</p>
                       <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
-                      <p className="text-xs text-gray-300 mt-1">{new Date(n.createdAt).toLocaleDateString('pt-BR')}</p>
+                      <p className="text-xs text-[var(--text-muted)] mt-1">{new Date(n.createdAt).toLocaleDateString('pt-BR')}</p>
                     </div>
                   </div>
                 </div>

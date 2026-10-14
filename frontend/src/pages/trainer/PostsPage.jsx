@@ -93,7 +93,7 @@ export function PostsPage() {
     <PageContainer className="space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Conteúdos</h1>
+          <h1 className="font-semibold text-slate-900 uc-heading">Conteúdos</h1>
           <p className="text-sm text-slate-500 mt-1">{posts.length} publicações</p>
         </div>
         <div className="flex items-center gap-2">
@@ -110,12 +110,12 @@ export function PostsPage() {
             const cfg = statusConfig[post.status] || statusConfig.Draft;
             const item = feedItems[idx];
             return (
-              <div key={post.id ?? post.postId ?? item?.id ?? `post-${idx}`} className="space-y-2 rounded-2xl border border-slate-200 bg-white p-3">
+              <div key={post.id ?? post.postId ?? item?.id ?? `post-${idx}`} className="space-y-2 ds-card p-3 p-[var(--card-padding)]">
                 <div className="flex items-center justify-between">
                   <Badge variant={cfg.badge}>{cfg.label}</Badge>
                   <div className="flex gap-1">
                     <button onClick={() => openEdit(post)} className="px-3 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil size={14} className="inline mr-1" />Editar</button>
-                    <button onClick={() => setDeleteTarget(post)} className="px-3 py-1.5 text-xs text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={14} className="inline mr-1" />Excluir</button>
+                    <button onClick={() => setDeleteTarget(post)} className="px-3 py-1.5 text-xs text-[var(--status-danger-text)] hover:bg-[var(--status-danger-bg)] rounded-lg"><Trash2 size={14} className="inline mr-1" />Excluir</button>
                   </div>
                 </div>
                 <FeedCard item={item} />

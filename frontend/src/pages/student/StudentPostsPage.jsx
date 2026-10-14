@@ -55,7 +55,7 @@ export function StudentPostsPage() {
   return (
     <PageContainer className="space-y-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <h1 className="text-2xl font-bold text-slate-900">Conteúdos</h1>
+        <h1 className="font-semibold text-slate-900 uc-heading">Conteúdos</h1>
         <Tabs tabs={feedTabs} value={tab} onChange={setTab} />
       </div>
 
@@ -114,14 +114,14 @@ export function StudentPostDetailPage() {
       <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700">
         <ChevronLeft size={18} />Voltar
       </button>
-      <article className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+      <article className="ds-card overflow-hidden">
         {post.imageUrl && <img src={post.imageUrl} alt={post.title} className="w-full h-56 object-cover" />}
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-slate-900">{post.title}</h1>
+          <h1 className="font-semibold text-slate-900 uc-heading">{post.title}</h1>
           <p className="text-slate-400 text-xs mt-1 mb-4">{new Date(post.createdAt).toLocaleDateString('pt-BR')}</p>
           {post.description && <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">{post.description}</p>}
           {post.videoUrl && (
-            <a href={post.videoUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-700 font-medium">
+            <a href={post.videoUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-xl border border-[var(--status-danger-bg)] bg-[var(--status-danger-bg)] px-3 py-2 text-sm text-[var(--status-danger-text)] font-medium">
               <Play size={16} />Assistir vídeo
             </a>
           )}

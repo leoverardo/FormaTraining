@@ -1,10 +1,10 @@
 const variants = {
-  success: 'bg-emerald-100/90 text-emerald-700 border-emerald-200',
-  warning: 'bg-amber-100/90 text-amber-700 border-amber-200',
-  danger: 'bg-red-100/90 text-red-700 border-red-200',
-  info: 'bg-cyan-100/90 text-cyan-700 border-cyan-200',
-  gray: 'bg-slate-100 text-slate-600 border-slate-200',
-  purple: 'bg-violet-100/90 text-violet-700 border-violet-200',
+  success: 'bg-[var(--status-success-bg)]/90 text-[var(--status-success-text)] border-[var(--status-success-bg)]',
+  warning: 'bg-[var(--status-warning-bg)]/90 text-[var(--status-warning-text)] border-[var(--status-warning-bg)]',
+  danger: 'bg-[var(--status-danger-bg)]/90 text-[var(--status-danger-text)] border-[var(--status-danger-bg)]',
+  info: 'bg-[var(--status-info-bg)]/90 text-[var(--status-info-text)] border-[var(--status-info-bg)]',
+  gray: 'bg-[var(--surface-subtle)] text-slate-600 border-slate-200',
+  purple: 'bg-[var(--status-purple-bg)]/90 text-[var(--status-purple-text)] border-[var(--status-purple-bg)]',
 };
 
 export function Badge({ children, variant = 'gray' }) {

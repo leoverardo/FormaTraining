@@ -70,7 +70,7 @@ export function VideoUpload({
           )}
           {!uploading && !disabled && (
             <button type="button" onClick={handleRemove}
-              className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-lg hover:bg-red-600 transition-colors">
+              className="absolute top-2 right-2 bg-[var(--danger-fill)] text-white p-1.5 rounded-lg hover:bg-[var(--danger-fill)] transition-colors">
               <X size={14} />
             </button>
           )}
@@ -82,16 +82,16 @@ export function VideoUpload({
           onDragOver={(e) => e.preventDefault()}
           className={`border-2 border-dashed rounded-[var(--radius-card)] px-4 py-8 text-center cursor-pointer transition-colors ${
             disabled || uploading ? 'opacity-50 cursor-not-allowed border-gray-200' :
-            'border-gray-300 hover:border-indigo-400 hover:bg-indigo-50/30'
+            'border-gray-300 hover:border-[var(--primary)] hover:bg-[var(--primary-soft)]/30'
           }`}
         >
           <div className="flex flex-col items-center gap-2">
-            <div className="p-3 bg-gray-100 rounded-xl">
+            <div className="p-3 bg-[var(--surface-subtle)] rounded-xl">
               <Video size={22} className="text-gray-400" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-700">
-                <span className="text-indigo-600">Clique para enviar</span> ou arraste aqui
+                <span className="text-[var(--link)]">Clique para enviar</span> ou arraste aqui
               </p>
               <p className="text-xs text-gray-400 mt-0.5">{description}</p>
             </div>

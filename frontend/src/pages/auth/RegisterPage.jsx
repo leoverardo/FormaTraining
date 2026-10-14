@@ -1,3 +1,4 @@
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { onboardingService } from '../../services/onboardingService';
@@ -6,6 +7,7 @@ import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { BrandLogo } from '../../components/brand/BrandLogo';
+import { BRAND_ASSETS } from '../../components/brand/brandAssets';
 import { CheckCircle, CreditCard, MapPin, User, Briefcase, Zap } from 'lucide-react';
 
 const STEPS = [
@@ -192,11 +194,11 @@ export function RegisterPage() {
         const done = s.id < step;
         return (
           <div key={s.id} className="flex items-center gap-2">
-            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${active ? 'bg-indigo-600 text-white' : done ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'}`}>
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${active ? 'bg-[var(--primary-strong)] text-white' : done ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)]' : 'bg-[var(--surface-subtle)] text-gray-400'}`}>
               {done ? <CheckCircle size={12} /> : <Icon size={12} />}
               <span className="hidden sm:inline">{s.label}</span>
             </div>
-            {i < STEPS.length - 1 && <div className={`w-4 h-0.5 ${done ? 'bg-emerald-400' : 'bg-gray-200'}`} />}
+            {i < STEPS.length - 1 && <div className={`w-4 h-0.5 ${done ? 'bg-emerald-400' : 'bg-[var(--surface-control)]'}`} />}
           </div>
         );
       })}
@@ -204,7 +206,8 @@ export function RegisterPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4 pt-20 pb-12">
+      <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />
       <div className="w-full max-w-lg">
         <div className="text-center mb-6">
           <div className="flex justify-center">
@@ -213,7 +216,11 @@ export function RegisterPage() {
           <p className="text-gray-500 text-sm mt-2">Cadastro de personal trainer</p>
         </div>
 
-        <div className="ds-card p-6 sm:p-8">
+        <div className="ds-card overflow-hidden">
+          <img src={BRAND_ASSETS.secondaryCover} width={1672} height={941}
+            alt="UpCoach — Mais alunos, melhores resultados. Capa secundária de boas-vindas ao cadastro."
+            className="block h-auto w-full" />
+          <div className="p-6 sm:p-8">
           <StepIndicator />
 
           {step === 1 && (
@@ -226,10 +233,10 @@ export function RegisterPage() {
                 <Input label="CPF" value={personal.cpf} onChange={e => setPersonal(p => ({ ...p, cpf: e.target.value }))} />
               </div>
               <Input label="Data de nascimento (opcional)" type="date" value={personal.birthDate} onChange={e => setPersonal(p => ({ ...p, birthDate: e.target.value }))} />
-              <label className="block text-xs"><input type="checkbox" checked={personal.acceptTermsOfUse} onChange={e => setPersonal(p => ({ ...p, acceptTermsOfUse: e.target.checked }))} /> Li e concordo com os <Link to="/terms-of-use" className="text-indigo-600">Termos de Uso</Link>.</label>
-              <label className="block text-xs"><input type="checkbox" checked={personal.acceptPrivacyPolicy} onChange={e => setPersonal(p => ({ ...p, acceptPrivacyPolicy: e.target.checked }))} /> Li e concordo com a <Link to="/privacy-policy" className="text-indigo-600">Politica de Privacidade</Link>.</label>
+              <label className="block text-xs"><input type="checkbox" checked={personal.acceptTermsOfUse} onChange={e => setPersonal(p => ({ ...p, acceptTermsOfUse: e.target.checked }))} /> Li e concordo com os <Link to="/terms-of-use" className="text-[var(--link)]">Termos de Uso</Link>.</label>
+              <label className="block text-xs"><input type="checkbox" checked={personal.acceptPrivacyPolicy} onChange={e => setPersonal(p => ({ ...p, acceptPrivacyPolicy: e.target.checked }))} /> Li e concordo com a <Link to="/privacy-policy" className="text-[var(--link)]">Politica de Privacidade</Link>.</label>
               <Button type="submit" loading={loading} className="w-full">Continuar</Button>
-              <p className="text-center text-sm text-gray-500">Ja tem conta? <Link to="/login" className="text-indigo-600 font-medium">Entrar</Link></p>
+              <p className="text-center text-sm text-gray-500">Ja tem conta? <Link to="/login" className="text-[var(--link)] font-medium">Entrar</Link></p>
             </form>
           )}
 
@@ -269,7 +276,7 @@ export function RegisterPage() {
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Escolha seu plano</h2>
               <div className="grid grid-cols-2 gap-2">
                 {Object.keys(cycleLabels).map(c => (
-                  <button key={c} onClick={() => setBillingCycle(c)} className={`py-2 text-xs font-medium rounded-lg border ${billingCycle === c ? 'bg-indigo-600 text-white border-indigo-600' : 'text-gray-600 border-gray-300'}`}>
+                  <button key={c} onClick={() => setBillingCycle(c)} className={`py-2 text-xs font-medium rounded-lg border ${billingCycle === c ? 'bg-[var(--primary-strong)] text-white border-[var(--primary)]' : 'text-gray-600 border-gray-300'}`}>
                     {cycleLabels[c]} {cycleBadges[c] ? `- ${cycleBadges[c]}` : ''}
                   </button>
                 ))}
@@ -288,14 +295,14 @@ export function RegisterPage() {
                       type="button"
                       disabled={!plan.isAvailableForPurchase}
                       onClick={() => { setSelectedPlan(plan); setSelectedPrice(price || null); setPricing(null); setAppliedCouponCode(null); setCouponCode(''); }}
-                      className={`w-full text-left border-2 rounded-2xl p-4 transition-all ${isSelected ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'} ${!plan.isAvailableForPurchase ? 'opacity-90 cursor-not-allowed' : ''}`}
+                      className={`w-full text-left border-2 rounded-2xl p-4 transition-all ${isSelected ? 'border-[var(--primary)] bg-[var(--primary-soft)]' : 'border-gray-200 hover:border-[var(--primary)]'} ${!plan.isAvailableForPurchase ? 'opacity-90 cursor-not-allowed' : ''}`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-bold text-gray-900">{plan.name}</p>
-                            {plan.code === 'BASIC' ? <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">Mais indicado para comecar</span> : null}
-                            {plan.isComingSoon ? <span className="text-[10px] font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">Em breve</span> : null}
+                            <p className="font-semibold text-gray-900">{plan.name}</p>
+                            {plan.code === 'BASIC' ? <span className="text-[10px] font-semibold text-[var(--link)] bg-[var(--primary-soft)] px-2 py-0.5 rounded-full">Mais indicado para comecar</span> : null}
+                            {plan.isComingSoon ? <span className="text-[10px] font-semibold text-[var(--status-warning-text)] bg-[var(--status-warning-bg)] px-2 py-0.5 rounded-full">Em breve</span> : null}
                           </div>
                           <p className="text-xs text-gray-500 mt-0.5">{plan.code === 'BASIC' ? 'O personal gerencia' : plan.code === 'PRO' ? 'O personal automatiza' : 'O personal cresce'}</p>
                           <p className="text-xs text-gray-500 mt-1">{plan.hasUnlimitedStudents ? 'Alunos ilimitados' : `Ate ${plan.maxActiveStudents} alunos ativos`}</p>
@@ -303,9 +310,9 @@ export function RegisterPage() {
                         <div className="text-right">
                           {price ? (
                             <>
-                              <p className="text-xl font-bold text-indigo-600">R$ {price.price.toFixed(2).replace('.', ',')}</p>
+                              <p className="text-xl font-semibold text-[var(--link)]">R$ {price.price.toFixed(2).replace('.', ',')}</p>
                               <p className="text-xs text-gray-400">/{cycleLabels[billingCycle].toLowerCase()}</p>
-                              {billingCycle !== 'Monthly' && <p className="text-xs text-emerald-600">equivale a R$ {monthlyEquivalent?.toFixed(2).replace('.', ',')}/mes</p>}
+                              {billingCycle !== 'Monthly' && <p className="text-xs text-[var(--status-success-text)]">equivale a R$ {monthlyEquivalent?.toFixed(2).replace('.', ',')}/mes</p>}
                             </>
                           ) : <p className="text-sm text-gray-400">Indisponivel</p>}
                         </div>
@@ -326,11 +333,11 @@ export function RegisterPage() {
             <div className="space-y-5">
               <h2 className="text-lg font-semibold text-gray-900">Finalizar contratacao</h2>
 
-              <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 text-sm space-y-2">
+              <div className="bg-[var(--primary-soft)] border border-[var(--primary-soft)] rounded-2xl p-4 text-sm space-y-2">
                 <div className="flex justify-between"><span>Preco cheio do ciclo</span><span>{formatMoney(effectivePricing?.cycleBaseAmountInCents || 0)}</span></div>
-                <div className="flex justify-between text-emerald-700"><span>Desconto do ciclo</span><span>- {formatMoney(effectivePricing?.cycleDiscountAmountInCents || 0)}</span></div>
+                <div className="flex justify-between text-[var(--status-success-text)]"><span>Desconto do ciclo</span><span>- {formatMoney(effectivePricing?.cycleDiscountAmountInCents || 0)}</span></div>
                 <div className="flex justify-between"><span>Subtotal</span><span>{formatMoney(effectivePricing?.subtotalAfterCycleDiscountInCents || 0)}</span></div>
-                <div className="flex justify-between text-emerald-700"><span>Desconto do cupom</span><span>- {formatMoney(effectivePricing?.couponDiscountAmountInCents || 0)}</span></div>
+                <div className="flex justify-between text-[var(--status-success-text)]"><span>Desconto do cupom</span><span>- {formatMoney(effectivePricing?.couponDiscountAmountInCents || 0)}</span></div>
                 <div className="flex justify-between font-semibold text-base"><span>Total final</span><span>{formatMoney(effectivePricing?.finalAmountInCents || 0)}</span></div>
               </div>
 
@@ -340,7 +347,7 @@ export function RegisterPage() {
                   <Button type="button" size="sm" onClick={applyCoupon} loading={loading}>Aplicar</Button>
                   {appliedCouponCode && <Button type="button" size="sm" variant="secondary" onClick={removeCoupon}>Remover</Button>}
                 </div>
-                {appliedCouponCode && <p className="text-xs text-emerald-700">Cupom aplicado com sucesso.</p>}
+                {appliedCouponCode && <p className="text-xs text-[var(--status-success-text)]">Cupom aplicado com sucesso.</p>}
               </div>
 
               <p className="text-xs text-gray-500">Voce sera redirecionado para pagamento seguro. A conta sera liberada apos confirmacao do pagamento.</p>
@@ -351,6 +358,7 @@ export function RegisterPage() {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>

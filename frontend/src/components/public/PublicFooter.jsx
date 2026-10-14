@@ -3,7 +3,7 @@ import { BrandLogo } from '../brand/BrandLogo';
 export function PublicFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="rounded-2xl border border-slate-200 bg-white px-5 py-5 text-center text-sm text-slate-600">
+    <footer className="ds-card px-5 py-5 text-center text-sm text-slate-600 p-[var(--card-padding)]">
       <div className="flex justify-center">
         <BrandLogo size="xs" />
       </div>

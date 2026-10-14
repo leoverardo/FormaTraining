@@ -1,3 +1,4 @@
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -6,6 +7,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Zap, Users, BarChart2, ChevronRight } from 'lucide-react';
 import { BrandLogo } from '../../components/brand/BrandLogo';
+import { BRAND_ASSETS } from '../../components/brand/brandAssets';
 
 const features = [
   { icon: Users, text: 'Gerencie alunos, treinos e metas em um só lugar' },
@@ -37,13 +39,22 @@ export function LoginPage() {
 
   return (
     <div className="auth-screen min-h-screen flex">
+      <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />
       {/* Left column ? branding + benefits */}
-      <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 bg-[var(--brand-ink)] p-12 text-white">
-        <BrandLogo tone="dark" size="md" />
+      <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 bg-[var(--surface-muted)] p-12 text-[var(--text)]">
+        <BrandLogo size="md" />
 
-        <div className="space-y-8">
+        <div className="space-y-8 my-8">
+          <div className="overflow-hidden rounded-2xl border border-white/10">
+            <img src={BRAND_ASSETS.cover} width={1672} height={941}
+              alt="UpCoach — Mais alunos, melhores resultados. Capa oficial em uma academia."
+              className="block h-auto w-full" fetchPriority="high" />
+            <img src={BRAND_ASSETS.subCover} width={1916} height={821}
+              alt="Treine, gerencie, conquiste. A plataforma completa para o personal trainer."
+              className="block h-auto w-full" />
+          </div>
           <div>
-            <h1 className="text-4xl font-bold leading-tight text-white">
+            <h1 className="uc-heading text-[var(--text)] uc-heading">
               Gerencie sua consultoria fitness em um só lugar
             </h1>
             <p className="text-slate-400 mt-4 text-lg leading-relaxed">
@@ -54,10 +65,10 @@ export function LoginPage() {
           <div className="space-y-4">
             {features.map(({ icon: Icon, text }, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-indigo-500/20 border border-indigo-500/30 rounded-lg flex items-center justify-center shrink-0">
-                  <Icon size={16} className="text-indigo-400" />
+                <div className="w-8 h-8 bg-[var(--brand-indigo)]/20 border border-[var(--primary)]/30 rounded-lg flex items-center justify-center shrink-0">
+                  <Icon size={16} className="text-[var(--link)]" />
                 </div>
-                <p className="text-slate-300 text-sm">{text}</p>
+                <p className="text-[var(--text-secondary)] text-sm">{text}</p>
               </div>
             ))}
           </div>
@@ -69,16 +80,16 @@ export function LoginPage() {
       </div>
 
       {/* Right column ? login form */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-[var(--surface-muted)]">
+      <div className="flex-1 flex items-center justify-center p-6 bg-[var(--surface)]">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
             <BrandLogo size="sm" />
           </div>
 
-          <div className="ds-card p-8">
+          <div className="ds-card p-[var(--card-padding)]">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-slate-900">Bem-vindo de volta</h2>
+              <h2 className="text-2xl font-semibold text-slate-900">Bem-vindo de volta</h2>
               <p className="text-slate-500 text-sm mt-1">Entre com suas credenciais para continuar.</p>
             </div>
 
@@ -94,21 +105,21 @@ export function LoginPage() {
 
             <p className="text-center text-sm text-slate-500 mt-5">
               Personal trainer?{' '}
-              <Link to="/register" className="text-indigo-600 font-semibold hover:text-indigo-700">Criar conta</Link>
+              <Link to="/register" className="text-[var(--link)] font-semibold hover:text-[var(--link)]">Criar conta</Link>
             </p>
             <p className="text-center text-sm text-slate-500 mt-2">
               Aluno explorador?{' '}
-              <Link to="/student/register" className="text-indigo-600 font-semibold hover:text-indigo-700">Criar conta</Link>
+              <Link to="/student/register" className="text-[var(--link)] font-semibold hover:text-[var(--link)]">Criar conta</Link>
             </p>
           </div>
 
           {/* Dev credentials */}
-          <div className="mt-4 bg-slate-100 rounded-2xl p-4">
+          <div className="mt-4 bg-[var(--surface-subtle)] rounded-2xl p-4">
             <p className="text-xs text-slate-500 font-semibold mb-2 uppercase tracking-wide">Credenciais de teste</p>
             <div className="space-y-1">
               {[['Owner', 'admin@test.com'], ['Trainer', 'trainer@test.com'], ['Aluno', 'aluno@test.com']].map(([role, email]) => (
                 <button key={email} type="button" onClick={() => setForm({ email, password: '123456' })}
-                  className="w-full text-left flex items-center justify-between px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-colors">
+                  className="w-full text-left flex items-center justify-between px-3 py-1.5 rounded-lg hover:bg-[var(--surface-control)] transition-colors">
                   <span className="text-xs text-slate-600 font-medium">{role}</span>
                   <span className="text-xs text-slate-400">{email}</span>
                 </button>

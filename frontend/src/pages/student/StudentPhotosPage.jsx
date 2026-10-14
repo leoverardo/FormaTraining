@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { progressService } from '../../services/progressService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
@@ -87,11 +87,11 @@ export function StudentPhotosPage() {
 
   return (
     <PageContainer className="space-y-5 pb-20 sm:pb-0">
-      <section className="rounded-[var(--radius-card)] bg-[var(--brand-ink)] p-5 sm:p-6 text-white">
+      <section className="rounded-[var(--radius-card)] bg-[var(--surface)] p-5 sm:p-6 text-[var(--text)]">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Fotos de Progresso</h1>
-            <p className="text-slate-200 text-sm mt-2">Conteúdo privado, visível apenas para você e seu personal.</p>
+            <h1 className="font-semibold uc-heading">Fotos de Progresso</h1>
+            <p className="text-[var(--text-secondary)] text-sm mt-2">Conteúdo privado, visível apenas para você e seu personal.</p>
           </div>
           <Button size="sm" onClick={() => setModalOpen(true)}><Plus size={14} />Adicionar</Button>
         </div>
@@ -102,14 +102,14 @@ export function StudentPhotosPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
             <div>
               <p className="text-xs text-slate-500 mb-1">Antes</p>
-              <select className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-2 bg-white" value={compareAId} onChange={(e) => setCompareAId(e.target.value)}>
+              <select className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-2 bg-[var(--surface)]" value={compareAId} onChange={(e) => setCompareAId(e.target.value)}>
                 {sortedPhotos.map((p) => <option key={p.id} value={p.id}>{new Date(p.photoDate).toLocaleDateString('pt-BR')}</option>)}
               </select>
               {compareA ? <img src={compareA.imageUrl} alt="Antes" className="w-full h-56 object-cover rounded-2xl border border-slate-100" /> : null}
             </div>
             <div>
               <p className="text-xs text-slate-500 mb-1">Depois</p>
-              <select className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-2 bg-white" value={compareBId} onChange={(e) => setCompareBId(e.target.value)}>
+              <select className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-2 bg-[var(--surface)]" value={compareBId} onChange={(e) => setCompareBId(e.target.value)}>
                 {sortedPhotos.map((p) => <option key={p.id} value={p.id}>{new Date(p.photoDate).toLocaleDateString('pt-BR')}</option>)}
               </select>
               {compareB ? <img src={compareB.imageUrl} alt="Depois" className="w-full h-56 object-cover rounded-2xl border border-slate-100" /> : null}
@@ -131,13 +131,13 @@ export function StudentPhotosPage() {
             {photos.map((p) => (
               <div key={p.id} className="relative group rounded-2xl overflow-hidden border border-slate-200 aspect-square">
                 <img src={p.imageUrl} alt={p.description || 'Foto de progresso'} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-2">
                     <div>
                       <p className="text-white text-xs font-semibold">{new Date(p.photoDate).toLocaleDateString('pt-BR')}</p>
                       {p.description ? <p className="text-white/80 text-xs truncate max-w-[110px]">{p.description}</p> : null}
                     </div>
-                    <button onClick={() => setDeleteTarget(p.id)} className="p-1.5 bg-red-500 rounded-lg text-white hover:bg-red-600"><Trash2 size={12} /></button>
+                    <button onClick={() => setDeleteTarget(p.id)} className="p-1.5 bg-[var(--danger-fill)] rounded-lg text-white hover:bg-[var(--danger-fill)]"><Trash2 size={12} /></button>
                   </div>
                 </div>
               </div>
@@ -157,7 +157,7 @@ export function StudentPhotosPage() {
             onUploaded={(m) => setForm((p) => ({ ...p, imageUrl: m.url }))}
             onRemoved={() => setForm((p) => ({ ...p, imageUrl: '' }))}
           />
-          <p className="text-xs text-slate-500 bg-slate-50 rounded-xl p-3">Suas fotos são privadas e visíveis apenas para você e seu personal trainer.</p>
+          <p className="text-xs text-slate-500 bg-[var(--surface-muted)] rounded-xl p-3">Suas fotos são privadas e visíveis apenas para você e seu personal trainer.</p>
           <Input label="Data da foto" type="date" value={form.photoDate} onChange={(e) => setForm((p) => ({ ...p, photoDate: e.target.value }))} />
           <Input label="Descrição (opcional)" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
           <div className="flex gap-3">

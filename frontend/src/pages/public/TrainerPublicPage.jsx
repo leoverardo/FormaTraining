@@ -21,12 +21,12 @@ import { PublicFooter } from '../../components/public/PublicFooter';
 function PublicPageSkeleton() {
   return (
     <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:py-8">
-      <div className="h-96 animate-pulse rounded-[2rem] bg-slate-200" />
+      <div className="h-96 animate-pulse rounded-[2rem] bg-[var(--surface-control)]" />
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="h-40 animate-pulse rounded-3xl bg-slate-200" />
-        <div className="h-40 animate-pulse rounded-3xl bg-slate-200" />
+        <div className="h-40 animate-pulse rounded-3xl bg-[var(--surface-control)]" />
+        <div className="h-40 animate-pulse rounded-3xl bg-[var(--surface-control)]" />
       </div>
-      <div className="h-72 animate-pulse rounded-3xl bg-slate-200" />
+      <div className="h-72 animate-pulse rounded-3xl bg-[var(--surface-control)]" />
     </div>
   );
 }
@@ -186,10 +186,10 @@ export function TrainerPublicPage() {
             </div>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {data.serviceOffers.map((offer) => (
-                <div key={offer.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div key={offer.id} className="rounded-2xl border border-slate-200 bg-[var(--surface-muted)] p-4">
                   <p className="font-semibold text-slate-900">{offer.title}</p>
                   <p className="mt-1 text-sm text-slate-600">{offer.description || 'Serviço personalizado.'}</p>
-                  <p className="mt-2 text-lg font-bold text-slate-900">R$ {Number(offer.price || 0).toFixed(2)}</p>
+                  <p className="mt-2 text-lg font-semibold text-slate-900">R$ {Number(offer.price || 0).toFixed(2)}</p>
                   <Button
                     className="mt-3 w-full"
                     onClick={() => {

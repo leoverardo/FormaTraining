@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FileText, MapPin } from 'lucide-react';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { SectionCard } from '../../components/ui/SectionCard';
@@ -112,9 +112,9 @@ export function ExploreFeedPage() {
 
   return (
     <PageContainer className="space-y-4">
-      <section className="rounded-[var(--radius-card)] border border-indigo-700 bg-[var(--primary-strong)] p-6 text-white">
-        <h1 className="text-2xl font-bold">Descubra personais e conteudos para evoluir</h1>
-        <p className="mt-1 text-sm text-cyan-100">Feed publico com dicas, aulas e publicacoes abertas.</p>
+      <section className="rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-6 text-[var(--text)]">
+        <h1 className="font-semibold uc-heading">Descubra personais e conteudos para evoluir</h1>
+        <p className="mt-3 uc-lead">Feed publico com dicas, aulas e publicacoes abertas.</p>
       </section>
 
       <SectionCard title="Feed publico">
@@ -134,7 +134,7 @@ export function ExploreFeedPage() {
           </Button>
         </div>
         {showGeoPrompt && (
-          <div className="mb-3 rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm">
+          <div className="mb-3 rounded-xl border border-[var(--primary-soft)] bg-[var(--primary-soft)] p-3 text-sm">
             <p>Usamos sua localizacao aproximada apenas para sugerir trainers proximos. Voce pode continuar sem permitir.</p>
             <div className="mt-2 flex gap-2">
               <Button onClick={confirmUseMyLocation} loading={locationLoading}>Permitir localizacao</Button>
@@ -147,13 +147,13 @@ export function ExploreFeedPage() {
         {recommended.length ? (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {recommended.map((trainer) => (
-              <div key={trainer.trainerId} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div key={trainer.trainerId} className="ds-card p-[var(--card-padding)]">
                 <p className="text-sm font-semibold text-slate-900">{trainer.brandName || trainer.fullName}</p>
                 <p className="text-xs text-slate-500">
                   {trainer.city || '-'}
                   {trainer.state ? `, ${trainer.state}` : ''}
                 </p>
-                {trainer.distanceKm != null && <p className="mt-1 text-xs text-indigo-600">A {trainer.distanceKm} km de voce</p>}
+                {trainer.distanceKm != null && <p className="mt-1 text-xs text-[var(--link)]">A {trainer.distanceKm} km de voce</p>}
                 {!trainer.distanceKm && location.latitude && <p className="mt-1 text-xs text-slate-400">Distancia indisponivel</p>}
               </div>
             ))}

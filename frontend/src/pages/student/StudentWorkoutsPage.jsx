@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { studentAreaService } from '../../services/studentAreaService';
 import { workoutSessionService } from '../../services/workoutSessionService';
@@ -74,13 +74,13 @@ export function StudentWorkoutsPage() {
 
   return (
     <div className="space-y-4 pb-20 sm:pb-0">
-      <h1 className="text-xl font-bold text-gray-900">Meus Treinos</h1>
+      <h1 className="font-semibold text-gray-900 uc-heading">Meus Treinos</h1>
       {workouts.length === 0 ? (
         <EmptyState icon={ClipboardList} title="Nenhum treino disponivel" description="Seu personal trainer ainda nao criou treinos para voce." />
       ) : (
         <div className="space-y-3">
           {workouts.map((w) => (
-            <button key={w.id} onClick={() => navigate(`/student/workouts/${w.id}`)} className="w-full bg-white rounded-2xl border border-gray-200 p-5 text-left hover:shadow-sm hover:border-indigo-200 transition-all">
+            <button key={w.id} onClick={() => navigate(`/student/workouts/${w.id}`)} className="w-full ds-card text-left hover:border-[var(--primary-soft)] transition-all p-[var(--card-padding)]">
               <div className="flex items-center justify-between">
                 <div className="min-w-0">
                   <p className="font-semibold text-gray-900">{w.name}</p>
@@ -283,14 +283,14 @@ export function StudentWorkoutDetailPage() {
         <ChevronLeft size={18} />Voltar
       </button>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4">
-        <h1 className="text-xl font-bold text-gray-900">{workout.name}</h1>
+      <div className="ds-card p-[var(--card-padding)]">
+        <h1 className="font-semibold text-gray-900 uc-heading">{workout.name}</h1>
         {workout.goal && <p className="text-gray-500 text-sm mt-1">{workout.goal}</p>}
         {workout.description && <p className="text-gray-400 text-sm mt-1">{workout.description}</p>}
       </div>
 
       {!activeSession ? (
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+        <div className="ds-card space-y-3 p-[var(--card-padding)]">
           <p className="text-sm text-slate-600">Nenhuma sessao ativa para este treino.</p>
           <Button onClick={handleStart} loading={sessionLoading}>
             Iniciar treino agora
@@ -300,7 +300,7 @@ export function StudentWorkoutDetailPage() {
         <LoadingState />
       ) : (
         <>
-          <div className="sticky top-0 z-20 rounded-2xl border border-indigo-200 bg-indigo-600 p-4 text-white shadow-sm">
+          <div className="sticky top-0 z-20 rounded-2xl border border-[var(--primary-soft)] bg-[var(--primary-strong)] p-4 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-indigo-100">Sessao em andamento</p>
@@ -309,7 +309,7 @@ export function StudentWorkoutDetailPage() {
               <Badge variant="gray">{execution.completedExercises}/{execution.totalExercises} exercicios</Badge>
             </div>
             <div className="mt-3">
-              <div className="h-2 rounded-full bg-indigo-500/50 overflow-hidden">
+              <div className="h-2 rounded-full bg-[var(--brand-indigo)]/50 overflow-hidden">
                 <div className="h-full bg-emerald-300" style={{ width: `${execution.totalSets ? (execution.completedSets / execution.totalSets) * 100 : 0}%` }} />
               </div>
               <div className="mt-2 flex items-center justify-between text-xs text-indigo-100">
@@ -320,51 +320,51 @@ export function StudentWorkoutDetailPage() {
           </div>
 
           {restRemainingSeconds > 0 && (
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-emerald-700">
+            <div className="rounded-2xl border border-[var(--status-success-bg)] bg-[var(--status-success-bg)] p-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[var(--status-success-text)]">
                 <TimerReset size={16} />
                 <span className="text-sm font-medium">Descanso: {formatDuration(restRemainingSeconds)}</span>
               </div>
-              <button className="text-xs text-emerald-700 underline" onClick={() => setRestRemainingSeconds(0)}>Encerrar</button>
+              <button className="text-xs text-[var(--status-success-text)] underline" onClick={() => setRestRemainingSeconds(0)}>Encerrar</button>
             </div>
           )}
 
           <div className="space-y-3">
             {execution.exercises.map((exercise, index) => (
-              <div key={exercise.workoutSessionExerciseId} className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+              <div key={exercise.workoutSessionExerciseId} className="ds-card overflow-hidden">
                 {exercise.exerciseImageUrl && <img src={exercise.exerciseImageUrl} alt={exercise.exerciseName} className="w-full h-36 object-cover" />}
                 <div className="p-4 space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-xs font-semibold text-indigo-600">Exercicio {index + 1}</p>
+                      <p className="text-xs font-semibold text-[var(--link)]">Exercicio {index + 1}</p>
                       <h3 className="font-semibold text-slate-900">{exercise.exerciseName}</h3>
                       {exercise.exerciseInstructions && <p className="text-xs text-slate-500 mt-1">{exercise.exerciseInstructions}</p>}
                     </div>
                     <button
                       disabled={completingExerciseId === exercise.workoutSessionExerciseId}
                       onClick={() => handleCompleteExercise(activeSession.id, exercise.workoutSessionExerciseId, !exercise.isCompleted)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${exercise.isCompleted ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-600 border-slate-200'}`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${exercise.isCompleted ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)] border-[var(--status-success-bg)]' : 'bg-[var(--surface-muted)] text-slate-600 border-slate-200'}`}
                     >
                       {exercise.isCompleted ? 'Concluido' : 'Marcar concluido'}
                     </button>
                   </div>
 
                   {exercise.lastExecutionSummary && (
-                    <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-3 py-2">
+                    <p className="text-xs text-[var(--status-warning-text)] bg-[var(--status-warning-bg)] rounded-lg px-3 py-2">
                       Ultima vez ({formatDate(exercise.lastExecutionDate)}): {exercise.lastExecutionSummary}
                     </p>
                   )}
 
-                  {exercise.prescribedNotes && <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-3 py-2">Orientacao do trainer: {exercise.prescribedNotes}</p>}
+                  {exercise.prescribedNotes && <p className="text-xs text-[var(--status-warning-text)] bg-[var(--status-warning-bg)] rounded-lg px-3 py-2">Orientacao do trainer: {exercise.prescribedNotes}</p>}
                   {exercise.executionNotes && <p className="text-xs text-slate-500">Observacao registrada: {exercise.executionNotes}</p>}
 
                   <div className="space-y-2">
                     {exercise.sets.map((set) => (
-                      <div key={set.id} className={`rounded-xl border p-3 ${set.isCompleted ? 'border-emerald-200 bg-emerald-50/60' : 'border-slate-200 bg-slate-50/70'}`}>
+                      <div key={set.id} className={`rounded-xl border p-3 ${set.isCompleted ? 'border-[var(--status-success-bg)] bg-[var(--status-success-bg)]/60' : 'border-slate-200 bg-[var(--surface-muted)]/70'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <p className="text-sm font-semibold text-slate-700">Serie {set.setNumber}</p>
                           <button
-                            className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg ${set.isCompleted ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 border border-slate-200'}`}
+                            className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg ${set.isCompleted ? 'bg-[var(--success-fill)] text-white' : 'bg-[var(--surface)] text-slate-600 border border-slate-200'}`}
                             disabled={savingSetId === set.id}
                             onClick={() => handleSetUpdate(activeSession.id, set.id, { isCompleted: !set.isCompleted }, set.prescribedRestSeconds)}
                           >
@@ -413,7 +413,7 @@ export function StudentWorkoutDetailPage() {
             ))}
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+          <div className="ds-card space-y-3 p-[var(--card-padding)]">
             <div className="flex items-center justify-between text-sm text-slate-600">
               <span>Exercicios concluidos</span>
               <span className="font-semibold text-slate-900">{execution.completedExercises}/{execution.totalExercises}</span>

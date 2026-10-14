@@ -113,15 +113,15 @@ export function AppointmentsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Compromissos</h1>
+      <div className="uc-page-header flex flex-wrap items-start justify-between gap-5">
+        <div className="min-w-0">
+          <h1 className="font-semibold text-gray-900 uc-heading">Compromissos</h1>
           <p className="text-sm text-gray-500">Agenda comercial do atendimento</p>
         </div>
         <Button onClick={openCreate}><Plus size={16} />Novo compromisso</Button>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-4 grid gap-3 sm:grid-cols-3">
+      <div className="ds-card grid gap-3 sm:grid-cols-3 p-[var(--card-padding)]">
         <select className="rounded-xl border border-gray-300 px-3 py-2 text-sm" value={filters.status} onChange={(e) => setFilters((p) => ({ ...p, status: e.target.value }))}>
           <option value="">Todos status</option>{statuses.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
@@ -138,14 +138,14 @@ export function AppointmentsPage() {
       ) : (
         <div className="space-y-2">
           {sorted.map((item) => (
-            <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div key={item.id} className="bg-[var(--surface)] rounded-xl border border-gray-200 p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-semibold text-gray-900">{item.title}</p>
                   <p className="text-xs text-gray-500">{item.type} • {new Date(item.startAt).toLocaleString('pt-BR')} - {new Date(item.endAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
                   <p className="text-xs text-gray-500">{item.studentName || 'Sem aluno vinculado'}</p>
                 </div>
-                <span className="shrink-0 text-xs px-2 py-1 rounded-lg bg-slate-100 text-slate-700">{item.status}</span>
+                <span className="shrink-0 text-xs px-2 py-1 rounded-lg bg-[var(--surface-subtle)] text-slate-700">{item.status}</span>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Button size="sm" variant="secondary" onClick={() => openEdit(item)}>Editar</Button>

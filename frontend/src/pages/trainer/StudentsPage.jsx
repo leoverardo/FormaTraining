@@ -82,9 +82,9 @@ export function StudentsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Alunos</h1>
+      <div className="uc-page-header flex flex-wrap items-start justify-between gap-5">
+        <div className="min-w-0">
+          <h1 className="font-semibold text-gray-900 uc-heading">Alunos</h1>
           <p className="text-gray-500 text-sm mt-1">{students.length} alunos cadastrados</p>
         </div>
         <Button onClick={openCreate}><Plus size={16} />Novo aluno</Button>
@@ -93,11 +93,11 @@ export function StudentsPage() {
       {students.length === 0 ? (
         <EmptyState icon={Users} title="Nenhum aluno cadastrado" description="Adicione seu primeiro aluno para começar." action={<Button onClick={openCreate}><Plus size={16} />Novo aluno</Button>} />
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="ds-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 bg-[var(--surface-muted)]">
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Aluno</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Objetivo</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -106,7 +106,7 @@ export function StudentsPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {students.map(s => (
-                  <tr key={s.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={s.id} className="hover:bg-[var(--surface-muted)] transition-colors">
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-medium text-gray-900 text-sm">{s.name}</p>
@@ -123,12 +123,12 @@ export function StudentsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 justify-end">
-                        <button onClick={() => toggleStatus(s)} className={`p-2 rounded-lg transition-colors ${s.status === 'Active' ? 'hover:bg-amber-50 text-amber-500' : 'hover:bg-emerald-50 text-emerald-500'}`} title={s.status === 'Active' ? 'Desativar' : 'Ativar'}>
+                        <button onClick={() => toggleStatus(s)} className={`p-2 rounded-lg transition-colors ${s.status === 'Active' ? 'hover:bg-[var(--status-warning-bg)] text-[var(--status-warning-text)]' : 'hover:bg-[var(--status-success-bg)] text-[var(--status-success-text)]'}`} title={s.status === 'Active' ? 'Desativar' : 'Ativar'}>
                           {s.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
                         </button>
                         <button onClick={() => openEdit(s)} className="p-2 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"><Pencil size={16} /></button>
-                        <button onClick={() => setDeleteTarget(s)} className="p-2 rounded-lg hover:bg-red-50 text-red-500 transition-colors"><Trash2 size={16} /></button>
-                        <button onClick={() => navigate(`/trainer/students/${s.id}`)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors" title="Ver detalhes"><ChevronRight size={16} /></button>
+                        <button onClick={() => setDeleteTarget(s)} className="p-2 rounded-lg hover:bg-[var(--status-danger-bg)] text-[var(--status-danger-text)] transition-colors"><Trash2 size={16} /></button>
+                        <button onClick={() => navigate(`/trainer/students/${s.id}`)} className="p-2 rounded-lg hover:bg-[var(--surface-subtle)] text-gray-400 transition-colors" title="Ver detalhes"><ChevronRight size={16} /></button>
                       </div>
                     </td>
                   </tr>

@@ -1,17 +1,32 @@
 # UpCoach — Brand & Design System (front-end)
 
-Página-index viva: `http://localhost:5173/brand` → `frontend/src/pages/brand/BrandPage.jsx`.
+Página-index viva: `http://localhost:5173/branding` (alias `/brand`) → `frontend/src/pages/brand/BrandPage.jsx`.
 Rota interna, sem links públicos — referência do time, não dos usuários.
 
 ## Marca
 
 - Nome: **UpCoach** (front-end renomeado de FitPlatform; backend/banco intactos).
-- Símbolo: U com seta ascendente — `frontend/public/brand/upcoach-symbol.svg`.
-- Favicon/app icon: `frontend/public/favicon.svg` (squircle índigo, U branco, seta ciano).
-- Board oficial: salvar a imagem da marca em `frontend/public/brand/upcoach-brand-board.jpg` (a página exibe automaticamente).
-- Componente: `frontend/src/components/brand/BrandLogo.jsx` (`horizontal` | `symbol` | `mono`, `tone` light/dark, tamanhos xs–lg).
+- Assets oficiais: `frontend/public/brand/`, com caminhos centralizados em `frontend/src/components/brand/brandAssets.js`.
+- Favicon/app icon: `IconePrincipalUpCoach.png`, também usado na variante `symbol`.
+- Board oficial: `BrandinUpCoach.jpg`, exibido e disponível para download em `/brand`.
+- Componente: `frontend/src/components/brand/BrandLogo.jsx` (`horizontal` | `symbol` | `mono`, `tone` auto/light/dark, tamanhos xs–lg). O padrão `auto` acompanha o tema do produto; `light`/`dark` permitem controlar o contraste sobre fundos fixos. A variante `mono` usa o ícone secundário oficial.
 - Título/SEO: `frontend/index.html` (pt-BR, description, theme-color `#4F46E5`).
 - Tagline: **Mais alunos · Melhores resultados** · Assinatura: **Treine > Gerencie > Conquiste**.
+
+### Aplicação das imagens
+
+| Arquivo | Local de uso |
+| --- | --- |
+| `Capa.png` | Painel de apresentação desktop do login |
+| `CapaSecundariaUpCoach.png` | Topo do cartão de cadastro de personal trainer |
+| `SubCapaUpCoach.png` | Faixa de assinatura abaixo da capa no login |
+| `IconeFundoBrancoUpcoach.png` | Logo em superfícies claras |
+| `IconeDarkModeUpCoach.png` | Logo em superfícies escuras |
+| `IconeSecundarioUpCoach.png` | Variante secundária e demonstração sobre índigo |
+
+As três capas também aparecem na galeria de `/brand`, com download dos originais.
+Preservar a proporção das imagens e o texto incorporado às capas; não recortar,
+esticar ou recolorir as artes. Os antigos SVGs permanecem disponíveis para compatibilidade.
 
 ## Paleta oficial
 
@@ -40,8 +55,24 @@ Content > decoration · whitespace > clutter · typography > efeitos ·
 motion com propósito (CSS p/ micro, GSAP p/ scroll) · performance e a11y antes de decorar.
 Nada de assets Apple/SF Symbols — tudo SVG/CSS próprio ou Lucide licenciado.
 
-## Rollout
+## Referência visual aplicada ao frontend
 
-Fase 1 (esta): tokens + primitivas + rename + página `/brand`.
-Fase 2 (incremental): aplicar `.uc-*` e narrativa editorial página a página,
-sem quebrar lógica, rotas, auth ou backend.
+Referência: [Apple — Refero](https://styles.refero.design/style/a73148b9-449b-42cd-9f38-86ef694f500e).
+Galeria clara, produto e imagens em destaque, tipografia editorial, faixas neutras e superfícies planas. Usar as cores UpCoach para ações e acentos; o azul Apple não é uma cor da plataforma.
+
+- Fonte: SF Pro disponível no sistema, com **Inter local** como fallback principal. Fontes servidas pelo próprio frontend via `@fontsource/inter`; nenhuma chamada externa necessária para carregá-las.
+- Hero: 80px/600/1.05 e tracking -0.015em no desktop; títulos editoriais 40px/600; corpo 17px/1.47. Interfaces densas usam 14px e auxiliares 12px.
+- Canvas claro: `#ffffff`; faixas e superfícies secundárias `#f5f5f7`; texto principal `#1d1d1f`, secundário `#707070`. O texto auxiliar deve manter contraste AA no fundo real onde aparece.
+- Card/mídia: 28px, padding 28px no desktop e 20px no celular; gaps 20px. Separação por espaço/superfície, sem sombras decorativas ou gradientes CSS.
+- Seções editoriais: 90px no desktop, 56px no celular. Títulos de telas operacionais usam `.uc-heading`, preservando espaço para dados e ações.
+- Controles pill, mínimo 44×44px de toque, foco visível e estados disabled/error. Inputs com raio 980px; textarea 20px.
+- Modos claro e escuro compartilham geometria e hierarquia. O escuro adapta a base existente `#0b1020/#12192a/#171f32`, com acentos legíveis.
+- Imagens oficiais permanecem intactas; efeitos incorporados na arte não devem ser removidos para imitar superfícies CSS.
+
+Aplicação: `/landing`, `/branding`, autenticação/onboarding, áreas Owner/Trainer/Student, exploração, páginas públicas e legais. Tokens semânticos e primitives atendem todas as telas; CSS de marketing utiliza a mesma fundação. Cores configuradas pelo personal continuam sendo dados da sua identidade, não os defaults da plataforma.
+
+## Validação visual
+
+Execute `npm run test:design` em `frontend/`. Chromium usa o Chrome instalado. O runner reutiliza o Vite em 5173 ou inicia uma instância para a suíte. Fixtures em `frontend/tests/` isolam estados de dados e papéis; não há bypass de autorização no frontend de produção. Um teste de integração de controles utiliza as contas locais existentes e requer o backend em 5000.
+
+Os testes exercitam rotas, temas, overflow de página, menus, FAQ, modal/teclado, persistência de tema e contraste AA. Evidências locais ficam em `artifacts/design/` (ignorado pelo Git). Tabelas podem rolar dentro do próprio container; a página inteira não deve rolar horizontalmente.

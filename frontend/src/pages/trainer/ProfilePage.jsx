@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { trainerService } from '../../services/trainerService';
 import { useToast } from '../../components/ui/Toast';
 import { Input } from '../../components/ui/Input';
@@ -92,11 +92,6 @@ export function ProfilePage() {
     }
   };
 
-  const previewGradient = useMemo(
-    () => `linear-gradient(130deg, ${form.primaryColor || '#0f766e'}, ${form.secondaryColor || '#0891b2'})`,
-    [form.primaryColor, form.secondaryColor],
-  );
-
   if (loading) return <LoadingState />;
 
   return (
@@ -120,7 +115,7 @@ export function ProfilePage() {
                 <div className="md:col-span-2"><Input label="Nome da marca" required {...f('brandName')} /></div>
                 <Input label="CREF" placeholder="000000-G/SP" {...f('cref')} />
                 <FormField label="Instagram" helper="Informe sem @ se preferir.">
-                  <div className="flex items-center rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus-within:ring-2 focus-within:ring-cyan-200">
+                  <div className="flex items-center rounded-xl border border-slate-300 bg-[var(--surface)] px-3.5 py-2.5 text-sm focus-within:ring-2 focus-within:ring-cyan-200">
                     <span className="text-slate-400">@</span>
                     <input value={form.instagram} onChange={(e) => setForm((p) => ({ ...p, instagram: e.target.value }))} className="ml-1 w-full border-0 p-0 text-slate-800 focus:outline-none" />
                   </div>
@@ -181,15 +176,15 @@ export function ProfilePage() {
 
           <div className="space-y-4 xl:sticky xl:top-6 xl:self-start">
             <PreviewCard title="Preview da marca" subtitle="Como o aluno visualiza seu perfil.">
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-                <div className="h-28 p-4" style={{ background: previewGradient }}>
-                  <div className="inline-flex rounded-full bg-white/20 px-2 py-1 text-xs font-semibold text-white">Consultoria</div>
+              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-[var(--surface-muted)]">
+                <div className="h-28 p-4 border-b-8" style={{ background: form.primaryColor || '#0f766e', borderColor: form.secondaryColor || '#0891b2' }}>
+                  <div className="inline-flex rounded-full bg-black/65 px-2 py-1 text-xs font-semibold text-white">Consultoria</div>
                 </div>
                 <div className="-mt-8 px-4 pb-4">
                   {form.profilePhotoUrl ? (
                     <img src={form.profilePhotoUrl} alt="Perfil" className="h-16 w-16 rounded-full border-4 border-white object-cover" />
                   ) : (
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-cyan-100 text-sm font-semibold text-cyan-800">{getInitials(form.name || form.brandName)}</div>
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-[var(--status-info-bg)] text-sm font-semibold text-[var(--status-info-text)]">{getInitials(form.name || form.brandName)}</div>
                   )}
                   <p className="mt-2 font-semibold text-slate-900">{form.brandName || 'Sua marca'}</p>
                   <p className="text-xs text-slate-500">{form.specialties || 'Especialidades em fitness e performance'}</p>
@@ -198,7 +193,7 @@ export function ProfilePage() {
             </PreviewCard>
 
             <PreviewCard title="Logo" subtitle="Exibicao institucional">
-              {form.logoUrl ? <img src={form.logoUrl} alt="Logo" className="h-20 w-auto rounded-lg border border-slate-200 bg-white p-2" /> : <p className="text-sm text-slate-500">Adicione sua logo para fortalecer sua identidade.</p>}
+              {form.logoUrl ? <img src={form.logoUrl} alt="Logo" className="h-20 w-auto rounded-lg border border-slate-200 bg-[var(--surface)] p-2" /> : <p className="text-sm text-slate-500">Adicione sua logo para fortalecer sua identidade.</p>}
             </PreviewCard>
           </div>
         </div>

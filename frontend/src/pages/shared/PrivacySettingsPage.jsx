@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { privacyService } from '../../services/privacyService';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { Button } from '../../components/ui/Button';
@@ -24,7 +24,7 @@ export function PrivacySettingsPage() {
 
   return (
     <PageContainer className="space-y-4">
-      <h1 className="text-2xl font-bold">Privacidade e Dados</h1>
+      <h1 className="font-semibold uc-heading">Privacidade e Dados</h1>
       <section className="rounded-xl border p-4">
         <h2 className="font-semibold">Consentimentos opcionais</h2>
         <div className="mt-3 space-y-2">
@@ -37,7 +37,7 @@ export function PrivacySettingsPage() {
           <p className="mt-2 text-sm text-slate-600">
             {healthNotice.description}
           </p>
-          <p className="mt-1 text-xs text-amber-700">
+          <p className="mt-1 text-xs text-[var(--status-warning-text)]">
             Texto e base legal final dependem de revisao juridica.
           </p>
         </section>

@@ -40,7 +40,7 @@ export function StudentAppointmentsPage() {
   return (
     <div className="space-y-4 pb-20">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Compromissos</h1>
+        <h1 className="font-semibold text-gray-900 uc-heading">Compromissos</h1>
         <p className="text-sm text-gray-500">Seus próximos atendimentos com o personal</p>
       </div>
       {items.length === 0 ? (
@@ -48,19 +48,19 @@ export function StudentAppointmentsPage() {
       ) : (
         <div className="space-y-2">
           {items.sort((a, b) => new Date(a.startAt) - new Date(b.startAt)).map((item) => (
-            <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div key={item.id} className="bg-[var(--surface)] rounded-xl border border-gray-200 p-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="font-semibold text-gray-900">{item.title}</p>
                   <p className="text-xs text-gray-500">{item.type} • {new Date(item.startAt).toLocaleString('pt-BR')}</p>
                   {item.location && <p className="text-xs text-gray-500 mt-1">Local: {item.location}</p>}
                 </div>
-                <span className="shrink-0 text-xs px-2 py-1 rounded-lg bg-slate-100 text-slate-700">{item.status}</span>
+                <span className="shrink-0 text-xs px-2 py-1 rounded-lg bg-[var(--surface-subtle)] text-slate-700">{item.status}</span>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {item.status === 'Scheduled' && <Button size="sm" onClick={() => confirm(item.id)}>Confirmar presença</Button>}
                 {item.onlineMeetingUrl && (
-                  <a href={item.onlineMeetingUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs rounded-lg px-2 py-1 bg-indigo-50 text-indigo-700">
+                  <a href={item.onlineMeetingUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs rounded-lg px-2 py-1 bg-[var(--primary-soft)] text-[var(--link)]">
                     <ExternalLink size={12} />Abrir link
                   </a>
                 )}

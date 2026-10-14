@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MessageCircle, Send, RefreshCw, ChevronLeft } from 'lucide-react';
 import { chatService } from '../../services/chatService';
 import { studentService } from '../../services/studentService';
@@ -163,7 +163,7 @@ export function MessagesPage() {
             title="Nenhuma conversa ainda"
             description="Escolha um aluno ativo e envie a primeira mensagem."
           />
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+          <div className="ds-card space-y-3 p-[var(--card-padding)]">
             {students.length === 0 ? (
               <p className="text-sm text-slate-500">Você não possui alunos ativos para iniciar conversa.</p>
             ) : (
@@ -209,12 +209,12 @@ export function MessagesPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-9rem)] min-h-[520px] rounded-2xl border border-slate-200 bg-white overflow-hidden">
+    <div className="h-[calc(100vh-9rem)] min-h-[520px] ds-card overflow-hidden">
       <div className="grid h-full md:grid-cols-[320px_1fr]">
         <aside className={`border-r border-slate-200 overflow-y-auto ${mobileThreadOpen ? 'hidden md:block' : 'block'}`}>
           <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-            <h1 className="font-semibold text-slate-900">Mensagens</h1>
-            <button className="p-2 rounded-lg hover:bg-slate-100 text-slate-500" onClick={refresh} aria-label="Atualizar">
+            <h1 className="font-semibold text-slate-900 uc-heading">Mensagens</h1>
+            <button className="p-2 rounded-lg hover:bg-[var(--surface-subtle)] text-slate-500" onClick={refresh} aria-label="Atualizar">
               <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
             </button>
           </div>
@@ -227,7 +227,7 @@ export function MessagesPage() {
                   setMobileThreadOpen(true);
                 }}
                 className={`w-full text-left p-3 rounded-xl transition ${
-                  selectedId === c.conversationId ? 'bg-indigo-50 border border-indigo-100' : 'hover:bg-slate-50 border border-transparent'
+                  selectedId === c.conversationId ? 'bg-[var(--primary-soft)] border border-[var(--primary-soft)]' : 'hover:bg-[var(--surface-muted)] border border-transparent'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
@@ -253,12 +253,12 @@ export function MessagesPage() {
           ) : (
             <>
               <header className="px-4 py-3 border-b border-slate-200 flex items-center gap-2">
-                <button className="md:hidden p-1 rounded hover:bg-slate-100 text-slate-500" onClick={() => setMobileThreadOpen(false)} aria-label="Voltar">
+                <button className="md:hidden p-1 rounded hover:bg-[var(--surface-subtle)] text-slate-500" onClick={() => setMobileThreadOpen(false)} aria-label="Voltar">
                   <ChevronLeft size={18} />
                 </button>
                 <p className="font-medium text-slate-900">{selectedConversation.participantName}</p>
               </header>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/40">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[var(--surface-muted)]/40">
                 {messagesLoading ? (
                   <LoadingState />
                 ) : messages.length === 0 ? (
@@ -268,7 +268,7 @@ export function MessagesPage() {
                     const mine = m.senderUserId === user?.id;
                     return (
                       <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[82%] rounded-2xl px-3 py-2 ${mine ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-800'}`}>
+                        <div className={`max-w-[82%] rounded-2xl px-3 py-2 ${mine ? 'bg-[var(--primary-strong)] text-white' : 'bg-[var(--surface)] border border-slate-200 text-slate-800'}`}>
                           <p className="text-sm whitespace-pre-wrap">{m.content}</p>
                           <p className={`text-[11px] mt-1 ${mine ? 'text-indigo-100' : 'text-slate-400'}`}>{formatDateTime(m.createdAt)}</p>
                         </div>
@@ -278,7 +278,7 @@ export function MessagesPage() {
                 )}
                 <div ref={messagesEndRef} />
               </div>
-              <footer className="p-3 border-t border-slate-200 bg-white">
+              <footer className="p-3 border-t border-slate-200 bg-[var(--surface)]">
                 <div className="flex gap-2">
                   <textarea
                     rows={2}

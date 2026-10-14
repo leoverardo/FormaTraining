@@ -14,7 +14,7 @@ const RatingInput = ({ label, value, onChange }) => (
     <div className="flex gap-2">
       {[1, 2, 3, 4, 5].map(v => (
         <button key={v} type="button" onClick={() => onChange(v)}
-          className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${value === v ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+          className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${value === v ? 'bg-[var(--primary-strong)] text-white' : 'bg-[var(--surface-subtle)] text-gray-500 hover:bg-[var(--surface-control)]'}`}>
           {v}
         </button>
       ))}
@@ -87,7 +87,7 @@ export function StudentCheckInPage() {
   return (
     <div className="space-y-4 pb-20 sm:pb-0">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">Check-in Semanal</h1>
+        <h1 className="font-semibold text-gray-900 uc-heading">Check-in Semanal</h1>
         <Button size="sm" onClick={openModal}>
           {currentWeek ? <CheckCircle size={14} /> : <Plus size={14} />}
           {currentWeek ? 'Atualizar' : 'Fazer check-in'}
@@ -95,14 +95,14 @@ export function StudentCheckInPage() {
       </div>
 
       {currentWeek ? (
-        <div className="bg-emerald-600 rounded-[var(--radius-card)] p-5 text-white">
+        <div className="bg-[var(--success-fill)] rounded-[var(--radius-card)] p-5 text-white">
           <p className="text-emerald-100 text-xs font-medium uppercase tracking-wide mb-2">Esta semana ✓</p>
           <div className="grid grid-cols-3 gap-3">
             {[['Humor', currentWeek.moodLevel], ['Energia', currentWeek.energyLevel], ['Dieta', currentWeek.dietAdherence]].map(([label, value]) =>
               value != null && (
-                <div key={label} className="bg-white/10 rounded-xl p-2 text-center">
+                <div key={label} className="bg-[var(--surface)]/10 rounded-xl p-2 text-center">
                   <p className="text-emerald-100 text-xs">{label}</p>
-                  <p className="font-bold text-xl">{value}/5</p>
+                  <p className="font-semibold text-xl">{value}/5</p>
                 </div>
               )
             )}
@@ -110,11 +110,11 @@ export function StudentCheckInPage() {
           {currentWeek.notes && <p className="text-emerald-100 text-xs mt-3 opacity-90">{currentWeek.notes}</p>}
         </div>
       ) : (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-          <CalendarCheck size={20} className="text-amber-500 shrink-0 mt-0.5" />
+        <div className="bg-[var(--status-warning-bg)] border border-[var(--status-warning-bg)] rounded-2xl p-4 flex items-start gap-3">
+          <CalendarCheck size={20} className="text-[var(--status-warning-text)] shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold text-amber-800 text-sm">Check-in pendente esta semana</p>
-            <p className="text-amber-600 text-xs mt-0.5">Informe como foi sua semana para seu personal acompanhar seu progresso.</p>
+            <p className="font-semibold text-[var(--status-warning-text)] text-sm">Check-in pendente esta semana</p>
+            <p className="text-[var(--status-warning-text)] text-xs mt-0.5">Informe como foi sua semana para seu personal acompanhar seu progresso.</p>
           </div>
         </div>
       )}
@@ -124,16 +124,16 @@ export function StudentCheckInPage() {
           <h3 className="text-sm font-semibold text-gray-700 mb-3">Histórico</h3>
           <div className="space-y-3">
             {checkIns.map(c => (
-              <div key={c.id} className="bg-white rounded-2xl border border-gray-200 p-4">
+              <div key={c.id} className="ds-card p-[var(--card-padding)]">
                 <div className="flex justify-between items-start mb-3">
                   <p className="font-semibold text-gray-900 text-sm">Semana de {new Date(c.weekStartDate).toLocaleDateString('pt-BR')}</p>
                   {c.weight && <p className="text-sm text-gray-500">{c.weight} kg</p>}
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   {[['Humor', c.moodLevel], ['Energia', c.energyLevel], ['Sono', c.sleepQuality], ['Dieta', c.dietAdherence], ['Treino', c.trainingAdherence]].filter(([, v]) => v != null).map(([label, value]) => (
-                    <div key={label} className="bg-gray-50 rounded-xl p-2 text-center">
+                    <div key={label} className="bg-[var(--surface-muted)] rounded-xl p-2 text-center">
                       <p className="text-xs text-gray-400 leading-none">{label}</p>
-                      <p className="font-bold text-gray-800 mt-0.5">{value}/5</p>
+                      <p className="font-semibold text-gray-800 mt-0.5">{value}/5</p>
                     </div>
                   ))}
                 </div>
@@ -141,9 +141,9 @@ export function StudentCheckInPage() {
                 {c.comments?.length > 0 && (
                   <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
                     {c.comments.map(cm => (
-                      <div key={cm.id} className="bg-indigo-50 rounded-xl px-3 py-2">
-                        <p className="text-xs font-medium text-indigo-700">{cm.authorName}</p>
-                        <p className="text-xs text-indigo-600 mt-0.5">{cm.comment}</p>
+                      <div key={cm.id} className="bg-[var(--primary-soft)] rounded-xl px-3 py-2">
+                        <p className="text-xs font-medium text-[var(--link)]">{cm.authorName}</p>
+                        <p className="text-xs text-[var(--link)] mt-0.5">{cm.comment}</p>
                       </div>
                     ))}
                   </div>
@@ -162,7 +162,7 @@ export function StudentCheckInPage() {
         {justSaved ? (
           <div className="flex flex-col items-center py-8 text-center">
             <SuccessCheck size={72} />
-            <p className="mt-4 font-bold text-gray-900">Tudo certo!</p>
+            <p className="mt-4 font-semibold text-gray-900">Tudo certo!</p>
             <p className="mt-1 text-sm text-gray-500">Seu personal já pode acompanhar sua semana.</p>
           </div>
         ) : (

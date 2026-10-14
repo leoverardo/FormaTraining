@@ -1,14 +1,33 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { legalService } from '../../services/privacyService';
+import { PublicHeader } from '../../components/brand/PublicHeader';
+
+function LegalPage({ title, loadDocument }) {
+  const [doc, setDoc] = useState(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    let active = true;
+    loadDocument().then(response => {
+      if (active) setDoc(response.data?.data);
+    }).catch(() => { if (active) setFailed(true); });
+    return () => { active = false; };
+  }, [loadDocument]);
+  return (
+    <div className="min-h-screen bg-[var(--bg)]">
+      <PublicHeader />
+      <main className="uc-container uc-section max-w-4xl">
+        <h1 className="uc-heading uc-heading">{title}</h1>
+        {failed ? <p role="alert" className="mt-8 text-[var(--danger)]">Não foi possível carregar este documento. Tente novamente mais tarde.</p>
+          : <div className="mt-8 whitespace-pre-wrap break-words uc-lead">{doc?.contentMarkdown || 'Carregando...'}</div>}
+      </main>
+    </div>
+  );
+}
 
 export function PrivacyPolicyPage() {
-  const [doc, setDoc] = useState(null);
-  useEffect(() => { legalService.getPrivacyPolicy().then((r) => setDoc(r.data?.data)); }, []);
-  return <div className="mx-auto max-w-4xl p-6"><h1 className="text-2xl font-bold">Politica de Privacidade</h1><div className="mt-4 whitespace-pre-wrap text-sm text-slate-700">{doc?.contentMarkdown || 'Carregando...'}</div></div>;
+  return <LegalPage title="Política de Privacidade" loadDocument={legalService.getPrivacyPolicy} />;
 }
 
 export function TermsOfUsePage() {
-  const [doc, setDoc] = useState(null);
-  useEffect(() => { legalService.getTermsOfUse().then((r) => setDoc(r.data?.data)); }, []);
-  return <div className="mx-auto max-w-4xl p-6"><h1 className="text-2xl font-bold">Termos de Uso</h1><div className="mt-4 whitespace-pre-wrap text-sm text-slate-700">{doc?.contentMarkdown || 'Carregando...'}</div></div>;
+  return <LegalPage title="Termos de Uso" loadDocument={legalService.getTermsOfUse} />;
 }

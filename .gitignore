@@ -61,3 +61,11 @@ coverage/
 
 # Local visual reference (kept only on each developer's machine)
 docs/gallery-design.md
+
+# Superpowers skills and generated documents (local only)
+/.agents/skills/
+/.agents/superpowers/
+/.superpowers/
+/docs/superpowers/
+# Local screenshots, traces and HTML reports from visual verification.
+/artifacts/design/

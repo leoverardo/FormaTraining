@@ -1,3 +1,4 @@
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../services/api';
@@ -34,12 +35,13 @@ export function SetPasswordPage() {
   };
 
   if (done) return (
-    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4 pt-20 pb-12">
+      <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />
       <div className="ds-card p-10 text-center max-w-sm w-full">
-        <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle size={28} className="text-emerald-600" />
+        <div className="w-14 h-14 bg-[var(--status-success-bg)] rounded-full flex items-center justify-center mx-auto mb-4">
+          <CheckCircle size={28} className="text-[var(--status-success-text)]" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Senha definida!</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Senha definida!</h2>
         <p className="text-gray-500 text-sm mb-6">Agora você pode entrar na plataforma.</p>
         <Button onClick={() => navigate('/login')} className="w-full">Ir para o login</Button>
       </div>
@@ -47,13 +49,14 @@ export function SetPasswordPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--surface-muted)] flex items-center justify-center p-4 pt-20 pb-12">
+      <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-3">
             <BrandLogo variant="symbol" size="md" />
           </div>
-          <h1 className="text-xl font-bold text-gray-900">Definir senha</h1>
+          <h1 className="font-semibold text-gray-900 uc-heading">Definir senha</h1>
           <p className="text-gray-500 text-sm mt-1">Escolha uma senha para acessar a plataforma</p>
         </div>
 

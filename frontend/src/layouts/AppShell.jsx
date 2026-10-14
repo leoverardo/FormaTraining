@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, LogOut, Moon, Sun } from 'lucide-react';
+import { Menu, LogOut } from 'lucide-react';
 import { BrandLogo } from '../components/brand/BrandLogo';
 import { NotificationBell } from '../components/ui/NotificationBell';
-import { useTheme } from '../contexts/ThemeContext';
+import { ThemeToggle } from '../components/ui/ThemeToggle';
 
 function SidebarItems({ groups, onNavigate }) {
   return (
@@ -25,8 +25,8 @@ function SidebarItems({ groups, onNavigate }) {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-[var(--primary-soft)] text-indigo-700 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2)]'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      ? 'bg-[var(--primary-soft)] text-[var(--link)]'
+                      : 'text-slate-600 hover:bg-[var(--surface-muted)] hover:text-slate-900'
                   }`
                 }
               >
@@ -43,7 +43,7 @@ function SidebarItems({ groups, onNavigate }) {
 
 function DesktopSidebar({ groups, onLogout, user, roleLabel }) {
   return (
-    <aside className="hidden md:sticky md:top-0 md:flex md:h-screen md:flex-col w-64 bg-white border-r border-slate-200 shrink-0">
+    <aside className="hidden md:sticky md:top-0 md:flex md:h-screen md:flex-col w-64 bg-[var(--surface)] border-r border-slate-200 shrink-0">
       <div className="px-4 py-5 border-b border-slate-200">
         <div className="min-w-0">
           <BrandLogo size="sm" />
@@ -54,7 +54,7 @@ function DesktopSidebar({ groups, onLogout, user, roleLabel }) {
         <SidebarItems groups={groups} />
       </div>
       <div className="px-3 py-3 border-t border-slate-200 mt-auto shrink-0">
-        <button onClick={onLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:bg-slate-50 w-full transition-colors">
+        <button onClick={onLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:bg-[var(--surface-muted)] w-full transition-colors">
           <LogOut size={18} />
           Sair
         </button>
@@ -66,9 +66,9 @@ function DesktopSidebar({ groups, onLogout, user, roleLabel }) {
 function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 sm:hidden">
-      <button className="absolute inset-0 bg-slate-900/35 backdrop-blur-[1px]" onClick={onClose} aria-label="Fechar menu" />
-      <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-white border-r border-slate-200 flex flex-col">
+    <div className="fixed inset-0 z-50 md:hidden">
+      <button className="absolute inset-0 bg-black/35 backdrop-blur-[1px]" onClick={onClose} aria-label="Fechar menu" />
+      <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-[var(--surface)] border-r border-slate-200 flex flex-col">
         <div className="px-4 py-5 border-b border-slate-200">
           <div className="min-w-0">
             <BrandLogo size="sm" />
@@ -79,7 +79,7 @@ function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel }) {
           <SidebarItems groups={groups} onNavigate={onClose} />
         </div>
         <div className="px-3 py-3 border-t border-slate-200">
-          <button onClick={onLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:bg-slate-50 w-full transition-colors">
+          <button onClick={onLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:bg-[var(--surface-muted)] w-full transition-colors">
             <LogOut size={18} />
             Sair
           </button>
@@ -92,7 +92,6 @@ function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel }) {
 export function AppShell({ children, user, groups, onLogout, roleLabel, contentClassName = '', useBottomNav = false }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const primaryItems = groups.flatMap(group => group.items);
-  const { isDark, toggleTheme } = useTheme();
 
   return (
     <div className="app-shell min-h-screen md:flex">
@@ -100,9 +99,9 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
       <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} groups={groups} onLogout={onLogout} user={user} roleLabel={roleLabel} />
 
       <div className="min-h-screen flex-1 min-w-0 flex flex-col">
-        <header className="bg-white/95 backdrop-blur border-b border-slate-200 px-4 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-40">
+        <header className="bg-[var(--surface)]/95 backdrop-blur border-b border-slate-200 px-4 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-3 min-w-0">
-            <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-500" aria-label="Abrir menu">
+            <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 rounded-lg hover:bg-[var(--surface-subtle)] text-slate-500" aria-label="Abrir menu">
               <Menu size={20} />
             </button>
             <div className="md:hidden flex items-center gap-2 min-w-0">
@@ -111,28 +110,21 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-slate-600 hidden md:block">{user?.name}</span>
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-slate-100 text-slate-500"
-              aria-label={isDark ? 'Ativar tema claro' : 'Ativar tema escuro'}
-              title={isDark ? 'Tema claro' : 'Tema escuro'}
-            >
-              {isDark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
+            <ThemeToggle />
             <NotificationBell />
-            <button onClick={onLogout} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 md:hidden" aria-label="Sair">
+            <button onClick={onLogout} className="p-2 rounded-lg hover:bg-[var(--surface-subtle)] text-slate-500 md:hidden" aria-label="Sair">
               <LogOut size={18} />
             </button>
           </div>
         </header>
 
-        <main className={`flex-1 px-4 sm:px-6 py-5 sm:py-6 ${useBottomNav ? 'pb-24 md:pb-6' : ''} ${contentClassName}`}>
+        <main className={`app-content flex-1 px-5 sm:px-8 py-8 ${useBottomNav ? 'pb-24 md:pb-8' : ''} ${contentClassName}`}>
           {children}
         </main>
       </div>
 
       {useBottomNav && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 bg-[var(--surface)] border-t border-slate-200 z-40 md:hidden">
           <div className="flex">
             {primaryItems.slice(0, 5).map(({ to, icon: Icon, label, end }, index) => (
               <NavLink
@@ -140,7 +132,7 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
                 to={to}
                 end={end}
                 className={({ isActive }) =>
-                  `flex-1 flex flex-col items-center py-2 text-[11px] font-medium transition-colors ${isActive ? 'text-indigo-600' : 'text-slate-400'}`
+                  `flex-1 flex flex-col items-center py-2 text-[11px] font-medium transition-colors ${isActive ? 'text-[var(--link)]' : 'text-slate-400'}`
                 }
               >
                 <Icon size={19} />

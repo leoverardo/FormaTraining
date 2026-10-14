@@ -217,18 +217,18 @@ export function StudentDetailPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate('/trainer/students')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"><ChevronLeft size={20} /></button>
+        <button onClick={() => navigate('/trainer/students')} className="p-2 rounded-lg hover:bg-[var(--surface-subtle)] text-gray-500"><ChevronLeft size={20} /></button>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">{student.name}</h1>
+          <h1 className="font-semibold text-gray-900 uc-heading">{student.name}</h1>
           <Badge variant={student.status === 'Active' ? 'success' : 'gray'}>{student.status === 'Active' ? 'Ativo' : 'Inativo'}</Badge>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+      <div className="flex gap-1 bg-[var(--surface-subtle)] rounded-xl p-1">
         {TABS.map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-[var(--surface)] text-[var(--link)] ' : 'text-gray-500 hover:text-gray-700'}`}>
             {tab}
           </button>
         ))}
@@ -236,7 +236,7 @@ export function StudentDetailPage() {
 
       {/* Tab: Dados */}
       {activeTab === 'Dados' && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-3">
+        <div className="ds-card space-y-3 p-[var(--card-padding)]">
           <Row label="E-mail" value={student.email} />
           <Row label="Telefone" value={student.phone} />
           <Row label="Objetivo" value={student.goal} />
@@ -257,11 +257,11 @@ export function StudentDetailPage() {
           {days.map((day, idx) => {
             const items = schedules.filter(s => s.dayOfWeek === idx);
             return (
-              <div key={idx} className="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center justify-between">
+              <div key={idx} className="bg-[var(--surface)] rounded-xl border border-gray-200 px-4 py-3 flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700 w-28">{day}</span>
                 <div className="flex flex-wrap gap-2 flex-1">
                   {items.length === 0 ? <span className="text-xs text-gray-300">Descanso</span> : items.map(s => (
-                    <span key={s.id} className="bg-indigo-50 text-indigo-700 text-xs font-medium px-2.5 py-1 rounded-lg">{s.workoutName}</span>
+                    <span key={s.id} className="bg-[var(--primary-soft)] text-[var(--link)] text-xs font-medium px-2.5 py-1 rounded-lg">{s.workoutName}</span>
                   ))}
                 </div>
               </div>
@@ -283,23 +283,23 @@ export function StudentDetailPage() {
           ) : (
             <div className="space-y-3">
               {progress.map(p => (
-                <div key={p.id} className="bg-white rounded-2xl border border-gray-200 p-4">
+                <div key={p.id} className="ds-card p-[var(--card-padding)]">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <p className="font-semibold text-gray-900 text-sm">{new Date(p.progressDate).toLocaleDateString('pt-BR')}</p>
                       <p className="text-xs text-gray-400">Por: {p.createdByRole}</p>
                     </div>
-                    <button onClick={() => deleteProgress(p.id)} className="p-1 rounded-lg hover:bg-red-50 text-red-400 transition-colors"><Trash2 size={14} /></button>
+                    <button onClick={() => deleteProgress(p.id)} className="p-1 rounded-lg hover:bg-[var(--status-danger-bg)] text-red-400 transition-colors"><Trash2 size={14} /></button>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                     {[['Peso', p.weight, 'kg'], ['Altura', p.height, 'cm'], ['Peito', p.chest, 'cm'], ['Cintura', p.waist, 'cm'], ['Abdômen', p.abdomen, 'cm'], ['Quadril', p.hip, 'cm'], ['Braço D', p.rightArm, 'cm'], ['Braço E', p.leftArm, 'cm'], ['Coxa D', p.rightThigh, 'cm'], ['% Gordura', p.bodyFatPercentage, '%']].filter(([, v]) => v != null).map(([label, value, unit]) => (
-                      <div key={label} className="bg-gray-50 rounded-xl px-3 py-2 text-center">
+                      <div key={label} className="bg-[var(--surface-muted)] rounded-xl px-3 py-2 text-center">
                         <p className="text-xs text-gray-400">{label}</p>
-                        <p className="font-bold text-gray-800 text-sm">{value}{unit}</p>
+                        <p className="font-semibold text-gray-800 text-sm">{value}{unit}</p>
                       </div>
                     ))}
                   </div>
-                  {p.notes && <p className="text-xs text-gray-500 mt-2 bg-amber-50 rounded-lg px-3 py-1.5">{p.notes}</p>}
+                  {p.notes && <p className="text-xs text-gray-500 mt-2 bg-[var(--status-warning-bg)] rounded-lg px-3 py-1.5">{p.notes}</p>}
                 </div>
               ))}
             </div>
@@ -316,13 +316,13 @@ export function StudentDetailPage() {
           </div>
 
           {photos.length >= 2 && (
-            <div className="bg-white rounded-2xl border border-gray-200 p-4">
+            <div className="ds-card p-[var(--card-padding)]">
               <p className="text-sm font-semibold text-gray-900 mb-3">Comparação</p>
               <div className="grid grid-cols-2 gap-4">
                 {[['Foto inicial', compareA, setCompareA], ['Foto atual', compareB, setCompareB]].map(([label, val, setter]) => (
                   <div key={label}>
                     <p className="text-xs text-gray-400 mb-1">{label}</p>
-                    <select className="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 mb-2 bg-white" value={val?.id || ''} onChange={e => setter(photos.find(p => p.id === e.target.value) || null)}>
+                    <select className="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 mb-2 bg-[var(--surface)]" value={val?.id || ''} onChange={e => setter(photos.find(p => p.id === e.target.value) || null)}>
                       <option value="">Selecione...</option>
                       {photos.map(p => <option key={p.id} value={p.id}>{new Date(p.photoDate).toLocaleDateString('pt-BR')}</option>)}
                     </select>
@@ -343,7 +343,7 @@ export function StudentDetailPage() {
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-end">
                     <div className="p-2 w-full opacity-0 group-hover:opacity-100 transition-all flex justify-between items-end">
                       <span className="text-white text-xs">{new Date(p.photoDate).toLocaleDateString('pt-BR')}</span>
-                      <button onClick={() => deletePhoto(p.id)} className="p-1 bg-red-500 rounded-lg text-white"><Trash2 size={12} /></button>
+                      <button onClick={() => deletePhoto(p.id)} className="p-1 bg-[var(--danger-fill)] rounded-lg text-white"><Trash2 size={12} /></button>
                     </div>
                   </div>
                 </div>
@@ -361,21 +361,21 @@ export function StudentDetailPage() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
-            <div className="bg-white rounded-2xl border border-gray-200 p-4">
+            <div className="ds-card p-[var(--card-padding)]">
               <p className="text-xs text-gray-400">Aderencia ({adherenceDays} dias)</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">{adherence?.completionRate ?? 0}%</p>
+              <p className="text-2xl font-semibold text-slate-900 mt-1">{adherence?.completionRate ?? 0}%</p>
               <p className="text-xs text-gray-500 mt-1">{adherence?.totalCompleted ?? 0} de {adherence?.totalExpected ?? 0} marcacoes concluidas</p>
               <div className="mt-3 flex gap-2">
-                <button onClick={() => setAdherenceDays(7)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 7 ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>7 dias</button>
-                <button onClick={() => setAdherenceDays(30)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 30 ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}>30 dias</button>
+                <button onClick={() => setAdherenceDays(7)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 7 ? 'bg-[var(--primary-soft)] text-[var(--link)]' : 'bg-[var(--surface-subtle)] text-gray-600'}`}>7 dias</button>
+                <button onClick={() => setAdherenceDays(30)} className={`px-2 py-1 text-xs rounded-lg ${adherenceDays === 30 ? 'bg-[var(--primary-soft)] text-[var(--link)]' : 'bg-[var(--surface-subtle)] text-gray-600'}`}>30 dias</button>
               </div>
               {adherence?.lowestHabitTitle && (
-                <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-2 py-1 mt-3">
+                <p className="text-xs text-[var(--status-warning-text)] bg-[var(--status-warning-bg)] rounded-lg px-2 py-1 mt-3">
                   Menor taxa: {adherence.lowestHabitTitle} ({adherence.lowestHabitRate}%)
                 </p>
               )}
             </div>
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
+            <div className="ds-card space-y-2 p-[var(--card-padding)]">
               <p className="text-sm font-semibold text-gray-900">Orientacao alimentar</p>
               <textarea
                 value={guidance.guidanceText}
@@ -396,7 +396,7 @@ export function StudentDetailPage() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
-            <div className="bg-white rounded-2xl border border-gray-200 p-4">
+            <div className="ds-card p-[var(--card-padding)]">
               <p className="text-sm font-semibold text-gray-900">Resumo de gamificacao</p>
               {!gamification ? (
                 <p className="text-xs text-gray-500 mt-2">Sem dados suficientes.</p>
@@ -407,15 +407,15 @@ export function StudentDetailPage() {
                     { label: 'Habitos', value: gamification.habitStreak?.current ?? 0 },
                     { label: 'Check-ins', value: gamification.checkInStreak?.current ?? 0 },
                   ].map((item) => (
-                    <div key={`${item.label}-${item.value}`} className="rounded-lg bg-gray-50 border border-gray-200 px-2 py-2 text-center uc-streak-pop">
+                    <div key={`${item.label}-${item.value}`} className="rounded-lg bg-[var(--surface-muted)] border border-gray-200 px-2 py-2 text-center uc-streak-pop">
                       <p className="text-[11px] text-gray-500">{item.label}</p>
-                      <p className="text-base font-bold text-gray-900"><CountUp value={item.value} /></p>
+                      <p className="text-base font-semibold text-gray-900"><CountUp value={item.value} /></p>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 space-y-2">
+            <div className="ds-card space-y-2 p-[var(--card-padding)]">
               <p className="text-sm font-semibold text-gray-900">Metas do mes</p>
               <div className="grid grid-cols-3 gap-2">
                 <Input label="Treinos" type="number" min="1" value={goalForm.workoutTarget} onChange={(e) => setGoalForm((p) => ({ ...p, workoutTarget: Number(e.target.value || 1) }))} />
@@ -431,7 +431,7 @@ export function StudentDetailPage() {
           ) : (
             <div className="space-y-2">
               {habits.map((habit) => (
-                <div key={habit.id} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap items-center justify-between gap-3">
+                <div key={habit.id} className="bg-[var(--surface)] rounded-xl border border-gray-200 p-4 flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-900">{habit.title}</p>
                     <p className="text-xs text-gray-500">{habit.category} {habit.targetValue ? `• ${habit.targetValue} ${habit.targetUnit || ''}` : ''}</p>
@@ -440,7 +440,7 @@ export function StudentDetailPage() {
                     <Badge variant={habit.isActive ? 'success' : 'gray'}>{habit.isActive ? 'Ativo' : 'Inativo'}</Badge>
                     <Button size="sm" variant="secondary" onClick={() => openEditHabit(habit)}>Editar</Button>
                     <Button size="sm" variant="secondary" onClick={() => toggleHabitStatus(habit)}>{habit.isActive ? 'Inativar' : 'Ativar'}</Button>
-                    <button title="Arquivar habito" onClick={() => removeHabit(habit.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>
+                    <button title="Arquivar habito" onClick={() => removeHabit(habit.id)} className="p-2 rounded-lg hover:bg-[var(--status-danger-bg)] text-[var(--status-danger-text)]"><Trash2 size={14} /></button>
                   </div>
                 </div>
               ))}
@@ -476,7 +476,7 @@ export function StudentDetailPage() {
           {photoForm.imageUrl && <img src={photoForm.imageUrl} className="w-full h-40 object-cover rounded-xl" alt="preview" />}
           <Input label="Data da foto" type="date" value={photoForm.photoDate} onChange={e => setPhotoForm(p => ({ ...p, photoDate: e.target.value }))} />
           <Input label="Descrição (opcional)" value={photoForm.description} onChange={e => setPhotoForm(p => ({ ...p, description: e.target.value }))} />
-          <p className="text-xs text-gray-400 bg-gray-50 rounded-xl p-3">Fotos são privadas e visíveis apenas para o aluno e seu personal trainer.</p>
+          <p className="text-xs text-gray-400 bg-[var(--surface-muted)] rounded-xl p-3">Fotos são privadas e visíveis apenas para o aluno e seu personal trainer.</p>
           <div className="flex gap-3">
             <Button variant="secondary" type="button" onClick={() => setPhotoModal(false)} className="flex-1">Cancelar</Button>
             <Button type="submit" loading={saving} className="flex-1">Adicionar</Button>

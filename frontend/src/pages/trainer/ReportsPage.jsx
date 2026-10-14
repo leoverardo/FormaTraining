@@ -22,7 +22,7 @@ export function ReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Relatórios</h1>
+        <h1 className="font-semibold text-gray-900 uc-heading">Relatórios</h1>
         <p className="text-gray-500 text-sm mt-1">Visão geral do engajamento dos seus alunos</p>
       </div>
 
@@ -37,14 +37,14 @@ export function ReportsPage() {
       </div>
 
       {data.studentEngagement?.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="ds-card overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h3 className="font-semibold text-gray-900 text-sm">Engajamento dos alunos este mês</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
+                <tr className="bg-[var(--surface-muted)] border-b border-gray-100">
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Aluno</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">?ltimo acesso</th>
@@ -55,7 +55,7 @@ export function ReportsPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {data.studentEngagement.map(s => (
-                  <tr key={s.studentId} className="hover:bg-gray-50 transition-colors">
+                  <tr key={s.studentId} className="hover:bg-[var(--surface-muted)] transition-colors">
                     <td className="px-6 py-3">
                       <p className="font-medium text-gray-900 text-sm">{s.name}</p>
                     </td>

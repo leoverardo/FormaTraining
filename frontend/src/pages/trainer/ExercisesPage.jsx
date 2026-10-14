@@ -180,7 +180,7 @@ export function ExercisesPage() {
           {filtered.map((exercise) => {
             const level = levelFromApi(exercise.level);
             return (
-              <article key={exercise.id} className="overflow-hidden ds-card transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
+              <article key={exercise.id} className="overflow-hidden ds-card transition hover:-translate-y-0.5">
                 <CardMedia imageUrl={exercise.imageUrl} name={exercise.name} />
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
@@ -192,12 +192,12 @@ export function ExercisesPage() {
                   </div>
                   <p className="mt-2 line-clamp-2 text-xs text-slate-600">{exercise.description || 'Sem descricao cadastrada.'}</p>
                   <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
-                    <PlayCircle size={14} className={exercise.videoUrl ? 'text-emerald-600' : 'text-slate-400'} />
+                    <PlayCircle size={14} className={exercise.videoUrl ? 'text-[var(--status-success-text)]' : 'text-slate-400'} />
                     {exercise.videoUrl ? 'Video disponivel' : 'Sem video'}
                   </div>
                   <div className="mt-4 flex gap-2 border-t border-slate-100 pt-3">
                     <button onClick={() => openEdit(exercise)} className="flex-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"><Pencil size={13} className="mr-1 inline" />Editar</button>
-                    <button onClick={() => setDeleteTarget(exercise)} className="flex-1 rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"><Trash2 size={13} className="mr-1 inline" />Excluir</button>
+                    <button onClick={() => setDeleteTarget(exercise)} className="flex-1 rounded-lg bg-[var(--status-danger-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--status-danger-text)] transition hover:bg-[var(--status-danger-bg)]"><Trash2 size={13} className="mr-1 inline" />Excluir</button>
                   </div>
                 </div>
               </article>

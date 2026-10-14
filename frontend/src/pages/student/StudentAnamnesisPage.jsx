@@ -123,23 +123,23 @@ export function StudentAnamnesisPage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 pb-20 sm:pb-0">
-      <header className="rounded-[var(--radius-card)] border border-slate-200 bg-white p-6 sm:p-7">
+      <header className="rounded-[var(--radius-card)] border border-slate-200 bg-[var(--surface)] p-6 sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="mt-0.5 rounded-2xl bg-indigo-600 p-2.5 text-white shadow-lg shadow-indigo-200">
+            <div className="mt-0.5 rounded-2xl bg-[var(--primary-strong)] p-2.5 text-white ">
               <ClipboardCheck size={22} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Meu Perfil de Treino</h1>
+              <h1 className="font-semibold tracking-tight text-slate-900 uc-heading">Meu Perfil de Treino</h1>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
                 Essas informacoes ajudam seu personal a montar treinos mais seguros, personalizados e alinhados aos seus objetivos.
               </p>
               {hasExisting ? (
-                <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--status-success-bg)] bg-[var(--status-success-bg)] px-3 py-1 text-xs font-medium text-[var(--status-success-text)]">
                   <CheckCircle2 size={14} /> Informacoes carregadas com sucesso
                 </p>
               ) : (
-                <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+                <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--status-warning-bg)] bg-[var(--status-warning-bg)] px-3 py-1 text-xs font-medium text-[var(--status-warning-text)]">
                   <Sparkles size={14} /> Perfil pronto para ser atualizado
                 </p>
               )}
@@ -150,14 +150,14 @@ export function StudentAnamnesisPage() {
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <form onSubmit={handleSave} className="space-y-5 xl:col-span-2">
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <section className="ds-card p-[var(--card-padding)]">
             <div className="mb-5">
               <h2 className="text-lg font-semibold text-slate-900">Objetivos do treino</h2>
               <p className="mt-1 text-sm text-slate-500">Conte um pouco sobre seus objetivos e sua rotina para que os treinos facam mais sentido para voce.</p>
             </div>
 
             <div className="space-y-5">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+              <div className="rounded-2xl border border-slate-200 bg-[var(--surface-muted)]/60 p-4 sm:p-5">
                 <h3 className="text-sm font-semibold text-slate-900">Objetivo e experiencia</h3>
                 <div className="mt-4 space-y-4">
                   <SelectField
@@ -212,7 +212,7 @@ export function StudentAnamnesisPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+              <div className="rounded-2xl border border-slate-200 bg-[var(--surface-muted)]/60 p-4 sm:p-5">
                 <h3 className="text-sm font-semibold text-slate-900">Disponibilidade e estrutura</h3>
                 <div className="mt-4 space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -263,9 +263,9 @@ export function StudentAnamnesisPage() {
             </div>
           </section>
 
-          <section className="rounded-[var(--radius-card)] border border-amber-200 bg-amber-50/70 p-5 sm:p-6">
+          <section className="rounded-[var(--radius-card)] border border-[var(--status-warning-bg)] bg-[var(--status-warning-bg)]/70 p-5 sm:p-6">
             <div className="mb-5 flex items-start gap-3">
-              <div className="rounded-xl bg-amber-100 p-2 text-amber-700">
+              <div className="rounded-xl bg-[var(--status-warning-bg)] p-2 text-[var(--status-warning-text)]">
                 <ShieldAlert size={18} />
               </div>
               <div>
@@ -297,7 +297,7 @@ export function StudentAnamnesisPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <section className="ds-card p-[var(--card-padding)]">
             <h2 className="text-lg font-semibold text-slate-900">Rotina e bem-estar</h2>
 
             <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -332,7 +332,7 @@ export function StudentAnamnesisPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <section className="ds-card p-[var(--card-padding)]">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-slate-500">Revise os dados e salve para manter seu perfil sempre atualizado.</p>
               <Button type="submit" loading={saving} className="w-full sm:w-auto">
@@ -344,16 +344,16 @@ export function StudentAnamnesisPage() {
 
         <aside className="xl:col-span-1">
           <div className="space-y-4 xl:sticky xl:top-24">
-            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <section className="ds-card p-[var(--card-padding)]">
               <h3 className="text-sm font-semibold text-slate-900">Como essas informacoes ajudam seu personal</h3>
               <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                <li className="rounded-xl bg-slate-50 px-3 py-2">Treino mais alinhado ao seu objetivo.</li>
-                <li className="rounded-xl bg-slate-50 px-3 py-2">Adaptacoes seguras para restricoes e lesoes.</li>
-                <li className="rounded-xl bg-slate-50 px-3 py-2">Melhor escolha de intensidade e progressao.</li>
+                <li className="rounded-xl bg-[var(--surface-muted)] px-3 py-2">Treino mais alinhado ao seu objetivo.</li>
+                <li className="rounded-xl bg-[var(--surface-muted)] px-3 py-2">Adaptacoes seguras para restricoes e lesoes.</li>
+                <li className="rounded-xl bg-[var(--surface-muted)] px-3 py-2">Melhor escolha de intensidade e progressao.</li>
               </ul>
             </section>
 
-            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <section className="ds-card p-[var(--card-padding)]">
               <h3 className="text-sm font-semibold text-slate-900">Status do perfil</h3>
               <p className="mt-2 text-sm text-slate-600">
                 {hasExisting ? 'Perfil com informacoes carregadas e pronto para ajustes.' : 'Preencha seus dados para receber treinos mais personalizados.'}
@@ -371,7 +371,7 @@ function SelectField({ label, value, onChange, options, placeholder }) {
     <div className="space-y-1.5">
       <label className="block text-sm font-semibold text-slate-700">{label}</label>
       <select
-        className="h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-800 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+        className="h-11 w-full rounded-xl border border-slate-300 bg-[var(--surface)] px-3.5 text-sm text-slate-800 transition focus:border-[var(--primary)] focus:outline-none focus:ring-4 focus:ring-indigo-100"
         value={value}
         onChange={onChange}
       >
@@ -389,7 +389,7 @@ function TextAreaField({ label, placeholder, value, onChange }) {
     <div className="space-y-1.5">
       <label className="block text-sm font-semibold text-slate-700">{label}</label>
       <textarea
-        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+        className="w-full rounded-xl border border-slate-300 bg-[var(--surface)] px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition focus:border-[var(--primary)] focus:outline-none focus:ring-4 focus:ring-indigo-100"
         rows={3}
         placeholder={placeholder}
         value={value}
@@ -401,27 +401,27 @@ function TextAreaField({ label, placeholder, value, onChange }) {
 
 function HealthQuestionCard({ title, active, onNo, onYes, placeholder, value, onChange }) {
   return (
-    <div className="rounded-2xl border border-amber-200/70 bg-white p-4">
+    <div className="ds-card border-[var(--status-warning-bg)]/70 p-[var(--card-padding)]">
       <p className="text-sm font-semibold text-slate-800">{title}</p>
-      <div className="mt-3 inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+      <div className="mt-3 inline-flex rounded-xl border border-slate-200 bg-[var(--surface-muted)] p-1">
         <button
           type="button"
           onClick={onNo}
-          className={`min-w-20 rounded-lg px-3 py-2 text-sm font-medium transition ${!active ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+          className={`min-w-20 rounded-lg px-3 py-2 text-sm font-medium transition ${!active ? 'bg-[var(--surface)] text-slate-900 ' : 'text-slate-600 hover:text-slate-800'}`}
         >
           Nao
         </button>
         <button
           type="button"
           onClick={onYes}
-          className={`min-w-20 rounded-lg px-3 py-2 text-sm font-medium transition ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+          className={`min-w-20 rounded-lg px-3 py-2 text-sm font-medium transition ${active ? 'bg-[var(--primary-strong)] text-white ' : 'text-slate-600 hover:text-slate-800'}`}
         >
           Sim
         </button>
       </div>
       {active && (
         <textarea
-          className="mt-3 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+          className="mt-3 w-full rounded-xl border border-slate-300 bg-[var(--surface)] px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition focus:border-[var(--primary)] focus:outline-none focus:ring-4 focus:ring-indigo-100"
           rows={3}
           placeholder={placeholder}
           value={value}
@@ -435,7 +435,7 @@ function HealthQuestionCard({ title, active, onNo, onYes, placeholder, value, on
 function ScaleInput({ label, value, labels, onChange }) {
   const selected = Number(value) || 0;
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+    <div className="rounded-2xl border border-slate-200 bg-[var(--surface-muted)]/60 p-4">
       <label className="block text-sm font-semibold text-slate-700">{label}</label>
       <div className="mt-3 grid grid-cols-5 gap-2">
         {[1, 2, 3, 4, 5].map((n) => (
@@ -445,8 +445,8 @@ function ScaleInput({ label, value, labels, onChange }) {
             onClick={() => onChange(n)}
             className={`rounded-xl border px-2 py-2 text-sm font-medium transition ${
               selected === n
-                ? 'border-indigo-600 bg-indigo-600 text-white'
-                : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400'
+                ? 'border-[var(--primary)] bg-[var(--primary-strong)] text-white'
+                : 'border-slate-300 bg-[var(--surface)] text-slate-700 hover:border-slate-400'
             }`}
           >
             {n}

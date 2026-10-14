@@ -17,7 +17,7 @@ export function PublicFeedCard({ item, fallbackName, fallbackAvatar }) {
   };
 
   return (
-    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(15,23,42,0.12)]">
+    <article className="ds-card transition hover:-translate-y-0.5 p-[var(--card-padding)]">
       <header className="flex items-center gap-3">
         <Avatar src={item.authorAvatarUrl || fallbackAvatar} name={item.authorName || fallbackName} className="h-11 w-11" />
         <div className="min-w-0">
@@ -29,7 +29,7 @@ export function PublicFeedCard({ item, fallbackName, fallbackAvatar }) {
       {item.title ? <h3 className="mt-4 text-lg font-semibold text-slate-900">{item.title}</h3> : null}
       {item.text ? <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.text}</p> : null}
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+      <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-[var(--surface-subtle)]">
         {media?.type === 'video' ? (
           <video controls className="h-60 w-full object-cover" src={media.url} />
         ) : media?.url ? (
@@ -47,25 +47,25 @@ export function PublicFeedCard({ item, fallbackName, fallbackAvatar }) {
       {!!tags.length && (
         <div className="mt-4 flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <span key={tag} className="rounded-full bg-cyan-50 px-2.5 py-1 text-xs font-semibold text-cyan-700">#{tag}</span>
+            <span key={tag} className="rounded-full bg-[var(--status-info-bg)] px-2.5 py-1 text-xs font-semibold text-[var(--status-info-text)]">#{tag}</span>
           ))}
         </div>
       )}
 
       <div className="mt-4 flex items-center gap-2 text-sm text-slate-600">
-        <button onClick={toggleLike} className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 transition hover:bg-slate-100">
+        <button onClick={toggleLike} className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 transition hover:bg-[var(--surface-subtle)]">
           <Heart size={16} className={liked ? 'fill-rose-500 text-rose-500' : ''} />
           {likesCount}
         </button>
-        <button className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 transition hover:bg-slate-100">
+        <button className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 transition hover:bg-[var(--surface-subtle)]">
           <MessageCircle size={16} />
           {item.commentsCount || 0}
         </button>
-        <button onClick={() => setSaved((prev) => !prev)} className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 transition hover:bg-slate-100">
+        <button onClick={() => setSaved((prev) => !prev)} className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 transition hover:bg-[var(--surface-subtle)]">
           <Bookmark size={16} className={saved ? 'fill-slate-700 text-slate-700' : ''} />
           Salvar
         </button>
-        <button className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 transition hover:bg-slate-100">
+        <button className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 transition hover:bg-[var(--surface-subtle)]">
           <Share2 size={16} />
           Compartilhar
         </button>

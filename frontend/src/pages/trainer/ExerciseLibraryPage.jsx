@@ -113,7 +113,7 @@ export function ExerciseLibraryPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((item) => (
-            <article key={item.id} className="overflow-hidden ds-card transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
+            <article key={item.id} className="overflow-hidden ds-card transition hover:-translate-y-0.5">
               {item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover" /> : <Placeholder name={item.name} />}
               <div className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">

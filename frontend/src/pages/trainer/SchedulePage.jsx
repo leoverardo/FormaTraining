@@ -68,16 +68,16 @@ export function SchedulePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Rotina Semanal</h1>
+        <h1 className="font-semibold text-gray-900 uc-heading">Rotina Semanal</h1>
         <p className="text-gray-500 text-sm mt-1">Monte a rotina semanal por aluno</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <div className="ds-card p-[var(--card-padding)]">
         <div className="flex items-end gap-4 flex-wrap">
           <div className="flex-1 min-w-48">
             <label className="block text-sm font-medium text-gray-700 mb-1">Selecionar aluno</label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-[var(--surface)]"
               value={selectedStudent}
               onChange={e => setSelectedStudent(e.target.value)}
             >
@@ -98,17 +98,17 @@ export function SchedulePage() {
       ) : loadingSchedule ? <LoadingState /> : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {scheduleByDay.map(({ day, idx, items }) => (
-            <div key={idx} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+            <div key={idx} className="ds-card overflow-hidden">
+              <div className="px-4 py-3 bg-[var(--surface-muted)] border-b border-gray-100">
                 <p className="font-semibold text-sm text-gray-700">{day}</p>
               </div>
               <div className="px-4 py-3 min-h-[80px]">
                 {items.length === 0 ? (
                   <p className="text-xs text-gray-300 text-center py-4">Descanso</p>
                 ) : items.map(s => (
-                  <div key={s.id} className="flex items-center justify-between gap-2 bg-indigo-50 rounded-lg px-3 py-2 mb-2">
-                    <p className="text-xs font-medium text-indigo-700 leading-snug">{s.workoutName}</p>
-                    <button onClick={() => setDeleteTarget(s)} className="text-indigo-300 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                  <div key={s.id} className="flex items-center justify-between gap-2 bg-[var(--primary-soft)] rounded-lg px-3 py-2 mb-2">
+                    <p className="text-xs font-medium text-[var(--link)] leading-snug">{s.workoutName}</p>
+                    <button onClick={() => setDeleteTarget(s)} className="text-[var(--link)] hover:text-[var(--status-danger-text)] transition-colors"><Trash2 size={14} /></button>
                   </div>
                 ))}
               </div>
@@ -121,13 +121,13 @@ export function SchedulePage() {
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Dia da semana</label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={form.dayOfWeek} onChange={e => setForm(p => ({ ...p, dayOfWeek: parseInt(e.target.value) }))}>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-[var(--surface)]" value={form.dayOfWeek} onChange={e => setForm(p => ({ ...p, dayOfWeek: parseInt(e.target.value) }))}>
               {days.map((d, i) => <option key={i} value={i}>{d}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Treino</label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={form.workoutId} onChange={e => setForm(p => ({ ...p, workoutId: e.target.value }))} required>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-[var(--surface)]" value={form.workoutId} onChange={e => setForm(p => ({ ...p, workoutId: e.target.value }))} required>
               <option value="">Selecione...</option>
               {workouts.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
             </select>

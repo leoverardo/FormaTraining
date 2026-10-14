@@ -12,7 +12,7 @@ export function WorkoutCard({ workout, onOpen }) {
 }
 
 export function ProgressMetricCard({ label, value, hint }) {
-  return <SectionCard className="p-4" title={label} description={hint}><p className="text-2xl font-bold text-slate-900">{value}</p></SectionCard>;
+  return <SectionCard className="p-4" title={label} description={hint}><p className="text-2xl font-semibold text-slate-900">{value}</p></SectionCard>;
 }
 
 export function CheckInCard({ status, summary, onOpen }) {
@@ -26,7 +26,7 @@ export function WeeklyScheduleCard({ items = [] }) {
         {items.map((item) => (
           <div key={item.day} className="flex items-center justify-between rounded-xl border border-slate-200 p-3">
             <p className="text-sm font-medium text-slate-700">{item.day}</p>
-            <p className={`text-xs font-semibold ${item.active ? 'text-indigo-600' : 'text-slate-400'}`}>{item.label}</p>
+            <p className={`text-xs font-semibold ${item.active ? 'text-[var(--link)]' : 'text-slate-400'}`}>{item.label}</p>
           </div>
         ))}
       </div>
@@ -37,7 +37,7 @@ export function WeeklyScheduleCard({ items = [] }) {
 export function BodyProgressCard({ title, value, progress }) {
   return (
     <SectionCard title={title}>
-      <p className="text-2xl font-bold text-slate-900 mb-2">{value}</p>
+      <p className="text-2xl font-semibold text-slate-900 mb-2">{value}</p>
       <ProgressBar value={progress} />
     </SectionCard>
   );

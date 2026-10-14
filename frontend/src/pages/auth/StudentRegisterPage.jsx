@@ -1,3 +1,4 @@
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '../../components/ui/Input';
@@ -46,9 +47,10 @@ export function StudentRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--surface-muted)] p-4 sm:p-8">
+    <div className="min-h-screen bg-[var(--surface-muted)] p-4 pt-20 pb-12 sm:p-8 sm:pt-20">
+      <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />
       <div className="ds-card mx-auto max-w-2xl p-6 sm:p-8">
-        <h1 className="text-2xl font-bold text-slate-900">Criar conta de aluno</h1>
+        <h1 className="font-semibold text-slate-900 uc-heading">Criar conta de aluno</h1>
         <p className="mt-1 text-sm text-slate-500">Entre como explorador para descobrir personais e conteúdos públicos.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -72,15 +74,15 @@ export function StudentRegisterPage() {
             </select>
           </div>
           <div className="sm:col-span-2 mt-2">
-            <label className="text-xs block"><input type="checkbox" checked={form.acceptTermsOfUse} onChange={(e) => setForm((p) => ({ ...p, acceptTermsOfUse: e.target.checked }))} /> Li e concordo com os <Link to="/terms-of-use" className="text-indigo-600">Termos de Uso</Link>.</label>
-            <label className="text-xs block"><input type="checkbox" checked={form.acceptPrivacyPolicy} onChange={(e) => setForm((p) => ({ ...p, acceptPrivacyPolicy: e.target.checked }))} /> Li e concordo com a <Link to="/privacy-policy" className="text-indigo-600">Politica de Privacidade</Link>.</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.acceptTermsOfUse} onChange={(e) => setForm((p) => ({ ...p, acceptTermsOfUse: e.target.checked }))} /> Li e concordo com os <Link to="/terms-of-use" className="text-[var(--link)]">Termos de Uso</Link>.</label>
+            <label className="text-xs block"><input type="checkbox" checked={form.acceptPrivacyPolicy} onChange={(e) => setForm((p) => ({ ...p, acceptPrivacyPolicy: e.target.checked }))} /> Li e concordo com a <Link to="/privacy-policy" className="text-[var(--link)]">Politica de Privacidade</Link>.</label>
             <label className="text-xs block"><input type="checkbox" checked={form.healthRelatedDataProcessingAcknowledged} onChange={(e) => setForm((p) => ({ ...p, healthRelatedDataProcessingAcknowledged: e.target.checked }))} /> Aviso sobre tratamento de dados de treino, habitos e evolucao (texto sujeito a revisao juridica).</label>
             <label className="text-xs block"><input type="checkbox" checked={form.marketingEmail} onChange={(e) => setForm((p) => ({ ...p, marketingEmail: e.target.checked }))} /> Aceito marketing por e-mail (opcional).</label>
             <label className="text-xs block"><input type="checkbox" checked={form.marketingWhatsapp} onChange={(e) => setForm((p) => ({ ...p, marketingWhatsapp: e.target.checked }))} /> Aceito marketing por WhatsApp (opcional).</label>
             <Button type="submit" className="w-full" loading={loading}>Criar conta</Button>
           </div>
         </form>
-        <p className="mt-4 text-center text-sm text-slate-500">Já tem conta? <Link to="/login" className="font-semibold text-indigo-600">Entrar</Link></p>
+        <p className="mt-4 text-center text-sm text-slate-500">Já tem conta? <Link to="/login" className="font-semibold text-[var(--link)]">Entrar</Link></p>
       </div>
     </div>
   );

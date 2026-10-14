@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { progressService } from '../../services/progressService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
@@ -118,12 +118,12 @@ export function StudentProgressPage() {
 
   return (
     <PageContainer className="space-y-5 pb-20 sm:pb-0">
-      <section className="rounded-[var(--radius-card)] bg-[var(--primary-strong)] p-5 sm:p-6 text-white">
+      <section className="rounded-[var(--radius-card)] bg-[var(--surface)] p-5 sm:p-6 text-[var(--text)]">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-indigo-100 text-sm">Acompanhe sua evolução</p>
-            <h1 className="text-2xl sm:text-3xl font-bold mt-1">Meu Progresso</h1>
-            <p className="text-indigo-100 text-sm mt-2">Última atualização: {latest ? new Date(latest.progressDate).toLocaleDateString('pt-BR') : '—'}</p>
+            <p className="text-[var(--text-secondary)] text-sm">Acompanhe sua evolução</p>
+            <h1 className="font-semibold mt-1 uc-heading">Meu Progresso</h1>
+            <p className="text-[var(--text-secondary)] text-sm mt-2">Última atualização: {latest ? new Date(latest.progressDate).toLocaleDateString('pt-BR') : '—'}</p>
           </div>
           <Button size="sm" onClick={() => setModalOpen(true)}><Plus size={14} />Registrar</Button>
         </div>
@@ -141,9 +141,9 @@ export function StudentProgressPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {highlights.map((item) => (
               <SectionCard key={item.label} className="p-4" title={item.label}>
-                <p className="text-2xl font-bold text-slate-900">{item.current}{item.unit}</p>
+                <p className="text-2xl font-semibold text-slate-900">{item.current}{item.unit}</p>
                 {item.diff != null ? (
-                  <p className={`text-xs mt-1 ${item.diff <= 0 ? 'text-emerald-600' : 'text-amber-600'}`}>
+                  <p className={`text-xs mt-1 ${item.diff <= 0 ? 'text-[var(--status-success-text)]' : 'text-[var(--status-warning-text)]'}`}>
                     {item.diff > 0 ? '+' : ''}{item.diff.toFixed(1)}{item.unit} desde o último registro
                   </p>
                 ) : <p className="text-xs mt-1 text-slate-400">Sem comparação anterior</p>}
@@ -155,26 +155,26 @@ export function StudentProgressPage() {
             <div className="space-y-4">
               {records.map((record, idx) => (
                 <article key={record.id} className="relative rounded-2xl border border-slate-200 p-4">
-                  {idx !== records.length - 1 && <span className="absolute left-5 top-12 bottom-[-18px] w-px bg-slate-200" />}
+                  {idx !== records.length - 1 && <span className="absolute left-5 top-12 bottom-[-18px] w-px bg-[var(--surface-control)]" />}
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
-                      <span className="h-3 w-3 rounded-full bg-indigo-500 mt-1" />
+                      <span className="h-3 w-3 rounded-full bg-[var(--brand-indigo)] mt-1" />
                       <div>
                         <p className="font-semibold text-slate-900">{new Date(record.progressDate).toLocaleDateString('pt-BR')}</p>
                         <p className="text-xs text-slate-500">Registro #{records.length - idx}</p>
                       </div>
                     </div>
-                    <button onClick={() => setDeleteTarget(record.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-400"><Trash2 size={14} /></button>
+                    <button onClick={() => setDeleteTarget(record.id)} className="p-1.5 rounded-lg hover:bg-[var(--status-danger-bg)] text-red-400"><Trash2 size={14} /></button>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                     {metricLabels.filter(([field]) => record[field] != null).map(([field, label, unit]) => (
-                      <div key={field} className="rounded-xl bg-slate-50 px-3 py-2 text-center border border-slate-100">
+                      <div key={field} className="rounded-xl bg-[var(--surface-muted)] px-3 py-2 text-center border border-slate-100">
                         <p className="text-xs text-slate-500">{label}</p>
-                        <p className="font-bold text-slate-800 text-sm">{record[field]}{unit}</p>
+                        <p className="font-semibold text-slate-800 text-sm">{record[field]}{unit}</p>
                       </div>
                     ))}
                   </div>
-                  {record.notes && <p className="text-xs text-slate-600 mt-3 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">{record.notes}</p>}
+                  {record.notes && <p className="text-xs text-slate-600 mt-3 bg-[var(--status-warning-bg)] border border-[var(--status-warning-bg)] rounded-lg px-3 py-2">{record.notes}</p>}
                 </article>
               ))}
             </div>
