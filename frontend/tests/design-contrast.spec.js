@@ -8,6 +8,7 @@ const screens = [
   ['/trainer/dashboard', 'Trainer'], ['/trainer/profile', 'Trainer'], ['/trainer/students', 'Trainer'],
   ['/owner', 'Owner'], ['/student/dashboard', 'Student'], ['/student/access', 'Student'],
   ['/explore', 'Student'], ['/p/marina-coach', 'Trainer'],
+  ['/trainer/posts', 'Trainer'], ['/owner/plans', 'Owner'],
 ];
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const [path, role] of screens) {
   test(`contraste AA ${path} ${width}px ${theme}`, async ({ page }) => {

@@ -8,7 +8,7 @@
 .gallery-nav .font-semibold { font-size: 17px; letter-spacing: -.5px; }
 .gallery-menu { display: none; }
 .gallery-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--primary-strong); color: #fff; padding: 12px 22px; border: 1px solid transparent; border-radius: 999px; font-size: 14px; font-weight: 400; min-height: 44px; transition: background .18s; white-space: nowrap; }
-.gallery-button:hover { background: var(--link); }
+.gallery-button:hover { background: var(--primary-strong); filter: brightness(1.08); }
 .gallery-button--outline { color: var(--text); background: transparent; border-color: var(--text-muted); }
 .gallery-button--outline:hover { background: var(--surface-control); }
 .gallery-link { display: inline-flex; align-items: center; gap: 4px; font-size: 17px; color: var(--link); }

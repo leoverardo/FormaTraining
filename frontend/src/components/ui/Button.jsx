@@ -1,7 +1,7 @@
 export function Button({ children, variant = 'primary', size = 'md', className = '', disabled, loading, ...props }) {
   const base = 'inline-flex items-center justify-center gap-2 font-normal rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99]';
   const variants = {
-    primary: 'bg-[var(--primary-strong)] text-white hover:brightness-110',
+    primary: 'bg-[var(--primary-strong)] text-[var(--on-primary)] hover:bg-[var(--primary-hover)]',
     secondary: 'bg-[var(--surface-subtle)] text-[var(--text)] hover:bg-[var(--surface-control)]',
     outline: 'bg-[var(--surface)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)] focus:ring-[var(--focus-ring)]',
     ghost: 'text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] focus:ring-[var(--focus-ring)]',

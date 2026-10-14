@@ -196,7 +196,7 @@ export function ExercisesPage() {
                     {exercise.videoUrl ? 'Video disponivel' : 'Sem video'}
                   </div>
                   <div className="mt-4 flex gap-2 border-t border-slate-100 pt-3">
-                    <button onClick={() => openEdit(exercise)} className="flex-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"><Pencil size={13} className="mr-1 inline" />Editar</button>
+                    <button onClick={() => openEdit(exercise)} className="flex-1 rounded-lg bg-[var(--primary-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--link)] transition hover:bg-[var(--surface-muted)]"><Pencil size={13} className="mr-1 inline" />Editar</button>
                     <button onClick={() => setDeleteTarget(exercise)} className="flex-1 rounded-lg bg-[var(--status-danger-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--status-danger-text)] transition hover:bg-[var(--status-danger-bg)]"><Trash2 size={13} className="mr-1 inline" />Excluir</button>
                   </div>
                 </div>

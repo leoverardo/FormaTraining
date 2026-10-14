@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, LogOut } from 'lucide-react';
 import { BrandLogo } from '../components/brand/BrandLogo';
 import { NotificationBell } from '../components/ui/NotificationBell';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 function SidebarItems({ groups, onNavigate }) {
   return (
-    <nav className="px-3 py-4 space-y-4 overflow-y-auto">
+    <nav className="h-full px-3 py-4 space-y-4 overflow-y-auto">
       {groups.map((group, groupIndex) => (
         <div key={`${group.label || 'group'}-${groupIndex}`}>
           {group.label && (
@@ -64,11 +65,21 @@ function DesktopSidebar({ groups, onLogout, user, roleLabel }) {
 }
 
 function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel }) {
+  const drawerRef = useRef(null);
+  useDialogFocus(drawerRef, open, onClose, 'a[href]');
+  useEffect(() => {
+    if (!open) return undefined;
+    const desktop = window.matchMedia('(min-width: 768px)');
+    const closeOnDesktop = () => { if (desktop.matches) onClose(); };
+    closeOnDesktop();
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, [open, onClose]);
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 md:hidden">
       <button className="absolute inset-0 bg-black/35 backdrop-blur-[1px]" onClick={onClose} aria-label="Fechar menu" />
-      <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-[var(--surface)] border-r border-slate-200 flex flex-col">
+      <aside ref={drawerRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Menu de navegação" className="absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-[var(--surface)] border-r border-slate-200 flex flex-col">
         <div className="px-4 py-5 border-b border-slate-200">
           <div className="min-w-0">
             <BrandLogo size="sm" />

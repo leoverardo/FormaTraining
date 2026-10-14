@@ -17,6 +17,8 @@ import { PublicTestimonialsSection } from '../../components/public/PublicTestimo
 import { PublicTransformationsSection } from '../../components/public/PublicTransformationsSection';
 import { PublicCtaSection } from '../../components/public/PublicCtaSection';
 import { PublicFooter } from '../../components/public/PublicFooter';
+import { useTheme } from '../../contexts/ThemeContext';
+import { getPublicBrandTheme } from '../../features/brand/publicBrandTheme';
 
 function PublicPageSkeleton() {
   return (
@@ -38,6 +40,7 @@ function digitsOnly(value) {
 }
 
 export function TrainerPublicPage() {
+  const { theme } = useTheme();
   const { slug } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -152,7 +155,7 @@ export function TrainerPublicPage() {
   }
 
   return (
-    <div className="public-page min-h-screen bg-[var(--bg)]">
+    <div className="public-page min-h-screen bg-[var(--bg)]" style={getPublicBrandTheme(data, theme)}>
       <main className="mx-auto max-w-6xl space-y-5 px-4 py-5 sm:space-y-6 sm:py-8">
         <PublicProfileHero
           profile={profile}

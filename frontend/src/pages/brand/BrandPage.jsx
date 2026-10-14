@@ -88,7 +88,7 @@ export function BrandPage() {
       <main className="uc-container pb-24">
         <div className="py-14 sm:py-20 max-w-3xl">
           <p className="uc-eyebrow">UpCoach · Brand & Design System</p>
-          <h1 className="uc-display mt-4 text-slate-900 uc-heading">Treine, gerencie, conquiste.</h1>
+          <h1 className="uc-display mt-4 text-slate-900">Treine, gerencie, conquiste.</h1>
           <p className="uc-lead mt-6">
             Esta é a página-index do nosso sistema de design: marca, cores, tipografia,
             componentes, motion e regras de uso. Ela é a referência para evoluir o produto

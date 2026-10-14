@@ -32,7 +32,13 @@ export async function contrastOf(locator, backgroundLocator) {
     const context = canvas.getContext('2d');
     context.fillStyle = getComputedStyle(element)[prop];
     context.fillRect(0, 0, 1, 1);
-    return Array.from(context.getImageData(0, 0, 1, 1).data).slice(0, 3);
+    const channels = Array.from(context.getImageData(0, 0, 1, 1).data).slice(0, 3);
+    let brightness = 1;
+    for (let node = element; node; node = node.parentElement) {
+      const match = getComputedStyle(node).filter.match(/brightness\(([\d.]+)(%)?\)/);
+      if (match) brightness *= Number(match[1]) / (match[2] ? 100 : 1);
+    }
+    return channels.map(channel => Math.min(255, Math.round(channel * brightness)));
   }, property);
   const foreground = await readColor(locator, 'color');
   const background = await readColor(backgroundLocator, 'backgroundColor');

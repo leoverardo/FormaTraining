@@ -73,6 +73,10 @@ Aplicação: `/landing`, `/branding`, autenticação/onboarding, áreas Owner/Tr
 
 ## Validação visual
 
-Execute `npm run test:design` em `frontend/`. Chromium usa o Chrome instalado. O runner reutiliza o Vite em 5173 ou inicia uma instância para a suíte. Fixtures em `frontend/tests/` isolam estados de dados e papéis; não há bypass de autorização no frontend de produção. Um teste de integração de controles utiliza as contas locais existentes e requer o backend em 5000.
+Execute `npm run test:design` em `frontend/`. Chromium usa o Chrome instalado. O runner reutiliza o Vite em 5173 ou inicia uma instância para a suíte. Fixtures em `frontend/tests/` isolam estados de dados e papéis; não há bypass de autorização no frontend de produção. A suíte visual não depende do backend ou de uma assinatura ativa no banco local.
 
 Os testes exercitam rotas, temas, overflow de página, menus, FAQ, modal/teclado, persistência de tema e contraste AA. Evidências locais ficam em `artifacts/design/` (ignorado pelo Git). Tabelas podem rolar dentro do próprio container; a página inteira não deve rolar horizontalmente.
+
+A página pública aplica as cores configuradas pelo personal somente no seu próprio container. A paleta global UpCoach permanece intacta. O texto dos CTAs personalizados é escolhido para manter contraste; links e hover usam variações legíveis da mesma cor.
+
+As cores de fundo personalizadas permanecem exatas. Textos de links e tags usam tons derivados com contraste AA nas superfícies do tema; o hover dos CTAs preserva a leitura mesmo com cores claras ou intermediárias. Modais e menu móvel mantêm o foco dentro do painel e o devolvem ao controle de abertura ao fechar.

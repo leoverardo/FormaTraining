@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { setTheme, signIn, assertNoPageOverflow } from './helpers';
+import { setTheme, assertNoPageOverflow } from './helpers';
+import { installVisualApi } from './visual-api';
 
 test('botão compacto continua acessível ao toque', async ({ page }) => {
   await page.goto('/branding');
@@ -17,11 +18,10 @@ test('tema escolhido na página pública persiste na navegação', async ({ page
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
-test('menu disponível no tablet e modal operável por teclado', async ({ page, request }) => {
+test('menu disponível no tablet e modal operável por teclado', async ({ page }) => {
   await page.setViewportSize({ width: 700, height: 900 });
-  // This test exercises the empty list and modal without changing the account's subscription.
-  await page.route('**/api/students', route => route.fulfill({ json: { success: true, data: [], errors: [] } }));
-  await signIn(page, request);
+  // UI contracts run independently of the local database and subscription lifecycle.
+  await installVisualApi(page, 'Trainer', { emptyStudents: true });
   await page.goto('/trainer/students');
   await page.getByRole('button', { name: 'Abrir menu' }).click();
   const drawer = page.locator('aside').filter({ visible: true });

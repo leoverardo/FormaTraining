@@ -85,20 +85,20 @@ export function WorkoutsPage() {
         <div className="space-y-3">
           {workouts.map(w => (
             <div key={w.id} className="ds-card overflow-hidden">
-              <div className="px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
+              <div className="px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto sm:flex-1">
                   <button onClick={() => setExpandedId(expandedId === w.id ? null : w.id)} className="text-gray-400 hover:text-gray-600">
                     {expandedId === w.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </button>
-                  <div className="min-w-0">
+                  <div className="min-w-0 break-words">
                     <p className="font-semibold text-gray-900 text-sm">{w.name}</p>
                     <p className="text-gray-400 text-xs">{w.exercises?.length || 0} exercícios · {w.level}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
                   <Badge variant={w.status === 'Active' ? 'success' : 'gray'}>{w.status === 'Active' ? 'Ativo' : 'Inativo'}</Badge>
                   <button onClick={() => { setAddExModal(w); setExForm({ exerciseId: exercises[0]?.id || '', sets: 3, reps: '12', suggestedLoad: '', restSeconds: 60, notes: '', orderIndex: (w.exercises?.length || 0) + 1 }); }} className="p-1.5 rounded-lg hover:bg-[var(--status-success-bg)] text-[var(--status-success-text)] transition-colors" title="Adicionar exercício"><Plus size={16} /></button>
-                  <button onClick={() => { setEditWorkout(w); const lm = { Beginner: 1, Intermediate: 2, Advanced: 3 }; setForm({ name: w.name, goal: w.goal || '', level: lm[w.level] || 1, description: w.description || '', status: w.status === 'Active' ? 1 : 2 }); setModalOpen(true); }} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"><Pencil size={16} /></button>
+                  <button onClick={() => { setEditWorkout(w); const lm = { Beginner: 1, Intermediate: 2, Advanced: 3 }; setForm({ name: w.name, goal: w.goal || '', level: lm[w.level] || 1, description: w.description || '', status: w.status === 'Active' ? 1 : 2 }); setModalOpen(true); }} className="p-1.5 rounded-lg hover:bg-[var(--primary-soft)] text-[var(--link)] transition-colors"><Pencil size={16} /></button>
                   <button onClick={() => setDeleteTarget(w)} className="p-1.5 rounded-lg hover:bg-[var(--status-danger-bg)] text-[var(--status-danger-text)] transition-colors"><Trash2 size={16} /></button>
                 </div>
               </div>
