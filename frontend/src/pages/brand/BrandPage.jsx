@@ -10,21 +10,24 @@ import { Badge } from '../../components/ui/Badge';
 import { Input } from '../../components/ui/Input';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { Card, CardHeader, CardContent } from '../../components/ui/Card';
+import { ThemeTokens, ComponentStates, MotionGuidelines, ResponsiveGuidelines } from './DesignSystemDetails';
 
 const COLORS = [
   { name: 'Índigo', hex: '#6366F1', rgb: 'rgb(99, 102, 241)', token: '--brand-indigo / --primary', use: 'Cor primária da marca e do produto.' },
-  { name: 'Índigo forte', hex: '#4F46E5', rgb: 'rgb(79, 70, 229)', token: '--brand-indigo-strong / --primary-strong', use: 'Ações, CTAs e eyebrow editorial.' },
+  { name: 'Índigo forte', hex: '#4F46E5', rgb: 'rgb(79, 70, 229)', token: '--brand-indigo-strong / --primary-strong', use: 'Preenchimento de CTAs. Links e texto editorial usam --link.' },
   { name: 'Índigo claro', hex: '#818CF8', rgb: 'rgb(129, 140, 248)', token: '--brand-indigo-soft', use: 'Realces e dark mode.' },
   { name: 'Ciano', hex: '#06B6D4', rgb: 'rgb(6, 182, 212)', token: '--brand-cyan', use: 'Acento de energia (seta do símbolo). Uso moderado.' },
 ];
 
 const TYPE_SCALE = [
   { label: 'Hero · 80px', cls: 'text-[clamp(40px,6vw,80px)] leading-[1.05] tracking-[-0.015em] font-semibold' },
-  { label: 'Display · 56px', cls: 'text-[clamp(32px,5vw,56px)] leading-[1.05] tracking-[-0.015em] font-semibold' },
-  { label: 'Heading · 40px', cls: 'text-[clamp(28px,4vw,40px)] leading-[1.1] tracking-[-0.01em] font-semibold' },
+  { label: 'Display · 48px', cls: 'text-[48px] leading-[1.05] tracking-[-0.015em] font-semibold' },
+  { label: 'Heading · 40px', cls: 'text-[clamp(28px,4vw,40px)] leading-[1.08] tracking-[-0.015em] font-semibold' },
   { label: 'Heading SM · 28px', cls: 'text-[28px] leading-[1.15] tracking-[-0.01em] font-semibold' },
-  { label: 'Product · 21px', cls: 'text-[21px] leading-[1.6]' },
-  { label: 'Body · 17px', cls: 'text-[17px] leading-[1.65]' },
+  { label: 'Product · 21px', cls: 'text-[21px] leading-[1.38]' },
+  { label: 'Body · 17px', cls: 'text-[17px] leading-[1.47]' },
+  { label: 'Interface · 14px', cls: 'text-sm leading-normal' },
+  { label: 'Auxiliar · 12px', cls: 'text-xs leading-normal' },
 ];
 
 const COVERS = [
@@ -36,12 +39,13 @@ const COVERS = [
 const NAV = [
   { to: '#marca', icon: Shapes, label: 'Marca' },
   { to: '#cores', icon: Palette, label: 'Cores' },
+  { to: '#temas', icon: Palette, label: 'Temas & tokens' },
   { to: '#tipografia', icon: Type, label: 'Tipografia' },
   { to: '#espacamento', icon: Space, label: 'Espaço & Raio' },
   { to: '#componentes', icon: MousePointerClick, label: 'Componentes' },
   { to: '#icones', icon: Check, label: 'Ícones' },
   { to: '#motion', icon: Film, label: 'Motion' },
-  { to: '#layout', icon: LayoutGrid, label: 'Layout' },
+  { to: '#layout', icon: LayoutGrid, label: 'Responsividade' },
   { to: '#acessibilidade', icon: Accessibility, label: 'A11y & Performance' },
 ];
 
@@ -71,11 +75,11 @@ export function BrandPage() {
   return (
     <div className="min-h-screen bg-[var(--bg)] text-slate-900">
       <header className="border-b border-slate-200 bg-[var(--surface)] sticky top-0 z-40">
-        <div className="uc-container flex h-16 items-center justify-between gap-4">
+        <div className="uc-container flex h-16 items-center justify-between gap-2 sm:gap-4">
           <BrandLogo size="sm" />
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--primary-strong)] px-3 py-1.5 text-xs font-semibold text-white">
+            <span className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full bg-[var(--primary-strong)] px-3 py-1.5 text-xs font-semibold text-white">
               <Lock size={13} /> Uso interno
             </span>
             <Link to="/login" className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-[var(--link)] hover:text-[var(--link)]">
@@ -90,23 +94,23 @@ export function BrandPage() {
           <p className="uc-eyebrow">UpCoach · Brand & Design System</p>
           <h1 className="uc-display mt-4 text-slate-900">Treine, gerencie, conquiste.</h1>
           <p className="uc-lead mt-6">
-            Esta é a página-index do nosso sistema de design: marca, cores, tipografia,
-            componentes, motion e regras de uso. Ela é a referência para evoluir o produto
-            com consistência — sem copiar a Apple, mas com o mesmo rigor de qualidade.
+            Guia do design system UpCoach: identidade, temas, tokens, tipografia, componentes,
+            animações e responsividade. A referência para manter landing, login e todas as telas
+            do produto com a mesma linguagem visual.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href={BRAND_ASSETS.icons.primary} download className="inline-flex">
-              <Button><Download size={16} /> Baixar favicon</Button>
+            <a href={BRAND_ASSETS.icons.primary} download className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-[var(--primary-strong)] px-6 py-2.5 text-sm text-[var(--on-primary)] hover:bg-[var(--primary-hover)]">
+              <Download size={16} /> Baixar favicon
             </a>
-            <a href={BRAND_ASSETS.board} download className="inline-flex">
-              <Button variant="outline"><Download size={16} /> Baixar board oficial</Button>
+            <a href={BRAND_ASSETS.board} download className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-muted)]">
+              <Download size={16} /> Baixar board oficial
             </a>
           </div>
         </div>
 
-        <nav className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-2 pb-4" aria-label="Seções do design system">
+        <nav className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 pb-4" aria-label="Seções do design system">
           {NAV.map(({ to, icon: Icon, label }) => (
-            <a key={to} href={to} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-[var(--surface)] px-3 py-2.5 text-[13px] font-semibold text-slate-600 hover:border-[var(--primary)] hover:text-[var(--link)] transition">
+            <a key={to} href={to} className="flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-200 bg-[var(--surface)] px-3 py-2.5 text-[13px] font-semibold text-slate-600 hover:border-[var(--primary)] hover:text-[var(--link)] transition">
               <Icon size={15} className="text-[var(--link)] shrink-0" /> {label}
             </a>
           ))}
@@ -137,7 +141,7 @@ export function BrandPage() {
                 <img src={BRAND_ASSETS.icons.primary} alt="Ícone UpCoach 16px" width={16} height={16} className="h-4 w-4 object-contain" />
               </CardContent></Card>
             <div className="rounded-2xl uc-inverse bg-[var(--brand-ink)] p-6 text-white flex flex-col justify-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--link)]">Treine <span className="text-cyan-400">&gt;</span> Gerencie <span className="text-cyan-400">&gt;</span> Conquiste</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--link)]">Treine <span className="text-[var(--brand-cyan)]">&gt;</span> Gerencie <span className="text-[var(--brand-cyan)]">&gt;</span> Conquiste</p>
               <p className="mt-3 text-sm text-slate-300">A plataforma completa para o personal trainer.</p>
             </div>
           </div>
@@ -181,7 +185,7 @@ export function BrandPage() {
                         <p className="font-semibold text-slate-900">{cover.title}</p>
                         <p className="mt-1 text-sm text-slate-500">{cover.description}</p>
                       </div>
-                      <a href={cover.src} download className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--link)]">
+                      <a href={cover.src} download className="inline-flex min-h-[44px] items-center gap-2 text-sm font-semibold text-[var(--link)]">
                         <Download size={16} /> Baixar imagem
                       </a>
                     </div>
@@ -212,16 +216,20 @@ export function BrandPage() {
             ))}
           </div>
           <ul className="mt-5 grid gap-2.5 sm:grid-cols-2">
-            <Rule ok>Texto principal sempre escuro (#0F172A) sobre fundo claro.</Rule>
-            <Rule ok>Tokens em <code>src/index.css</code> — nunca hardcodar hex em componente.</Rule>
+            <Rule ok>Texto principal: #1D1D1F no claro e #F5F7FF no escuro. Usar --text e --text-secondary no fundo adequado.</Rule>
+            <Rule ok>Tokens em <code>src/index.css</code>. Valores hex nesta página documentam a marca; a interface consome tokens semânticos.</Rule>
             <Rule>Não criar novas cores de marca sem atualizar esta página.</Rule>
-            <Rule>Dark mode troca superfície, não a identidade (tokens --primary viram #818CF8).</Rule>
+            <Rule ok>Dark mode adapta superfícies e contraste. A paleta oficial permanece intacta.</Rule>
           </ul>
+        </Section>
+
+        <Section id="temas" kicker="03 · Temas e tokens" title="Duas aparências. A mesma identidade." lead="Superfícies, textos, bordas e estados semânticos são compartilhados pelo produto inteiro. As amostras acompanham o tema ativo.">
+          <ThemeTokens />
         </Section>
 
         <Section
           id="tipografia"
-          kicker="03 · Tipografia"
+          kicker="04 · Tipografia"
           title="SF Pro · Inter"
           lead="SF Pro quando disponível no sistema; Inter carregada localmente como alternativa web. Pesos moderados, tracking negativo cuidadoso nos títulos, sem gradiente/sombra em texto."
         >
@@ -243,7 +251,7 @@ export function BrandPage() {
 
         <Section
           id="espacamento"
-          kicker="04 · Espaço, raio e sombra"
+          kicker="05 · Espaço, raio e sombra"
           title="Respiro é design"
           lead="Base de 4px, radius por hierarquia (cards 28px, pills total) e superfícies sem sombra — separação por espaço e superfície."
         >
@@ -274,7 +282,7 @@ export function BrandPage() {
 
         <Section
           id="componentes"
-          kicker="05 · Componentes"
+          kicker="06 · Componentes"
           title="Primitivas do produto"
           lead="Mesma API em todas as páginas: Button, Badge, Input, Card. Estados obrigatórios: default, hover, active, focus, disabled."
         >
@@ -308,13 +316,14 @@ export function BrandPage() {
                 <p className="mt-1 text-sm text-slate-600">Whitespace separa; superfície confirma. Nem todo conteúdo precisa de card.</p>
               </CardContent></Card>
           </div>
+          <ComponentStates />
         </Section>
 
         <Section
           id="icones"
-          kicker="06 · Ícones"
+          kicker="07 · Ícones"
           title="Lucide, traço consistente"
-          lead="Tamanhos 16/20/24, stroke 1.5–2px, cantos arredondados. Equivalente web aos princípios SF Symbols — sem violar licença."
+          lead="Lucide para a interface: tamanhos 16/20/24px e traço de 1.5–2px. Ícones interativos recebem área de toque de 44px e nome acessível; os ícones da marca usam os assets oficiais."
         >
           <Card><CardContent className="flex flex-wrap items-center gap-6 text-[var(--link)]">
             <ArrowRight size={16} /><ArrowRight size={20} /><ArrowRight size={24} />
@@ -325,9 +334,9 @@ export function BrandPage() {
 
         <Section
           id="motion"
-          kicker="07 · Motion"
+          kicker="08 · Motion"
           title="Movimento com propósito"
-          lead="Toda animação responde: por que isso está se movendo? CSS para respostas discretas de hover e foco. Calma, precisão, fluidez."
+          lead="GSAP para entradas e scroll; CSS para feedback de controles; Three.js apenas na apresentação da landing. Conteúdo utilizável antes, durante e depois de cada efeito."
         >
           <Card><CardContent className="grid gap-3 font-mono text-[13px] text-slate-600 sm:grid-cols-2">
             <p><span className="text-[var(--link)]">--ease-apple</span> cubic-bezier(0.22, 1, 0.36, 1)</p>
@@ -335,31 +344,21 @@ export function BrandPage() {
             <p><span className="text-[var(--link)]">--duration-medium</span> 400ms · reveals</p>
             <p><span className="text-[var(--link)]">--duration-slow</span> 800ms · storytelling</p>
           </CardContent></Card>
-          <ul className="mt-5 grid gap-2.5 sm:grid-cols-2">
-            <Rule ok>Hover: scale 1.02 · active: 0.98 — nada de bounce.</Rule>
-            <Rule ok>Respeitar <code>prefers-reduced-motion</code> (já global no CSS).</Rule>
-            <Rule>Nada de parallax excessivo, particles ou gamer UI.</Rule>
-            <Rule>Botão/link: CSS. Movimento discreto, respeitando a preferência do visitante.</Rule>
-          </ul>
+          <MotionGuidelines />
         </Section>
 
         <Section
           id="layout"
-          kicker="08 · Layout"
+          kicker="09 · Layout"
           title="Um container, um ritmo"
-          lead="Desktop 1200px · tablet 960px · mobile full com respiro. Breakpoints centralizados, tipografia com clamp()."
+          lead="Organizar pelo espaço útil, não apenas pela largura da tela. Containers, grades, navegação e demonstrações se adaptam sem trocar a linguagem visual."
         >
-          <Card><CardContent className="grid gap-3 font-mono text-[13px] text-slate-600 sm:grid-cols-2">
-            <p><span className="text-[var(--link)]">.uc-container</span> min(100% − 64px, 1200px)</p>
-            <p><span className="text-[var(--link)]">--content-width-tablet</span> 960px</p>
-            <p><span className="text-[var(--link)]">.uc-display</span> clamp(40px, 6vw, 80px)</p>
-            <p><span className="text-[var(--link)]">.uc-section</span> ritmo vertical por clamp()</p>
-          </CardContent></Card>
+          <ResponsiveGuidelines />
         </Section>
 
         <Section
           id="acessibilidade"
-          kicker="09 · Acessibilidade & performance"
+          kicker="10 · Acessibilidade & performance"
           title="Premium inclui todo mundo"
           lead="Ordem de prioridade: funcionalidade → acessibilidade → performance → responsividade → consistência → motion."
         >
@@ -367,14 +366,14 @@ export function BrandPage() {
             <Rule ok>Touch mínimo 44px · foco visível em todo interativo.</Rule>
             <Rule ok>HTML semântico, ARIA só quando necessário, alt em imagens.</Rule>
             <Rule ok>Animações em transform/opacity, lazy em mídia, sem vídeo gigante no LCP.</Rule>
-            <Rule ok>Contraste AA: texto slate-900/600 sobre branco; índigo-600 para ação.</Rule>
+            <Rule ok>Contraste AA no fundo real: 4.5:1 para texto normal e 3:1 para texto grande. Usar os tokens semânticos de cada tema.</Rule>
           </ul>
-          <div className="mt-8 flex items-center justify-between rounded-2xl uc-inverse bg-[var(--brand-ink)] p-6 text-white">
-            <div className="flex items-center gap-3">
-              <Gauge size={20} className="text-cyan-400" />
-              <p className="text-sm text-slate-300">Referências: Apple HIG · Design Resources · Fonts · SF Symbols · Motion · Typography · Color · Accessibility.</p>
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl uc-inverse bg-[var(--brand-ink)] p-6 text-white">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <Gauge size={20} className="shrink-0 text-[var(--brand-cyan)]" />
+              <p className="text-sm text-slate-300">Referência visual: galeria Apple. Identidade UpCoach, ícones Lucide, GSAP para movimento e Three.js sob demanda. Validar sempre nos dois temas e com movimento reduzido.</p>
             </div>
-            <Link to="/login" className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-[var(--link)] hover:text-white">
+            <Link to="/login" className="hidden min-h-[44px] shrink-0 items-center gap-1 whitespace-nowrap text-sm sm:inline-flex font-semibold text-[var(--link)] hover:text-white">
               Voltar ao app <ArrowRight size={15} />
             </Link>
           </div>

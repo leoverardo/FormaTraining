@@ -85,7 +85,7 @@ export function SubscriptionPage() {
         <div className="mb-4">
           <input value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="Cupom de desconto (opcional)" className="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {plans.filter(p => p.active && p.isPublic).map(p => (
             <div key={p.id} className={`border rounded-2xl p-5 ${p.code === 'BASIC' ? 'border-[var(--primary)] bg-[var(--primary-soft)]/40' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between gap-2">

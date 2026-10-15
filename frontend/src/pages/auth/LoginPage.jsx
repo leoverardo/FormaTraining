@@ -5,15 +5,9 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Zap, Users, BarChart2, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { BrandLogo } from '../../components/brand/BrandLogo';
 import { BRAND_ASSETS } from '../../components/brand/brandAssets';
-
-const features = [
-  { icon: Users, text: 'Gerencie alunos, treinos e metas em um só lugar' },
-  { icon: Zap, text: 'Acompanhe o progresso e check-ins semanais' },
-  { icon: BarChart2, text: 'Relatórios de engajamento e evolução física' },
-];
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -40,12 +34,12 @@ export function LoginPage() {
   return (
     <div className="auth-screen min-h-screen flex">
       <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />
-      {/* Left column ? branding + benefits */}
-      <div className="hidden lg:flex lg:flex-col lg:justify-between lg:w-1/2 bg-[var(--surface-muted)] p-12 text-[var(--text)]">
+      {/* Brand imagery; product information lives on the landing. */}
+      <div className="hidden lg:flex lg:flex-col lg:w-1/2 bg-[var(--surface-muted)] p-12 text-[var(--text)]">
         <BrandLogo size="md" />
 
-        <div className="space-y-8 my-8">
-          <div className="overflow-hidden rounded-2xl border border-white/10">
+        <div className="flex flex-1 items-center py-10">
+          <div className="w-full overflow-hidden rounded-2xl border border-white/10">
             <img src={BRAND_ASSETS.cover} width={1672} height={941}
               alt="UpCoach — Mais alunos, melhores resultados. Capa oficial em uma academia."
               className="block h-auto w-full" fetchPriority="high" />
@@ -53,30 +47,7 @@ export function LoginPage() {
               alt="Treine, gerencie, conquiste. A plataforma completa para o personal trainer."
               className="block h-auto w-full" />
           </div>
-          <div>
-            <h1 className="uc-heading text-[var(--text)] uc-heading">
-              Gerencie sua consultoria fitness em um só lugar
-            </h1>
-            <p className="text-slate-400 mt-4 text-lg leading-relaxed">
-              Treinos, alunos, progresso e conteúdos organizados em uma plataforma profissional e fácil de usar.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {features.map(({ icon: Icon, text }, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[var(--brand-indigo)]/20 border border-[var(--primary)]/30 rounded-lg flex items-center justify-center shrink-0">
-                  <Icon size={16} className="text-[var(--link)]" />
-                </div>
-                <p className="text-[var(--text-secondary)] text-sm">{text}</p>
-              </div>
-            ))}
-          </div>
         </div>
-
-        <p className="text-slate-600 text-sm">
-          © {new Date().getFullYear()} UpCoach. Todos os direitos reservados.
-        </p>
       </div>
 
       {/* Right column ? login form */}

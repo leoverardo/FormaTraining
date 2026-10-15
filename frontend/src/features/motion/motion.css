@@ -1,0 +1,8 @@
+@media (prefers-reduced-motion: no-preference) {
+  .uc-icon-button, button.rounded-full, a.gallery-button {
+    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, scale 180ms ease;
+  }
+  .uc-icon-button:active, a.gallery-button:active { scale: .97; }
+  [role="dialog"] { animation: uc-dialog-enter 220ms cubic-bezier(.2,.8,.2,1); }
+  @keyframes uc-dialog-enter { from { opacity: .5; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+}

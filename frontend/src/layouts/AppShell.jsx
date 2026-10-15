@@ -115,8 +115,8 @@ export function AppShell({ children, user, groups, onLogout, roleLabel, contentC
             <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 rounded-lg hover:bg-[var(--surface-subtle)] text-slate-500" aria-label="Abrir menu">
               <Menu size={20} />
             </button>
-            <div className="md:hidden flex items-center gap-2 min-w-0">
-              <BrandLogo size="xs" />
+            <div className="md:hidden flex items-center gap-2 min-w-0" role="img" aria-label="UpCoach">
+              <BrandLogo size="xs" textClassName="hidden min-[360px]:inline" />
             </div>
           </div>
           <div className="flex items-center gap-2">

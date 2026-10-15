@@ -9,6 +9,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { outputFolder: '../artifacts/design/report', open: 'never' }]],
   outputDir: '../artifacts/design/test-results',
   use: {
+    reducedMotion: 'reduce',
     actionTimeout: 8000,
     navigationTimeout: 15000,
     baseURL: 'http://localhost:5173',

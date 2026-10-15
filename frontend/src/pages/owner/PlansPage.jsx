@@ -97,7 +97,7 @@ export function PlansPage() {
       {plans.length === 0 ? (
         <EmptyState icon={Tag} title="Nenhum plano" description="Crie planos para os personal trainers contratarem." action={<Button onClick={() => { setEditPlan(null); setForm(empty); setModalOpen(true); }}><Plus size={16} />Novo plano</Button>} />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {plans.map(p => (
             <div key={p.id} className="ds-card p-[var(--card-padding)]">
               <div className="flex items-start justify-between mb-3">

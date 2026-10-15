@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { MotionRoute } from './features/motion/MotionRoute';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -77,6 +78,7 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <ToastProvider>
+            <MotionRoute />
             <Routes>
             <Route path="/" element={<HomeRedirect />} />
             <Route path="/landing" element={<LandingPage />} />

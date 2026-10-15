@@ -225,7 +225,7 @@ export function StudentDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[var(--surface-subtle)] rounded-xl p-1">
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-1 bg-[var(--surface-subtle)] rounded-xl p-1">
         {TABS.map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === tab ? 'bg-[var(--surface)] text-[var(--link)] ' : 'text-gray-500 hover:text-gray-700'}`}>

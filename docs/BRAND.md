@@ -80,3 +80,23 @@ Os testes exercitam rotas, temas, overflow de página, menus, FAQ, modal/teclado
 A página pública aplica as cores configuradas pelo personal somente no seu próprio container. A paleta global UpCoach permanece intacta. O texto dos CTAs personalizados é escolhido para manter contraste; links e hover usam variações legíveis da mesma cor.
 
 As cores de fundo personalizadas permanecem exatas. Textos de links e tags usam tons derivados com contraste AA nas superfícies do tema; o hover dos CTAs preserva a leitura mesmo com cores claras ou intermediárias. Modais e menu móvel mantêm o foco dentro do painel e o devolvem ao controle de abertura ao fechar.
+
+
+## Motion e narrativa do produto
+
+A landing usa GSAP/ScrollTrigger para entradas e parallax contido, carrossel de destaques com scroll-snap nativo e uma narrativa de três etapas com demonstração fixa no desktop. Celulares e tablets apresentam as demonstrações junto dos respectivos textos. Setas, indicadores, teclado e toque continuam funcionando sem depender da animação. A reprodução automática pode ser pausada e interrompe quando a pessoa navega manualmente.
+
+Three.js é carregado sob demanda somente na landing, em desktop com movimento permitido e sem economia de dados. A escultura geométrica usa a paleta UpCoach; as imagens oficiais permanecem intactas. O render limita DPR a 1.5 e frames a 30 por segundo, suspende fora da tela/em aba oculta e libera recursos ao sair. Sem WebGL, uma ilustração CSS ocupa o mesmo espaço.
+
+O botão “Pausar animações” controla os efeitos da landing. A preferência de movimento reduzido do sistema é respeitada em tempo real, deixando a página estática e sem autoplay. Login e demais telas compartilham entradas curtas em títulos e elementos de apresentação; tabelas, campos e regras de negócio permanecem estáveis. Primitivas de diálogo recebem entrada breve, preservando foco e teclado.
+
+Testes dedicados: `npm run test:design -- tests/motion-foundation.spec.js tests/motion-landing.spec.js tests/motion-three.spec.js`. A suíte de design estático usa movimento reduzido para comparação consistente; esses testes de interação exercitam o movimento normal e suas alternativas.
+
+
+## Responsividade
+
+A revisão inclui larguras de 320, 360, 600, 768, 820, 1024 e 1440px, claro/escuro e amostras em paisagem. Em celulares abaixo de 360px, o cabeçalho interno apresenta apenas o símbolo oficial com nome acessível, preservando espaço para os controles. O controle de animações da landing fica compacto em 44px no celular e não aparece quando a preferência do sistema já desativa movimento.
+
+Cartões de planos usam uma coluna no celular, duas em telas intermediárias e três apenas no desktop largo. A seleção de plano em modal limita a grade a duas colunas, considerando a largura do painel. Perguntas do FAQ mantêm texto flexível e espaço para a rotação do ícone. O selo de uso interno no branding mantém formato pill sem quebra de linha. Tabelas continuam com rolagem interna quando necessária.
+
+Na ficha do aluno, as cinco abas se distribuem em duas linhas no celular e voltam a uma linha a partir de 640px, preservando rótulos completos e alvos de toque.
