@@ -95,6 +95,8 @@ Testes dedicados: `npm run test:design -- tests/motion-foundation.spec.js tests/
 
 ## Responsividade
 
+Na landing, links internos percorrem a página com rolagem suave nativa, preservando hashes, histórico e o espaço do cabeçalho fixo. A suavização acompanha o controle de pausa e a preferência de movimento reduzido; ao sair da landing, o documento retoma seu comportamento normal de rolagem.
+
 A revisão inclui larguras de 320, 360, 600, 768, 820, 1024 e 1440px, claro/escuro e amostras em paisagem. Em celulares abaixo de 360px, o cabeçalho interno apresenta apenas o símbolo oficial com nome acessível, preservando espaço para os controles. O controle de animações da landing fica compacto em 44px no celular e não aparece quando a preferência do sistema já desativa movimento.
 
 Cartões de planos usam uma coluna no celular, duas em telas intermediárias e três apenas no desktop largo. A seleção de plano em modal limita a grade a duas colunas, considerando a largura do painel. Perguntas do FAQ mantêm texto flexível e espaço para a rotação do ícone. O selo de uso interno no branding mantém formato pill sem quebra de linha. Tabelas continuam com rolagem interna quando necessária.
