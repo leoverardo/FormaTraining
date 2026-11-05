@@ -103,25 +103,16 @@
 .gallery-checks { display: grid; gap: 16px; margin: 32px 0; font-size: 14px; }
 .gallery-checks li { display: flex; align-items: center; gap: 12px; }
 .gallery-student-stage { display: grid; place-items: center; border-radius: 28px; background: var(--surface-muted); padding: 48px 20px 0; overflow: hidden; height: 620px; }
-.student-device { width: 272px; padding: 22px 18px 20px; border: 7px solid var(--border-strong); border-radius: 44px; background: var(--surface); color: var(--text); position: relative; text-align: left; }
-.device-speaker { height: 15px; width: 65px; border-radius: 99px; position: absolute; top: 9px; left: calc(50% - 32px); background: var(--text); }
-.student-device-top { display: flex; justify-content: space-between; font-size: 9px; font-weight: 600; padding: 0 6px 32px; }
-.student-device > p { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
-.student-device h3 { font-size: 27px; font-weight: 600; line-height: 1.07; letter-spacing: -.7px; }
-.student-device-progress { margin-top: 24px; }
-.student-device-progress > div:first-child { display: flex; justify-content: space-between; font-size: 10px; }
-.device-week { display: flex; gap: 8px; margin: 12px 0; }
-.device-week > span { height: 32px; width: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-muted); color: var(--text-secondary); font-size: 11px; }
-.device-week > .done { color: #fff; background: var(--primary-strong); }
-.student-device-progress > small { color: var(--text-secondary); font-size: 9px; }
-.student-device-workout { margin-top: 24px; background: var(--surface-muted); border-radius: 22px; padding: 20px; }
-.student-device-workout small { display: block; font-size: 8px; letter-spacing: 1px; margin: 18px 0 8px; }
-.student-device-workout h4 { font-size: 28px; font-weight: 600; line-height: 1.1; letter-spacing: -.7px; }
-.student-device-workout p { color: var(--text-secondary); font-size: 9px; margin-top: 12px; }
-.student-device-workout > span { display: flex; align-items: center; justify-content: space-between; color: var(--link); font-size: 11px; margin-top: 24px; }
-.student-device-message { display: flex; align-items: center; gap: 10px; margin-top: 22px; font-size: 9px; }
-.student-device-message small { display: block; margin-top: 3px; font-size: 8px; color: var(--text-secondary); }
-.device-home { width: 90px; height: 4px; border-radius: 99px; background: var(--text); margin: 24px auto 0; }
+.student-device { width: 272px; padding: 7px; border: 2px solid #5a6275; border-radius: 42px; background: #111725; position: relative; box-shadow: 12px 24px 38px rgba(8, 16, 40, .22), inset 1px 1px 1px rgba(255, 255, 255, .25); }
+.student-device-screen { display: block; width: 100%; height: auto; border-radius: 32px; background: #f5f5f7; }
+@media (prefers-reduced-motion: no-preference) {
+  .gallery-landing[data-motion='enabled'] .student-device-screen { animation: student-screen-enter 350ms ease-out; }
+  @keyframes student-screen-enter { from { opacity: .65; } to { opacity: 1; } }
+}
+.device-speaker { height: 8px; width: 60px; border-radius: 99px; position: absolute; z-index: 1; top: 10px; left: calc(50% - 30px); background: #111725; }
+.gallery-student-stage { perspective: 1100px; }
+.gallery-student-stage .student-device { transform: rotateY(-8deg) rotateX(3deg); transform-origin: center bottom; }
+.gallery-story-product-image { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; }
 .gallery-workflow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 64px; }
 .gallery-workflow article > span { font-size: 13px; color: var(--text-muted); }
 .gallery-workflow h3 { font-size: 28px; font-weight: 600; margin: 20px 0 12px; }

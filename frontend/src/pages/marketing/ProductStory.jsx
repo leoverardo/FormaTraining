@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, Dumbbell } from 'lucide-react';
-import { ProductPreview, StudentPreview } from './ProductPreview';
+import { StudentDevicePreview } from './StudentDevicePreview';
 import { useMotionPreference } from '../../features/motion/useMotionPreference';
 
 const chapters = [
@@ -10,11 +10,11 @@ const chapters = [
 ];
 
 function StoryPreview({ index }) {
-  return index === 0 ? <ProductPreview /> : index === 1 ? <div className="gallery-prescription-preview">
+  return index === 0 ? <img className="gallery-story-product-image" src="/marketing/painel-personal.jpg" width="1440" height="900" alt="Tela do painel do personal" loading="lazy" /> : index === 1 ? <div className="gallery-prescription-preview">
               <div><Dumbbell size={26} /><span>Seu método, em prática</span></div><h3>Força e mobilidade.</h3><p>Uma rotina clara. Um novo passo.</p>
               {['Agachamento livre', 'Remada com halteres', 'Mobilidade de quadril'].map((exercise, index) => <article key={exercise}><i>0{index + 1}</i><div><b>{exercise}</b><small>3 séries · Movimento com intenção</small></div><Check size={16} /></article>)}
               <span className="gallery-story-note">Demonstração ilustrativa</span>
-            </div> : <StudentPreview />;
+            </div> : <StudentDevicePreview />;
 }
 
 export function ProductStory({ enabled }) {
