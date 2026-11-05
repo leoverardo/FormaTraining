@@ -5,6 +5,7 @@ import { useMotionPreference } from '../../features/motion/useMotionPreference';
 export function FeatureCarousel({ children, enabled }) {
   const slides = Children.toArray(children);
   const viewport = useRef(null);
+  const drag = useRef(null);
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [hovered, setHovered] = useState(false);
@@ -40,11 +41,44 @@ export function FeatureCarousel({ children, enabled }) {
     const offsets = [...element.children].map(slide => Math.abs(slide.offsetLeft - element.scrollLeft));
     setActive(offsets.indexOf(Math.min(...offsets)));
   };
+  const endDrag = event => {
+    const gesture = drag.current;
+    if (!gesture || gesture.pointerId !== event.pointerId) return;
+    const element = viewport.current;
+    drag.current = null;
+    element.style.scrollSnapType = '';
+    delete element.dataset.dragging;
+    if (element.hasPointerCapture(event.pointerId)) element.releasePointerCapture(event.pointerId);
+    if (gesture.moved) {
+      const delta = event.clientX - gesture.startX;
+      navigate(gesture.startIndex + (Math.abs(delta) > 50 ? (delta < 0 ? 1 : -1) : 0));
+    }
+  };
   return <div className="gallery-carousel" role="region" aria-roledescription="carrossel" aria-label="Destaques da plataforma"
     onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
     onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
     <div ref={viewport} className="gallery-features" tabIndex={0} aria-label="Cartões de funcionalidades" onScroll={onScroll}
-      onPointerDown={() => setPlaying(false)}
+      onPointerDown={event => {
+        setPlaying(false);
+        if (event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a, button, input, select, textarea')) return;
+        drag.current = { pointerId: event.pointerId, startX: event.clientX, startScroll: event.currentTarget.scrollLeft, startIndex: active, moved: false };
+      }}
+      onPointerMove={event => {
+        const gesture = drag.current;
+        if (!gesture || gesture.pointerId !== event.pointerId) return;
+        const delta = event.clientX - gesture.startX;
+        if (!gesture.moved && Math.abs(delta) < 8) return;
+        if (!gesture.moved) {
+          gesture.moved = true;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          event.currentTarget.dataset.dragging = 'true';
+          event.currentTarget.style.scrollSnapType = 'none';
+        }
+        event.preventDefault();
+        event.currentTarget.scrollLeft = gesture.startScroll - delta;
+      }}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
       onWheel={event => { if (Math.abs(event.deltaX) > 0 || event.shiftKey) setPlaying(false); }}
       onKeyDown={event => {
         if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); navigate(active + (event.key === 'ArrowRight' ? 1 : -1)); }

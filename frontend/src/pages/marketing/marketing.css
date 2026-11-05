@@ -253,6 +253,10 @@
 .gallery-motion-toggle > span[aria-hidden] { color: var(--link); font-size: 16px; }
 .gallery-carousel { min-width: 0; }
 .gallery-carousel .gallery-features { display: flex; position: relative; gap: 20px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
+@media (hover: hover) and (pointer: fine) {
+  .gallery-carousel .gallery-features { cursor: grab; }
+  .gallery-carousel .gallery-features[data-dragging='true'] { cursor: grabbing; user-select: none; }
+}
 .gallery-carousel .gallery-features::-webkit-scrollbar { display: none; }
 .gallery-carousel .gallery-features > article { flex: 0 0 min(720px, 85%); min-height: 500px; scroll-snap-align: start; padding: 40px; }
 .gallery-carousel .gallery-features::after { content: ''; flex: 0 0 max(0px, calc(100% - min(720px, 85%) - 20px)); }

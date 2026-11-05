@@ -3,6 +3,21 @@ import { assertNoPageOverflow } from './helpers';
 
 test.use({ reducedMotion: 'no-preference' });
 
+test('arrastar com o mouse muda o destaque e pausa a reprodução automática', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/landing');
+  const carousel = page.getByRole('region', { name: 'Destaques da plataforma' });
+  const viewport = carousel.locator('.gallery-features');
+  await viewport.scrollIntoViewIfNeeded();
+  const box = await viewport.boundingBox();
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.25, box.y + box.height * 0.5, { steps: 8 });
+  await page.mouse.up();
+  await expect(carousel.getByRole('button', { name: 'Mostrar destaque 2' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(carousel.getByRole('button', { name: 'Reproduzir destaques' })).toBeVisible();
+});
+
 test('carrossel oferece setas, indicadores, teclado e pausa', async ({ page }) => {
   await page.goto('/landing');
   const carousel = page.getByRole('region', { name: 'Destaques da plataforma' });
