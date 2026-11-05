@@ -1,5 +1,6 @@
 import { Children, cloneElement, useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import gsap from 'gsap';
 import { useMotionPreference } from '../../features/motion/useMotionPreference';
 
 export function FeatureCarousel({ children, enabled }) {
@@ -18,7 +19,15 @@ export function FeatureCarousel({ children, enabled }) {
   const goTo = useCallback(index => {
     const element = viewport.current;
     const slide = element?.children[(index + slides.length) % slides.length];
-    if (slide) element.scrollTo({ left: slide.offsetLeft, behavior: moving ? 'smooth' : 'instant' });
+    if (!slide) return;
+    gsap.killTweensOf(element);
+    if (!moving) {
+      element.scrollTo({ left: slide.offsetLeft, behavior: 'instant' });
+      return;
+    }
+    element.style.scrollSnapType = 'none';
+    const restoreSnap = () => { element.style.scrollSnapType = ''; };
+    gsap.to(element, { scrollLeft: slide.offsetLeft, duration: 0.75, ease: 'power2.inOut', onComplete: restoreSnap, onInterrupt: restoreSnap });
   }, [slides.length, moving]);
   const navigate = index => { setPlaying(false); goTo(index); };
 
@@ -32,7 +41,7 @@ export function FeatureCarousel({ children, enabled }) {
   }, []);
   useEffect(() => {
     if (!running) return undefined;
-    const timer = window.setTimeout(() => goTo(active + 1), 6000);
+    const timer = window.setTimeout(() => goTo(active + 1), 3500);
     return () => window.clearTimeout(timer);
   }, [running, active, goTo]);
 
@@ -60,6 +69,7 @@ export function FeatureCarousel({ children, enabled }) {
     <div ref={viewport} className="gallery-features" tabIndex={0} aria-label="Cartões de funcionalidades" onScroll={onScroll}
       onPointerDown={event => {
         setPlaying(false);
+        gsap.killTweensOf(event.currentTarget);
         if (event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a, button, input, select, textarea')) return;
         drag.current = { pointerId: event.pointerId, startX: event.clientX, startScroll: event.currentTarget.scrollLeft, startIndex: active, moved: false };
       }}

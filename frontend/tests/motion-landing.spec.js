@@ -3,6 +3,15 @@ import { assertNoPageOverflow } from './helpers';
 
 test.use({ reducedMotion: 'no-preference' });
 
+test('carrossel começa automaticamente ao entrar na tela sem longa espera', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/landing');
+  const carousel = page.getByRole('region', { name: 'Destaques da plataforma' });
+  await carousel.scrollIntoViewIfNeeded();
+  await page.mouse.move(2, 80);
+  await expect(carousel.getByRole('button', { name: 'Mostrar destaque 2' })).toHaveAttribute('aria-pressed', 'true', { timeout: 5000 });
+});
+
 test('arrastar com o mouse muda o destaque e pausa a reprodução automática', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/landing');
@@ -87,7 +96,7 @@ test('carrossel avança sozinho e respeita pausa por foco e pelo controle', asyn
   const carousel = page.getByRole('region', { name: 'Destaques da plataforma' });
   await carousel.scrollIntoViewIfNeeded();
   await page.mouse.move(2, 80);
-  await page.clock.runFor(6500);
+  await page.clock.runFor(4000);
   const second = carousel.getByRole('button', { name: 'Mostrar destaque 2' });
   await expect(second).toHaveAttribute('aria-pressed', 'true');
   await second.focus();

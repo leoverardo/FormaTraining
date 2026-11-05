@@ -273,7 +273,7 @@
 .gallery-carousel-playback > button > span { display: block; width: 8px; height: 8px; border-radius: 99px; overflow: hidden; background: var(--text-muted); transition: width 250ms; }
 .gallery-carousel-playback > button > span.is-selected { width: 32px; background: var(--border-strong); }
 .gallery-carousel-playback i { display: block; height: 100%; width: 100%; background: var(--text); }
-.gallery-carousel-playback[data-playing="true"] .is-selected i { animation: gallery-slide-progress 6s linear both; transform-origin: left; }
+.gallery-carousel-playback[data-playing="true"] .is-selected i { animation: gallery-slide-progress 3.5s linear both; transform-origin: left; }
 .gallery-carousel-count { color: var(--text-secondary); font-variant-numeric: tabular-nums; font-size: 12px; }
 @keyframes gallery-slide-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .gallery-story { background: var(--surface); }
