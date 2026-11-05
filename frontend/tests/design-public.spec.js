@@ -30,14 +30,15 @@ for (const width of [390, 768, 1440]) {
   }
 }
 
-test('login preserva arte oficial proporcional e permite mudar tema', async ({ page }) => {
+test('login preserva arte oficial sem distorção e permite mudar tema', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await setTheme(page, 'light');
   await page.goto('/login');
   for (const asset of ['Capa.png', 'SubCapaUpCoach.png']) {
     const image = page.locator(`img[src="/brand/${asset}"]`);
     await expect(image).toBeVisible();
-    expect(await image.evaluate(el => Math.abs(el.clientWidth / el.clientHeight - el.naturalWidth / el.naturalHeight))).toBeLessThan(0.03);
+    await expect(image).toHaveCSS('object-fit', 'cover');
+    expect(await image.evaluate(el => el.naturalWidth)).toBeGreaterThan(0);
   }
   await page.getByRole('button', { name: 'Ativar tema escuro' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');

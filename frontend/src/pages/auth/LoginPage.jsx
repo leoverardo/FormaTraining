@@ -34,24 +34,17 @@ export function LoginPage() {
   return (
     <div className="auth-screen min-h-screen flex">
       <ThemeToggle className="fixed top-4 right-4 z-40 border border-[var(--border)] bg-[var(--surface)]" />
-      {/* Brand imagery; product information lives on the landing. */}
-      <div className="hidden lg:flex lg:flex-col lg:w-1/2 bg-[var(--surface-muted)] p-12 text-[var(--text)]">
-        <BrandLogo size="md" />
-
-        <div className="flex flex-1 items-center py-10">
-          <div className="w-full overflow-hidden rounded-2xl border border-white/10">
-            <img src={BRAND_ASSETS.cover} width={1672} height={941}
-              alt="UpCoach — Mais alunos, melhores resultados. Capa oficial em uma academia."
-              className="block h-auto w-full" fetchPriority="high" />
-            <img src={BRAND_ASSETS.subCover} width={1916} height={821}
-              alt="Treine, gerencie, conquiste. A plataforma completa para o personal trainer."
-              className="block h-auto w-full" />
-          </div>
-        </div>
-      </div>
+      <aside aria-label="Arte de apresentação da UpCoach" className="hidden lg:grid lg:w-1/2 lg:h-screen lg:sticky lg:top-0 lg:grid-rows-[minmax(0,1.45fr)_minmax(0,1fr)] overflow-hidden bg-[#071535]">
+        <img src={BRAND_ASSETS.cover} width={1672} height={941}
+          alt="UpCoach — Mais alunos, melhores resultados. Capa oficial em uma academia."
+          className="block h-full w-full object-cover" fetchPriority="high" />
+        <img src={BRAND_ASSETS.subCover} width={1916} height={821}
+          alt="Treine, gerencie, conquiste. A plataforma completa para o personal trainer."
+          className="block h-full w-full object-cover" />
+      </aside>
 
       {/* Right column ? login form */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-[var(--surface)]">
+      <div className="login-panel flex-1 flex items-center justify-center p-6 bg-[var(--surface)]">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
