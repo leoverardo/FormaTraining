@@ -46,7 +46,6 @@ pnpm-debug.log*
 # Environment / secrets
 .env
 .env.*
-!.env.example
 **/appsettings.Local.json
 **/appsettings.*.local.json
 **/appsettings.Development.json
@@ -69,3 +68,10 @@ docs/gallery-design.md
 /docs/superpowers/
 # Local screenshots, traces and HTML reports from visual verification.
 /artifacts/design/
+
+# Local AI tooling, Markdown and environment files (never publish)
+*.[mM][dD]
+*.[eE][nN][vV]*
+/.agents/
+/.codex/
+/.claude/
