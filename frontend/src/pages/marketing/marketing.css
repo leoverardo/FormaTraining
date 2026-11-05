@@ -26,6 +26,7 @@
 .gallery-product-stage { position: relative; max-width: 930px; margin: 54px auto 24px; padding: 0 26px 24px; }
 .gallery-desktop-device { padding: 16px 10px 10px; background: var(--surface-control); border: 1px solid var(--border-strong); border-radius: 22px 22px 4px 4px; position: relative; }
 .gallery-device-camera { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); position: absolute; left: 50%; top: 6px; }
+.gallery-dashboard-preview { display: block; width: 100%; height: auto; border-radius: 8px; }
 .gallery-device-foot { height: 12px; background: var(--border-strong); border-radius: 0 0 45% 45%; margin: 0 -26px; }
 .gallery-product-caption { position: absolute; right: -6px; bottom: 4px; display: flex; align-items: center; gap: 36px; text-align: left; padding: 20px 24px; border-radius: 28px; background: var(--surface); border: 1px solid var(--surface-control); font-size: 13px; line-height: 1.5; }
 .gallery-product-caption a { background: var(--surface-muted); border-radius: 50%; padding: 8px; }
