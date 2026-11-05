@@ -52,18 +52,18 @@ public static class DatabaseSeeder
         // Users
         var ownerUser = new User { Id = Guid.NewGuid(), Name = "Admin Plataforma", Email = "admin@test.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"), Role = UserRole.Owner, IsActive = true };
         var trainerUser = new User { Id = Guid.NewGuid(), Name = "Carlos Trainer", Email = "trainer@test.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"), Role = UserRole.Trainer, IsActive = true };
-        var studentUser = new User { Id = Guid.NewGuid(), Name = "JoÃ£o Silva", Email = "aluno@test.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"), Role = UserRole.Student, IsActive = true };
+        var studentUser = new User { Id = Guid.NewGuid(), Name = "João Silva", Email = "aluno@test.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"), Role = UserRole.Student, IsActive = true };
         await context.Users.AddRangeAsync(ownerUser, trainerUser, studentUser);
 
         var trainer = new Trainer
         {
             Id = Guid.NewGuid(), UserId = trainerUser.Id, BrandName = "Carlos Trainer Consultoria",
-            Phone = "(11) 99999-9999", Bio = "Personal trainer com 10 anos de experiÃªncia.",
-            CREF = "012345-G/SP", City = "SÃ£o Paulo", State = "SP"
+            Phone = "(11) 99999-9999", Bio = "Personal trainer com 10 anos de experiência.",
+            CREF = "012345-G/SP", City = "São Paulo", State = "SP"
         };
         await context.Trainers.AddAsync(trainer);
 
-        var student = new Student { Id = Guid.NewGuid(), UserId = studentUser.Id, TrainerId = trainer.Id, Phone = "(11) 88888-8888", Goal = "Hipertrofia", Notes = "Sem lesÃµes", Status = StudentStatus.Active };
+        var student = new Student { Id = Guid.NewGuid(), UserId = studentUser.Id, TrainerId = trainer.Id, Phone = "(11) 88888-8888", Goal = "Hipertrofia", Notes = "Sem lesões", Status = StudentStatus.Active };
         await context.Students.AddAsync(student);
 
         var basicMonthlyPrice = prices.First(p => p.PlatformPlanId == basicPlan.Id && p.BillingCycle == BillingFrequency.Monthly);
@@ -75,15 +75,15 @@ public static class DatabaseSeeder
         };
         await context.TrainerSubscriptions.AddAsync(subscription);
 
-        var ex1 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Supino Reto", MuscleGroup = "Peitoral", Description = "ExercÃ­cio clÃ¡ssico para peitoral", Instructions = "Deite no banco, segure a barra, desÃ§a atÃ© o peito e empurre.", Level = ExerciseLevel.Intermediate };
-        var ex2 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Agachamento Livre", MuscleGroup = "QuadrÃ­ceps", Description = "ExercÃ­cio composto para membros inferiores", Instructions = "Fique em pÃ© com os pÃ©s na largura dos ombros, dobre os joelhos.", Level = ExerciseLevel.Intermediate };
-        var ex3 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Remada Curvada", MuscleGroup = "Costas", Description = "ExercÃ­cio para dorsal", Instructions = "Incline o tronco, segure a barra e puxe atÃ© o abdÃ´men.", Level = ExerciseLevel.Intermediate };
-        var ex4 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Rosca Direta", MuscleGroup = "BÃ­ceps", Description = "ExercÃ­cio para bÃ­ceps", Instructions = "Em pÃ©, segure a barra e flexione os cotovelos.", Level = ExerciseLevel.Beginner };
-        var ex5 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "TrÃ­ceps Pulley", MuscleGroup = "TrÃ­ceps", Description = "ExercÃ­cio para trÃ­ceps", Instructions = "No cabo, empurre a barra para baixo estendendo os cotovelos.", Level = ExerciseLevel.Beginner };
+        var ex1 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Supino Reto", MuscleGroup = "Peitoral", Description = "Exercício clássico para peitoral", Instructions = "Deite no banco, segure a barra, desça até o peito e empurre.", Level = ExerciseLevel.Intermediate };
+        var ex2 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Agachamento Livre", MuscleGroup = "Quadríceps", Description = "Exercício composto para membros inferiores", Instructions = "Fique em pé com os pés na largura dos ombros, dobre os joelhos.", Level = ExerciseLevel.Intermediate };
+        var ex3 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Remada Curvada", MuscleGroup = "Costas", Description = "Exercício para dorsal", Instructions = "Incline o tronco, segure a barra e puxe até o abdômen.", Level = ExerciseLevel.Intermediate };
+        var ex4 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Rosca Direta", MuscleGroup = "Bíceps", Description = "Exercício para bíceps", Instructions = "Em pé, segure a barra e flexione os cotovelos.", Level = ExerciseLevel.Beginner };
+        var ex5 = new Exercise { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Tríceps Pulley", MuscleGroup = "Tríceps", Description = "Exercício para tríceps", Instructions = "No cabo, empurre a barra para baixo estendendo os cotovelos.", Level = ExerciseLevel.Beginner };
         await context.Exercises.AddRangeAsync(ex1, ex2, ex3, ex4, ex5);
 
-        var workoutA = new Workout { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Treino A - Peito e TrÃ­ceps", Goal = "Hipertrofia de Peito e TrÃ­ceps", Level = ExerciseLevel.Intermediate, Status = WorkoutStatus.Active };
-        var workoutB = new Workout { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Treino B - Costas e BÃ­ceps", Goal = "Hipertrofia de Costas e BÃ­ceps", Level = ExerciseLevel.Intermediate, Status = WorkoutStatus.Active };
+        var workoutA = new Workout { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Treino A - Peito e Tríceps", Goal = "Hipertrofia de Peito e Tríceps", Level = ExerciseLevel.Intermediate, Status = WorkoutStatus.Active };
+        var workoutB = new Workout { Id = Guid.NewGuid(), TrainerId = trainer.Id, Name = "Treino B - Costas e Bíceps", Goal = "Hipertrofia de Costas e Bíceps", Level = ExerciseLevel.Intermediate, Status = WorkoutStatus.Active };
         await context.Workouts.AddRangeAsync(workoutA, workoutB);
 
         await context.WorkoutExercises.AddRangeAsync(
@@ -94,7 +94,7 @@ public static class DatabaseSeeder
         );
 
         await context.StudentWorkoutSchedules.AddRangeAsync(
-            new StudentWorkoutSchedule { Id = Guid.NewGuid(), TrainerId = trainer.Id, StudentId = student.Id, WorkoutId = workoutA.Id, DayOfWeek = 1, Notes = "Foco na execuÃ§Ã£o" },
+            new StudentWorkoutSchedule { Id = Guid.NewGuid(), TrainerId = trainer.Id, StudentId = student.Id, WorkoutId = workoutA.Id, DayOfWeek = 1, Notes = "Foco na execução" },
             new StudentWorkoutSchedule { Id = Guid.NewGuid(), TrainerId = trainer.Id, StudentId = student.Id, WorkoutId = workoutB.Id, DayOfWeek = 3, Notes = "Aumentar carga no remada" },
             new StudentWorkoutSchedule { Id = Guid.NewGuid(), TrainerId = trainer.Id, StudentId = student.Id, WorkoutId = workoutA.Id, DayOfWeek = 5 }
         );
@@ -109,10 +109,10 @@ public static class DatabaseSeeder
             new Post
             {
                 Id = Guid.NewGuid(), TrainerId = trainer.Id,
-                Title = "Dicas de NutriÃ§Ã£o PÃ³s-Treino",
-                Description = "ApÃ³s o treino, consuma proteÃ­nas e carboidratos em atÃ© 30 minutos para potencializar a recuperaÃ§Ã£o muscular. Uma boa opÃ§Ã£o Ã© whey protein com banana.",
+                Title = "Dicas de Nutrição Pós-Treino",
+                Description = "Após o treino, consuma proteínas e carboidratos em até 30 minutos para potencializar a recuperação muscular. Uma boa opção é whey protein com banana.",
                 Status = PostStatus.Published, Visibility = PostVisibility.Public,
-                Tags = "NutriÃ§Ã£o,Dicas,RecuperaÃ§Ã£o", PublishedAt = publishedAt1
+                Tags = "Nutrição,Dicas,Recuperação", PublishedAt = publishedAt1
             },
             new Post
             {
@@ -125,16 +125,16 @@ public static class DatabaseSeeder
             new Post
             {
                 Id = Guid.NewGuid(), TrainerId = trainer.Id,
-                Title = "Como ajustar sua carga com seguranÃ§a",
-                Description = "Progredir de carga Ã© fundamental para evoluÃ§Ã£o. Aprenda o mÃ©todo de sobrecarga progressiva sem se machucar.",
+                Title = "Como ajustar sua carga com segurança",
+                Description = "Progredir de carga é fundamental para evolução. Aprenda o método de sobrecarga progressiva sem se machucar.",
                 Status = PostStatus.Published, Visibility = PostVisibility.StudentsOnly,
-                Tags = "Treino,ForÃ§a,EvoluÃ§Ã£o", PublishedAt = publishedAt3
+                Tags = "Treino,Força,Evolução", PublishedAt = publishedAt3
             },
             new Post
             {
                 Id = Guid.NewGuid(), TrainerId = trainer.Id,
-                Title = "A importÃ¢ncia do descanso na hipertrofia",
-                Description = "Muitos alunos subestimam o descanso. Saiba por que dormir bem e ter dias de recuperaÃ§Ã£o Ã© essencial para ganhar mÃºsculo.",
+                Title = "A importância do descanso na hipertrofia",
+                Description = "Muitos alunos subestimam o descanso. Saiba por que dormir bem e ter dias de recuperação é essencial para ganhar músculo.",
                 Status = PostStatus.Published, Visibility = PostVisibility.Public,
                 Tags = "Hipertrofia,Descanso,Sono", PublishedAt = publishedAt4
             },
@@ -148,7 +148,7 @@ public static class DatabaseSeeder
             }
         );
 
-        // 2 progress records para JoÃ£o (para ter comparaÃ§Ã£o)
+        // 2 progress records para João (para ter comparação)
         await context.StudentProgressRecords.AddRangeAsync(
             new StudentProgress
             {
@@ -157,7 +157,7 @@ public static class DatabaseSeeder
                 Hip = 99m, BodyFatPercentage = 18.5m,
                 ProgressDate = DateTime.UtcNow.AddMonths(-2),
                 CreatedByUserId = trainerUser.Id, CreatedByRole = ProgressCreatedByRole.Trainer,
-                Notes = "AvaliaÃ§Ã£o inicial â€” inÃ­cio do programa"
+                Notes = "Avaliação inicial — início do programa"
             },
             new StudentProgress
             {
@@ -166,7 +166,7 @@ public static class DatabaseSeeder
                 Hip = 97m, BodyFatPercentage = 16.2m,
                 ProgressDate = DateTime.UtcNow.AddMonths(-1),
                 CreatedByUserId = trainerUser.Id, CreatedByRole = ProgressCreatedByRole.Trainer,
-                Notes = "Boa evoluÃ§Ã£o no primeiro mÃªs. Continuar com dÃ©ficit calÃ³rico moderado."
+                Notes = "Boa evolução no primeiro mês. Continuar com déficit calórico moderado."
             },
             new StudentProgress
             {
@@ -175,25 +175,25 @@ public static class DatabaseSeeder
                 Hip = 96m, BodyFatPercentage = 14.8m,
                 ProgressDate = DateTime.UtcNow.AddDays(-7),
                 CreatedByUserId = studentUser.Id, CreatedByRole = ProgressCreatedByRole.Student,
-                Notes = "Me sinto muito melhor! Roupas estÃ£o mais folgadas."
+                Notes = "Me sinto muito melhor! Roupas estão mais folgadas."
             }
         );
 
-        // Progress photos para JoÃ£o
+        // Progress photos para João
         await context.StudentProgressPhotos.AddRangeAsync(
             new StudentProgressPhoto
             {
                 Id = Guid.NewGuid(), StudentId = student.Id, TrainerId = trainer.Id,
                 ImageUrl = "https://placehold.co/400x600/1a1a2e/ffffff?text=Antes",
-                Description = "Foto inicial â€” frente",
+                Description = "Foto inicial — frente",
                 PhotoDate = DateTime.UtcNow.AddMonths(-2),
                 CreatedByUserId = trainerUser.Id, CreatedByRole = ProgressCreatedByRole.Trainer
             },
             new StudentProgressPhoto
             {
                 Id = Guid.NewGuid(), StudentId = student.Id, TrainerId = trainer.Id,
-                ImageUrl = "https://placehold.co/400x600/16213e/ffffff?text=1+MÃªs",
-                Description = "Foto com 1 mÃªs de treino â€” frente",
+                ImageUrl = "https://placehold.co/400x600/16213e/ffffff?text=1+Mês",
+                Description = "Foto com 1 mês de treino — frente",
                 PhotoDate = DateTime.UtcNow.AddMonths(-1),
                 CreatedByUserId = trainerUser.Id, CreatedByRole = ProgressCreatedByRole.Trainer
             },
@@ -201,7 +201,7 @@ public static class DatabaseSeeder
             {
                 Id = Guid.NewGuid(), StudentId = student.Id, TrainerId = trainer.Id,
                 ImageUrl = "https://placehold.co/400x600/0f3460/ffffff?text=2+Meses",
-                Description = "Foto com 2 meses de treino â€” frente",
+                Description = "Foto com 2 meses de treino — frente",
                 PhotoDate = DateTime.UtcNow.AddDays(-7),
                 CreatedByUserId = studentUser.Id, CreatedByRole = ProgressCreatedByRole.Student
             }
@@ -211,7 +211,7 @@ public static class DatabaseSeeder
         await context.StudentTestimonials.AddAsync(new StudentTestimonial
         {
             Id = Guid.NewGuid(), TrainerId = trainer.Id, StudentId = student.Id,
-            Text = "O Carlos Ã© incrÃ­vel! Em 2 meses jÃ¡ perdi 5kg e ganhei muito mais disposiÃ§Ã£o. Os treinos sÃ£o desafiadores mas sempre dentro do meu limite. Super recomendo!",
+            Text = "O Carlos é incrível! Em 2 meses já perdi 5kg e ganhei muito mais disposição. Os treinos são desafiadores mas sempre dentro do meu limite. Super recomendo!",
             Rating = 5, ApprovedByStudent = true, Published = true
         });
 
@@ -221,17 +221,17 @@ public static class DatabaseSeeder
             Id = Guid.NewGuid(), TrainerId = trainer.Id, StudentId = student.Id,
             BeforePhotoUrl = "https://placehold.co/400x600/1a1a2e/ffffff?text=Antes",
             AfterPhotoUrl = "https://placehold.co/400x600/0f3460/ffffff?text=Depois",
-            Description = "TransformaÃ§Ã£o em 2 meses: -4.7kg de gordura, +mÃºsculo e muito mais disposiÃ§Ã£o!",
+            Description = "Transformação em 2 meses: -4.7kg de gordura, +músculo e muito mais disposição!",
             ApprovedByStudent = true, Published = true
         });
 
-        // Configurar pÃ¡gina pÃºblica do trainer
+        // Configurar página pública do trainer
         trainer.PublicSlug = "carlos-trainer";
         trainer.PublicPageEnabled = true;
         trainer.PublicSearchEnabled = true;
         trainer.AcceptingStudents = true;
         trainer.PublicHeadline = "Personal Trainer Especialista em Hipertrofia";
-        trainer.PublicDescription = "Ajudo vocÃª a transformar seu corpo com treinos personalizados e acompanhamento completo. 10 anos de experiÃªncia, mais de 200 alunos transformados.";
+        trainer.PublicDescription = "Ajudo você a transformar seu corpo com treinos personalizados e acompanhamento completo. 10 anos de experiência, mais de 200 alunos transformados.";
         trainer.WhatsappNumber = "11999999999";
         trainer.ShowTestimonials = true;
         trainer.ShowInstagram = true;
@@ -249,12 +249,12 @@ public static class DatabaseSeeder
         var features = new[]
         {
             ("STUDENT_PROGRESS", "Progresso do aluno"), ("PROGRESS_PHOTOS", "Fotos de progresso"),
-            ("WEEKLY_CHECKIN", "Check-in semanal"), ("WORKOUT_COMPLETION", "ConclusÃ£o de treino"),
-            ("EXERCISE_LIBRARY", "Biblioteca de exercÃ­cios"), ("WORKOUT_TEMPLATES", "Templates de treino"),
-            ("PUBLIC_PROFILE_PAGE", "PÃ¡gina pÃºblica"), ("NOTIFICATIONS", "NotificaÃ§Ãµes"),
-            ("REPORTS", "RelatÃ³rios"), ("VISUAL_CUSTOMIZATION", "PersonalizaÃ§Ã£o visual"),
+            ("WEEKLY_CHECKIN", "Check-in semanal"), ("WORKOUT_COMPLETION", "Conclusão de treino"),
+            ("EXERCISE_LIBRARY", "Biblioteca de exercícios"), ("WORKOUT_TEMPLATES", "Templates de treino"),
+            ("PUBLIC_PROFILE_PAGE", "Página pública"), ("NOTIFICATIONS", "Notificações"),
+            ("REPORTS", "Relatórios"), ("VISUAL_CUSTOMIZATION", "Personalização visual"),
             ("ANAMNESIS", "Anamnese"), ("INTERNAL_NOTES", "Notas internas"),
-            ("TESTIMONIALS", "Depoimentos"), ("PROGRESS_COMMENTS", "ComentÃ¡rios no progresso"),
+            ("TESTIMONIALS", "Depoimentos"), ("PROGRESS_COMMENTS", "Comentários no progresso"),
         };
         var featureEntities = features.Select(f => new PlatformFeature { Id = Guid.NewGuid(), Code = f.Item1, Name = f.Item2, Active = true }).ToList();
         await context.PlatformFeatures.AddRangeAsync(featureEntities);
@@ -270,15 +270,15 @@ public static class DatabaseSeeder
         var libItems = new[]
         {
             ("Supino Reto com Barra", "Peitoral", ExerciseLevel.Intermediate), ("Supino Inclinado com Halteres", "Peitoral", ExerciseLevel.Intermediate),
-            ("Crucifixo", "Peitoral", ExerciseLevel.Beginner), ("Agachamento Livre", "QuadrÃ­ceps", ExerciseLevel.Intermediate),
-            ("Leg Press 45Â°", "QuadrÃ­ceps", ExerciseLevel.Beginner), ("Afundo", "QuadrÃ­ceps", ExerciseLevel.Beginner),
-            ("Levantamento Terra", "Posterior/Lombar", ExerciseLevel.Advanced), ("Cadeira Extensora", "QuadrÃ­ceps", ExerciseLevel.Beginner),
-            ("Mesa Flexora", "Posterior", ExerciseLevel.Beginner), ("Panturrilha em PÃ©", "Panturrilha", ExerciseLevel.Beginner),
+            ("Crucifixo", "Peitoral", ExerciseLevel.Beginner), ("Agachamento Livre", "Quadríceps", ExerciseLevel.Intermediate),
+            ("Leg Press 45°", "Quadríceps", ExerciseLevel.Beginner), ("Afundo", "Quadríceps", ExerciseLevel.Beginner),
+            ("Levantamento Terra", "Posterior/Lombar", ExerciseLevel.Advanced), ("Cadeira Extensora", "Quadríceps", ExerciseLevel.Beginner),
+            ("Mesa Flexora", "Posterior", ExerciseLevel.Beginner), ("Panturrilha em Pé", "Panturrilha", ExerciseLevel.Beginner),
             ("Remada Curvada", "Costas", ExerciseLevel.Intermediate), ("Puxada Frontal", "Costas", ExerciseLevel.Beginner),
-            ("Remada Unilateral", "Costas", ExerciseLevel.Intermediate), ("Rosca Direta", "BÃ­ceps", ExerciseLevel.Beginner),
-            ("Rosca Alternada", "BÃ­ceps", ExerciseLevel.Beginner), ("TrÃ­ceps Pulley", "TrÃ­ceps", ExerciseLevel.Beginner),
-            ("TrÃ­ceps Testa", "TrÃ­ceps", ExerciseLevel.Intermediate), ("Desenvolvimento com Halteres", "Ombros", ExerciseLevel.Intermediate),
-            ("ElevaÃ§Ã£o Lateral", "Ombros", ExerciseLevel.Beginner), ("Abdominal Crunch", "AbdÃ´men", ExerciseLevel.Beginner),
+            ("Remada Unilateral", "Costas", ExerciseLevel.Intermediate), ("Rosca Direta", "Bíceps", ExerciseLevel.Beginner),
+            ("Rosca Alternada", "Bíceps", ExerciseLevel.Beginner), ("Tríceps Pulley", "Tríceps", ExerciseLevel.Beginner),
+            ("Tríceps Testa", "Tríceps", ExerciseLevel.Intermediate), ("Desenvolvimento com Halteres", "Ombros", ExerciseLevel.Intermediate),
+            ("Elevação Lateral", "Ombros", ExerciseLevel.Beginner), ("Abdominal Crunch", "Abdômen", ExerciseLevel.Beginner),
         };
         var libEntities = libItems.Select(l => new ExerciseLibraryItem { Id = Guid.NewGuid(), Name = l.Item1, MuscleGroup = l.Item2, Level = l.Item3, IsActive = true }).ToList();
         await context.ExerciseLibraryItems.AddRangeAsync(libEntities);
@@ -292,7 +292,7 @@ public static class DatabaseSeeder
         var agach = libEntities.First(l => l.Name == "Agachamento Livre");
         var remada = libEntities.First(l => l.Name == "Remada Curvada");
         var rosca = libEntities.First(l => l.Name == "Rosca Direta");
-        var tricep = libEntities.First(l => l.Name == "TrÃ­ceps Pulley");
+        var tricep = libEntities.First(l => l.Name == "Tríceps Pulley");
 
         await context.WorkoutTemplateExercises.AddRangeAsync(
             new WorkoutTemplateExercise { Id = Guid.NewGuid(), WorkoutTemplateId = tplHyper.Id, ExerciseLibraryItemId = supino.Id, Sets = 4, Reps = "8-12", RestSeconds = 90, OrderIndex = 1 },
@@ -305,9 +305,9 @@ public static class DatabaseSeeder
 
         // Terms
         await context.TermsDocuments.AddRangeAsync(
-            new TermsDocument { Id = Guid.NewGuid(), Type = TermsType.TermsOfUse, Version = "1.0", Title = "Termos de Uso", Content = "Ao usar a FitPlatform vocÃª concorda com os termos de uso.", Active = true },
-            new TermsDocument { Id = Guid.NewGuid(), Type = TermsType.PrivacyPolicy, Version = "1.0", Title = "PolÃ­tica de Privacidade", Content = "Seus dados sÃ£o tratados conforme a LGPD.", Active = true },
-            new TermsDocument { Id = Guid.NewGuid(), Type = TermsType.ProgressPhotoConsent, Version = "1.0", Title = "Consentimento para Fotos de Progresso", Content = "Suas fotos sÃ£o privadas e visÃ­veis apenas para vocÃª e seu personal trainer.", Active = true }
+            new TermsDocument { Id = Guid.NewGuid(), Type = TermsType.TermsOfUse, Version = "1.0", Title = "Termos de Uso", Content = "Ao usar a FitPlatform você concorda com os termos de uso.", Active = true },
+            new TermsDocument { Id = Guid.NewGuid(), Type = TermsType.PrivacyPolicy, Version = "1.0", Title = "Política de Privacidade", Content = "Seus dados são tratados conforme a LGPD.", Active = true },
+            new TermsDocument { Id = Guid.NewGuid(), Type = TermsType.ProgressPhotoConsent, Version = "1.0", Title = "Consentimento para Fotos de Progresso", Content = "Suas fotos são privadas e visíveis apenas para você e seu personal trainer.", Active = true }
         );
 
         await context.PrivacyPolicyVersions.AddRangeAsync(
@@ -341,7 +341,7 @@ public static class DatabaseSeeder
             new DataProcessorVendor { Name = "AbacatePay", Purpose = "Processamento de pagamentos e assinaturas", DataCategories = "Dados de cobranca e identificadores transacionais", CountryOrRegion = "Brasil", HasInternationalTransfer = false, IsActive = true, PrivacyPolicyReference = "https://abacatepay.com" },
             new DataProcessorVendor { Name = "Cloudinary", Purpose = "Armazenamento e entrega de midia", DataCategories = "Imagens e videos enviados pelos usuarios", CountryOrRegion = "Global", HasInternationalTransfer = true, IsActive = true, PrivacyPolicyReference = "https://cloudinary.com/privacy" },
             new DataProcessorVendor { Name = "Hosting Provider", Purpose = "Hospedagem da aplicacao", DataCategories = "Dados de aplicacao e logs tecnicos", CountryOrRegion = "A definir", HasInternationalTransfer = true, IsActive = true });
-        // Sample check-in for JoÃ£o Silva
+        // Sample check-in for João Silva
         var weekStart = DateTime.UtcNow.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
         await context.StudentWeeklyCheckIns.AddAsync(new StudentWeeklyCheckIn
         {
@@ -356,11 +356,11 @@ public static class DatabaseSeeder
         await context.StudentAnamnesisRecords.AddAsync(new StudentAnamnesis
         {
             Id = Guid.NewGuid(), StudentId = student.Id, TrainerId = trainer.Id,
-            MainGoal = "Hipertrofia e ganho de forÃ§a", TrainingExperience = "2 anos de musculaÃ§Ã£o",
-            Injuries = "Nenhuma lesÃ£o ativa", HealthRestrictions = "Nenhuma",
+            MainGoal = "Hipertrofia e ganho de força", TrainingExperience = "2 anos de musculação",
+            Injuries = "Nenhuma lesão ativa", HealthRestrictions = "Nenhuma",
             AvailableDaysPerWeek = 4, TrainingLocation = "Academia",
             AvailableEquipment = "Equipamento completo de academia", SleepQuality = 4,
-            StressLevel = 3, FoodRoutineNotes = "Come bem, faz suplementaÃ§Ã£o bÃ¡sica",
+            StressLevel = 3, FoodRoutineNotes = "Come bem, faz suplementação básica",
             SubmittedAt = DateTime.UtcNow.AddDays(-7)
         });
 
@@ -388,7 +388,7 @@ public static class DatabaseSeeder
         trainer.PublicSearchEnabled = true;
         trainer.AcceptingStudents = true;
         trainer.PublicHeadline = "Personal Trainer Especialista em Hipertrofia";
-        trainer.PublicDescription = "Ajudo vocÃª a transformar seu corpo com treinos personalizados e acompanhamento completo. 10 anos de experiÃªncia, mais de 200 alunos transformados.";
+        trainer.PublicDescription = "Ajudo você a transformar seu corpo com treinos personalizados e acompanhamento completo. 10 anos de experiência, mais de 200 alunos transformados.";
         trainer.WhatsappNumber = "11999999999";
         trainer.ShowTestimonials = true;
         trainer.ShowInstagram = true;
@@ -436,8 +436,8 @@ public static class DatabaseSeeder
                 new Post
                 {
                     Id = Guid.NewGuid(), TrainerId = trainer.Id,
-                    Title = "A importÃ¢ncia do descanso na hipertrofia",
-                    Description = "Muitos alunos subestimam o descanso. Saiba por que dormir bem e ter dias de recuperaÃ§Ã£o Ã© essencial para ganhar mÃºsculo.",
+                    Title = "A importância do descanso na hipertrofia",
+                    Description = "Muitos alunos subestimam o descanso. Saiba por que dormir bem e ter dias de recuperação é essencial para ganhar músculo.",
                     Status = PostStatus.Published, Visibility = PostVisibility.Public,
                     Tags = "Hipertrofia,Descanso,Sono", PublishedAt = DateTime.UtcNow.AddDays(-5)
                 }
@@ -455,7 +455,7 @@ public static class DatabaseSeeder
                 context.StudentTestimonials.Add(new StudentTestimonial
                 {
                     Id = Guid.NewGuid(), TrainerId = trainer.Id, StudentId = student.Id,
-                    Text = "O Carlos Ã© incrÃ­vel! Em 2 meses jÃ¡ perdi 5kg e ganhei muito mais disposiÃ§Ã£o. Super recomendo!",
+                    Text = "O Carlos é incrível! Em 2 meses já perdi 5kg e ganhei muito mais disposição. Super recomendo!",
                     Rating = 5, ApprovedByStudent = true, Published = true
                 });
             }
@@ -474,7 +474,7 @@ public static class DatabaseSeeder
                     Id = Guid.NewGuid(), TrainerId = trainer.Id, StudentId = student.Id,
                     BeforePhotoUrl = "https://placehold.co/400x600/1a1a2e/ffffff?text=Antes",
                     AfterPhotoUrl = "https://placehold.co/400x600/0f3460/ffffff?text=Depois",
-                    Description = "TransformaÃ§Ã£o em 2 meses: -4.7kg de gordura, ganho de mÃºsculo e muito mais disposiÃ§Ã£o!",
+                    Description = "Transformação em 2 meses: -4.7kg de gordura, ganho de músculo e muito mais disposição!",
                     ApprovedByStudent = true, Published = true
                 });
             }
@@ -497,7 +497,7 @@ public static class DatabaseSeeder
                         Weight = 85.0m, Height = 178m, Chest = 98m, Waist = 88m, Abdomen = 91m, Hip = 99m, BodyFatPercentage = 18.5m,
                         ProgressDate = DateTime.UtcNow.AddMonths(-2),
                         CreatedByUserId = trainerUser.Id, CreatedByRole = ProgressCreatedByRole.Trainer,
-                        Notes = "AvaliaÃ§Ã£o inicial â€” inÃ­cio do programa"
+                        Notes = "Avaliação inicial — início do programa"
                     },
                     new StudentProgress
                     {
@@ -505,7 +505,7 @@ public static class DatabaseSeeder
                         Weight = 80.3m, Height = 178m, Chest = 102m, Waist = 82m, Abdomen = 85m, Hip = 96m, BodyFatPercentage = 14.8m,
                         ProgressDate = DateTime.UtcNow.AddDays(-7),
                         CreatedByUserId = studentUser.Id, CreatedByRole = ProgressCreatedByRole.Student,
-                        Notes = "Me sinto muito melhor! Roupas estÃ£o mais folgadas."
+                        Notes = "Me sinto muito melhor! Roupas estão mais folgadas."
                     }
                 );
             }
@@ -526,7 +526,7 @@ public static class DatabaseSeeder
                     {
                         Id = Guid.NewGuid(), StudentId = student.Id, TrainerId = trainer.Id,
                         ImageUrl = "https://placehold.co/400x600/1a1a2e/ffffff?text=Antes",
-                        Description = "Foto inicial â€” frente",
+                        Description = "Foto inicial — frente",
                         PhotoDate = DateTime.UtcNow.AddMonths(-2),
                         CreatedByUserId = trainerUser.Id, CreatedByRole = ProgressCreatedByRole.Trainer
                     },
@@ -534,7 +534,7 @@ public static class DatabaseSeeder
                     {
                         Id = Guid.NewGuid(), StudentId = student.Id, TrainerId = trainer.Id,
                         ImageUrl = "https://placehold.co/400x600/0f3460/ffffff?text=Depois",
-                        Description = "Foto com 2 meses de treino â€” frente",
+                        Description = "Foto com 2 meses de treino — frente",
                         PhotoDate = DateTime.UtcNow.AddDays(-7),
                         CreatedByUserId = studentUser.Id, CreatedByRole = ProgressCreatedByRole.Student
                     }
@@ -571,8 +571,8 @@ public static class DatabaseSeeder
             -29.917881,
             -51.183228,
             "Hybrid",
-            "Hipertrofia,ForÃ§a",
-            "Acompanhamento hÃ­brido para ganho de massa e forÃ§a."
+            "Hipertrofia,Força",
+            "Acompanhamento híbrido para ganho de massa e força."
         );
         await EnsureExploreTrainerAsync(
             context,
@@ -586,8 +586,8 @@ public static class DatabaseSeeder
             -29.722019,
             -52.434444,
             "InPerson",
-            "ReabilitaÃ§Ã£o,Funcional",
-            "Treinos personalizados com foco em mobilidade e saÃºde."
+            "Reabilitação,Funcional",
+            "Treinos personalizados com foco em mobilidade e saúde."
         );
         await EnsureExploreTrainerAsync(
             context,
@@ -595,14 +595,14 @@ public static class DatabaseSeeder
             "Renato Alves",
             "Renato Personal",
             "renato-personal-sp",
-            "SÃ£o Paulo",
+            "São Paulo",
             "SP",
             "Vila Mariana",
             -23.589949,
             -46.634596,
             "Hybrid",
             "Hipertrofia,Emagrecimento",
-            "Consultoria presencial e online para evoluÃ§Ã£o consistente."
+            "Consultoria presencial e online para evolução consistente."
         );
         await EnsureExploreTrainerAsync(
             context,
