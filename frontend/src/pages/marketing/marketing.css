@@ -246,17 +246,8 @@
 @media (max-width: 1023px) { .gallery-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 767px) { .gallery-overview-grid { grid-template-columns: 1fr; gap: 28px; } }
 .gallery-product-stage { perspective: 1400px; }
-.brand-sculpture { position: absolute; width: 250px; height: 250px; right: -30px; top: -140px; pointer-events: none; z-index: 0; }
-.brand-sculpture canvas, .brand-sculpture-fallback { position: absolute; inset: 0; width: 100%; height: 100%; }
-.brand-sculpture[data-renderer="webgl"] .brand-sculpture-fallback { visibility: hidden; }
-.brand-sculpture-fallback { display: grid; place-items: center; transform: rotate(-16deg); }
-.brand-sculpture-fallback i { grid-area: 1/1; width: 58%; height: 58%; border: 7px solid var(--brand-indigo); border-radius: 50%; transform: rotateX(55deg) rotate(-25deg); }
-.brand-sculpture-fallback i:nth-child(2) { border-color: var(--brand-indigo-soft); transform: rotateY(55deg) rotate(35deg); }
-.brand-sculpture-fallback i:nth-child(3) { width: 42%; height: 42%; border-width: 5px; border-color: var(--brand-cyan); transform: rotateX(-45deg) rotate(-45deg); }
-.brand-sculpture-fallback span { grid-area: 1/1; width: 10px; height: 42px; border-radius: 99px; background: var(--brand-indigo-strong); }
 .gallery-desktop-device { position: relative; z-index: 1; }
 .gallery-product-caption { z-index: 2; }
-@media (max-width: 1023px) { .brand-sculpture { width: 120px; height: 120px; right: -10px; top: -60px; } .brand-sculpture-fallback i { border-width: 4px; } .brand-sculpture-fallback span { width: 5px; height: 22px; } }
 .gallery-motion-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 46; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 99px; background: var(--surface-frost); color: var(--text-secondary); font-size: 12px; backdrop-filter: blur(14px); }
 .gallery-motion-toggle:disabled { display: none; }
 .gallery-motion-toggle > span[aria-hidden] { color: var(--link); font-size: 16px; }

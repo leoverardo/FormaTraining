@@ -5,7 +5,6 @@ import { BrandLogo } from '../../components/brand/BrandLogo';
 import { ProductPreview, StudentPreview } from './ProductPreview';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { FeatureCarousel } from './FeatureCarousel';
-import { BrandSculpture } from './BrandSculpture';
 import { ProductStory } from './ProductStory';
 import { PlatformOverview } from './PlatformOverview';
 import { useLandingMotion } from './useLandingMotion';
@@ -44,7 +43,7 @@ export function LandingPage() {
     <main>
       <section className="gallery-hero">
         <div className="gallery-shell"><p className="gallery-eyebrow">UpCoach</p><h1>Seu método.<br /><span>Em sua melhor forma.</span></h1><p className="gallery-hero-description">Mais presença no acompanhamento.<br className="mobile-break" /> Mais espaço para evoluir.<br />Alunos, treinos e resultados. Tudo conectado.</p><div className="gallery-actions"><Link to="/register" className="gallery-button">Conhecer os planos <ArrowRight size={15} /></Link><a href="#produto" className="gallery-link">Explore a plataforma <ChevronRight size={17} /></a></div>
-          <div className="gallery-product-stage"><BrandSculpture enabled={moving} /><div className="gallery-desktop-device"><div className="gallery-device-camera" /><ProductPreview /></div><div className="gallery-device-foot" /><div className="gallery-product-caption"><span>Feito para personal trainers.<br /><b>Pensado para cada aluno.</b></span><a href="#experiencia" aria-label="Conheça a experiência do aluno"><Plus size={20} /></a></div></div>
+          <div className="gallery-product-stage"><div className="gallery-desktop-device"><div className="gallery-device-camera" /><ProductPreview /></div><div className="gallery-device-foot" /><div className="gallery-product-caption"><span>Feito para personal trainers.<br /><b>Pensado para cada aluno.</b></span><a href="#experiencia" aria-label="Conheça a experiência do aluno"><Plus size={20} /></a></div></div>
           <p className="gallery-footnote">Uma prévia do que você e seus alunos podem construir juntos. Dados ilustrativos.</p>
         </div>
       </section>
