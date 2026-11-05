@@ -22,20 +22,20 @@ public class ExerciseLibraryService
     public async Task<ApiResponse<ExerciseLibraryResponse>> CreateAsync(ExerciseLibraryRequest request)
     {
         if (!string.IsNullOrWhiteSpace(request.ImageUrl) || !string.IsNullOrWhiteSpace(request.VideoUrl))
-            return ApiResponse<ExerciseLibraryResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+            return ApiResponse<ExerciseLibraryResponse>.Fail("Envio por URL não é permitido. Use upload de mídia e informe os MediaIds.");
 
         string? imageUrl = null;
         string? videoUrl = null;
         if (request.ImageMediaId.HasValue)
         {
             var imageMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.ImageMediaId.Value);
-            if (imageMedia == null) return ApiResponse<ExerciseLibraryResponse>.Fail("MÃ­dia de imagem nÃ£o encontrada.");
+            if (imageMedia == null) return ApiResponse<ExerciseLibraryResponse>.Fail("Mídia de imagem não encontrada.");
             imageUrl = imageMedia.SecureUrl ?? imageMedia.Url;
         }
         if (request.VideoMediaId.HasValue)
         {
             var videoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.VideoMediaId.Value);
-            if (videoMedia == null) return ApiResponse<ExerciseLibraryResponse>.Fail("MÃ­dia de vÃ­deo nÃ£o encontrada.");
+            if (videoMedia == null) return ApiResponse<ExerciseLibraryResponse>.Fail("Mídia de vídeo não encontrada.");
             videoUrl = videoMedia.SecureUrl ?? videoMedia.Url;
         }
 
@@ -56,18 +56,18 @@ public class ExerciseLibraryService
         if (item == null) return ApiResponse<ExerciseLibraryResponse>.Fail("Exercício não encontrado.");
 
         if (!string.IsNullOrWhiteSpace(request.ImageUrl) || !string.IsNullOrWhiteSpace(request.VideoUrl))
-            return ApiResponse<ExerciseLibraryResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+            return ApiResponse<ExerciseLibraryResponse>.Fail("Envio por URL não é permitido. Use upload de mídia e informe os MediaIds.");
 
         if (request.ImageMediaId.HasValue)
         {
             var imageMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.ImageMediaId.Value);
-            if (imageMedia == null) return ApiResponse<ExerciseLibraryResponse>.Fail("MÃ­dia de imagem nÃ£o encontrada.");
+            if (imageMedia == null) return ApiResponse<ExerciseLibraryResponse>.Fail("Mídia de imagem não encontrada.");
             item.ImageUrl = imageMedia.SecureUrl ?? imageMedia.Url;
         }
         if (request.VideoMediaId.HasValue)
         {
             var videoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.VideoMediaId.Value);
-            if (videoMedia == null) return ApiResponse<ExerciseLibraryResponse>.Fail("MÃ­dia de vÃ­deo nÃ£o encontrada.");
+            if (videoMedia == null) return ApiResponse<ExerciseLibraryResponse>.Fail("Mídia de vídeo não encontrada.");
             item.VideoUrl = videoMedia.SecureUrl ?? videoMedia.Url;
         }
 

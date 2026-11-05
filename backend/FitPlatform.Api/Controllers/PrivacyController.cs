@@ -54,11 +54,11 @@ public class ConsentsController : ControllerBase
     {
         var termsDoc = await _db.TermsDocuments.FindAsync(request.TermsDocumentId);
         if (termsDoc == null || !termsDoc.Active)
-            return BadRequest(ApiResponse.Fail("Documento de termos n„o encontrado ou inativo."));
+            return BadRequest(ApiResponse.Fail("Documento de termos n√£o encontrado ou inativo."));
 
         var existing = await _db.UserConsents.FirstOrDefaultAsync(c => c.UserId == _currentUser.UserId && c.TermsDocumentId == request.TermsDocumentId);
         if (existing != null)
-            return Ok(ApiResponse.Ok("Consentimento j· registrado."));
+            return Ok(ApiResponse.Ok("Consentimento j√° registrado."));
 
         _db.UserConsents.Add(new UserConsent
         {
@@ -92,7 +92,7 @@ public class StudentAnonymizationController : ControllerBase
     {
         var student = await _db.Students.Include(s => s.User)
             .FirstOrDefaultAsync(s => s.Id == id && s.TrainerId == _currentUser.TrainerId!.Value);
-        if (student == null) return NotFound(ApiResponse.Fail("Aluno n„o encontrado."));
+        if (student == null) return NotFound(ApiResponse.Fail("Aluno n√£o encontrado."));
 
         student.User.Name = "Aluno Anonimizado";
         student.User.Email = $"anon_{student.Id:N}@deleted.invalid";

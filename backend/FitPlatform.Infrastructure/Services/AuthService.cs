@@ -25,10 +25,10 @@ public class AuthService
     public async Task<ApiResponse<AuthResponse>> RegisterTrainerAsync(RegisterTrainerRequest request)
     {
         if (!request.AcceptPrivacyPolicy || !request.AcceptTermsOfUse)
-            return ApiResponse<AuthResponse>.Fail("VocÃª precisa aceitar os Termos de Uso e a PolÃ­tica de Privacidade.");
+            return ApiResponse<AuthResponse>.Fail("Você precisa aceitar os Termos de Uso e a Política de Privacidade.");
 
         if (await _db.Users.AnyAsync(u => u.Email == request.Email.ToLower()))
-            return ApiResponse<AuthResponse>.Fail("E-mail jÃ¡ estÃ¡ em uso.");
+            return ApiResponse<AuthResponse>.Fail("E-mail já está em uso.");
 
         var user = new User
         {
@@ -68,10 +68,10 @@ public class AuthService
     public async Task<ApiResponse<AuthResponse>> RegisterStudentAsync(RegisterStudentRequest request)
     {
         if (!request.AcceptPrivacyPolicy || !request.AcceptTermsOfUse)
-            return ApiResponse<AuthResponse>.Fail("VocÃª precisa aceitar os Termos de Uso e a PolÃ­tica de Privacidade.");
+            return ApiResponse<AuthResponse>.Fail("Você precisa aceitar os Termos de Uso e a Política de Privacidade.");
         var email = request.Email.Trim().ToLower();
         if (await _db.Users.AnyAsync(u => u.Email == email))
-            return ApiResponse<AuthResponse>.Fail("E-mail jÃ¡ estÃ¡ em uso.");
+            return ApiResponse<AuthResponse>.Fail("E-mail já está em uso.");
 
         var user = new User
         {
@@ -162,7 +162,7 @@ public class AuthService
         var user = await FindUserByIdSafeAsync(userId);
 
         if (user == null)
-            return ApiResponse<UserDto>.Fail("UsuÃ¡rio nÃ£o encontrado.");
+            return ApiResponse<UserDto>.Fail("Usuário não encontrado.");
 
         Guid? activeTrainerId = user.Student?.Status == StudentStatus.Active ? user.Student.TrainerId : null;
         return ApiResponse<UserDto>.Ok(MapUserDto(user, user.Trainer?.Id, user.Student?.Id, user.StudentProfile?.Id, activeTrainerId));

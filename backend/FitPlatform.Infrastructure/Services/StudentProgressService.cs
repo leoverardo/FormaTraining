@@ -134,7 +134,7 @@ public class StudentProgressService
         if (student == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("Aluno não encontrado.");
 
         var media = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.MediaAssetId);
-        if (media == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("MÃ­dia nÃ£o encontrada.");
+        if (media == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("Mídia não encontrada.");
 
         var photo = new StudentProgressPhoto
         {
@@ -175,7 +175,7 @@ public class StudentProgressService
         if (student == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("Aluno não encontrado.");
 
         var media = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.MediaAssetId);
-        if (media == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("MÃ­dia nÃ£o encontrada.");
+        if (media == null) return ApiResponse<StudentProgressPhotoResponse>.Fail("Mídia não encontrada.");
 
         var photo = new StudentProgressPhoto
         {

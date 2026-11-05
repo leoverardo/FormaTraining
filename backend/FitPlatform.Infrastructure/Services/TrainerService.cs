@@ -132,7 +132,7 @@ public class TrainerService
         if (trainer == null) return ApiResponse<TrainerProfileResponse>.Fail("Trainer não encontrado.");
 
         if (!string.IsNullOrWhiteSpace(request.ProfilePhotoUrl) || !string.IsNullOrWhiteSpace(request.LogoUrl))
-            return ApiResponse<TrainerProfileResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+            return ApiResponse<TrainerProfileResponse>.Fail("Envio por URL não é permitido. Use upload de mídia e informe os MediaIds.");
 
         trainer.User.Name = request.Name;
         trainer.User.UpdatedAt = DateTime.UtcNow;
@@ -147,14 +147,14 @@ public class TrainerService
         if (request.ProfilePhotoMediaId.HasValue)
         {
             var profileMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.ProfilePhotoMediaId.Value);
-            if (profileMedia == null) return ApiResponse<TrainerProfileResponse>.Fail("MÃ­dia de foto de perfil nÃ£o encontrada.");
+            if (profileMedia == null) return ApiResponse<TrainerProfileResponse>.Fail("Mídia de foto de perfil não encontrada.");
             trainer.ProfilePhotoMediaId = profileMedia.Id;
             trainer.ProfilePhotoUrl = profileMedia.SecureUrl ?? profileMedia.Url;
         }
         if (request.LogoMediaId.HasValue)
         {
             var logoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.LogoMediaId.Value);
-            if (logoMedia == null) return ApiResponse<TrainerProfileResponse>.Fail("MÃ­dia de logo nÃ£o encontrada.");
+            if (logoMedia == null) return ApiResponse<TrainerProfileResponse>.Fail("Mídia de logo não encontrada.");
             trainer.LogoMediaId = logoMedia.Id;
             trainer.LogoUrl = logoMedia.SecureUrl ?? logoMedia.Url;
         }

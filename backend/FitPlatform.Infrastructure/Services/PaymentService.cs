@@ -30,7 +30,7 @@ public class PaymentService
     public async Task<ApiResponse<List<PlanBillingOptionResponse>>> GetBillingOptionsAsync(Guid planId, CancellationToken cancellationToken = default)
     {
         var plan = await _db.PlatformPlans.FirstOrDefaultAsync(x => x.Id == planId && x.Active, cancellationToken);
-        if (plan == null) return ApiResponse<List<PlanBillingOptionResponse>>.Fail("Plano nÃ£o encontrado.");
+        if (plan == null) return ApiResponse<List<PlanBillingOptionResponse>>.Fail("Plano não encontrado.");
         if (!plan.IsAvailableForPurchase)
             return ApiResponse<List<PlanBillingOptionResponse>>.Fail("Este plano ainda não está disponível para contratação.");
 
@@ -49,34 +49,34 @@ public class PaymentService
     public async Task<ApiResponse<ValidateCouponResponse>> ValidateCouponAsync(Guid trainerId, ValidateCouponRequest request, CancellationToken cancellationToken = default)
     {
         var plan = await _db.PlatformPlans.FirstOrDefaultAsync(x => x.Id == request.PlanId && x.Active, cancellationToken);
-        if (plan == null) return ApiResponse<ValidateCouponResponse>.Fail("Plano nÃ£o encontrado.");
+        if (plan == null) return ApiResponse<ValidateCouponResponse>.Fail("Plano não encontrado.");
         if (!plan.IsAvailableForPurchase)
             return ApiResponse<ValidateCouponResponse>.Fail("Este plano ainda não está disponível para contratação.");
 
         var calc = await CalculateWithCouponAsync(plan, request.BillingCycle, request.CouponCode, trainerId, cancellationToken);
-        return ApiResponse<ValidateCouponResponse>.Ok(ToCouponResponse(calc, calc.CouponError ?? "Cupom vÃ¡lido."));
+        return ApiResponse<ValidateCouponResponse>.Ok(ToCouponResponse(calc, calc.CouponError ?? "Cupom válido."));
     }
 
     public async Task<ApiResponse<SubscriptionResponse>> CreateSubscriptionAsync(Guid trainerId, CreateSubscriptionRequest request, CancellationToken cancellationToken = default)
     {
         var trainer = await _db.Trainers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == trainerId, cancellationToken);
-        if (trainer == null) return ApiResponse<SubscriptionResponse>.Fail("Trainer nÃ£o encontrado.");
+        if (trainer == null) return ApiResponse<SubscriptionResponse>.Fail("Trainer não encontrado.");
 
         var plan = await _db.PlatformPlans.FirstOrDefaultAsync(x => x.Id == request.PlatformPlanId && x.Active, cancellationToken);
-        if (plan == null) return ApiResponse<SubscriptionResponse>.Fail("Plano nÃ£o encontrado.");
+        if (plan == null) return ApiResponse<SubscriptionResponse>.Fail("Plano não encontrado.");
         if (!plan.IsAvailableForPurchase)
             return ApiResponse<SubscriptionResponse>.Fail("Este plano ainda não está disponível para contratação.");
 
         var active = await _db.TrainerSubscriptions.FirstOrDefaultAsync(
             ts => ts.TrainerId == trainerId && ts.Status == TrainerSubscriptionStatus.Active,
             cancellationToken);
-        if (active != null) return ApiResponse<SubscriptionResponse>.Fail("VocÃª jÃ¡ possui uma assinatura ativa.");
+        if (active != null) return ApiResponse<SubscriptionResponse>.Fail("Você já possui uma assinatura ativa.");
 
         var option = await _db.PlanBillingOptions.FirstOrDefaultAsync(
             x => x.PlatformPlanId == plan.Id && x.BillingCycle == request.BillingCycle && x.IsActive,
             cancellationToken);
         if (option == null || string.IsNullOrWhiteSpace(option.AbacatePayProductId))
-            return ApiResponse<SubscriptionResponse>.Fail("Produto da AbacatePay nÃ£o configurado para esse plano/ciclo.");
+            return ApiResponse<SubscriptionResponse>.Fail("Produto da AbacatePay não configurado para esse plano/ciclo.");
 
         var onboarding = await _db.TrainerOnboardings
             .Where(x => x.Email == trainer.User.Email && x.Status == OnboardingStatus.WaitingPayment)
@@ -209,7 +209,7 @@ public class PaymentService
             {
                 _logger.LogInformation("Webhook ignored by idempotency. Provider=AbacatePay EventId={EventId}", evtId);
                 await tx.CommitAsync(cancellationToken);
-                return ApiResponse.Ok("Webhook jÃ¡ processado.");
+                return ApiResponse.Ok("Webhook já processado.");
             }
 
             var log = new PaymentWebhookLog
@@ -226,11 +226,11 @@ public class PaymentService
             var subscription = await ResolveSubscriptionFromWebhookAsync(payload, cancellationToken);
             if (subscription == null)
             {
-                _logger.LogWarning("Webhook AbacatePay sem correlaÃ§Ã£o interna. EventId={EventId} EventType={EventType}", evtId, evtType);
+                _logger.LogWarning("Webhook AbacatePay sem correlação interna. EventId={EventId} EventType={EventType}", evtId, evtType);
                 log.ProcessedAt = DateTime.UtcNow;
                 await _db.SaveChangesAsync(cancellationToken);
                 await tx.CommitAsync(cancellationToken);
-                return ApiResponse.Ok("Webhook recebido sem correlaÃ§Ã£o local.");
+                return ApiResponse.Ok("Webhook recebido sem correlação local.");
             }
 
             await ApplyWebhookToSubscriptionAsync(subscription, payload, evtType, cancellationToken);
@@ -519,16 +519,16 @@ public class PaymentService
         var coupon = await _db.DiscountCoupons.FirstOrDefaultAsync(
             c => c.Code.ToUpper() == couponCode.Trim().ToUpper(),
             cancellationToken);
-        if (coupon == null || !coupon.IsActive) return snapshot with { CouponError = "Cupom invÃ¡lido." };
+        if (coupon == null || !coupon.IsActive) return snapshot with { CouponError = "Cupom inválido." };
 
         var now = DateTime.UtcNow;
-        if (coupon.StartsAt.HasValue && coupon.StartsAt > now) return snapshot with { CouponError = "Cupom fora da vigÃªncia." };
+        if (coupon.StartsAt.HasValue && coupon.StartsAt > now) return snapshot with { CouponError = "Cupom fora da vigência." };
         if (coupon.ExpiresAt.HasValue && coupon.ExpiresAt < now) return snapshot with { CouponError = "Cupom expirado." };
-        if (coupon.AppliesToPlanId.HasValue && coupon.AppliesToPlanId != plan.Id) return snapshot with { CouponError = "Cupom nÃ£o aplicÃ¡vel a este plano." };
-        if (coupon.AppliesToBillingCycle.HasValue && coupon.AppliesToBillingCycle != cycle) return snapshot with { CouponError = "Cupom nÃ£o aplicÃ¡vel a este ciclo." };
+        if (coupon.AppliesToPlanId.HasValue && coupon.AppliesToPlanId != plan.Id) return snapshot with { CouponError = "Cupom não aplicável a este plano." };
+        if (coupon.AppliesToBillingCycle.HasValue && coupon.AppliesToBillingCycle != cycle) return snapshot with { CouponError = "Cupom não aplicável a este ciclo." };
         if (coupon.MaxUsesTotal.HasValue && coupon.CurrentUses >= coupon.MaxUsesTotal.Value) return snapshot with { CouponError = "Cupom esgotado." };
         if (coupon.MinimumPurchaseAmountInCents.HasValue && snapshot.SubtotalAfterCycleDiscountInCents < coupon.MinimumPurchaseAmountInCents.Value)
-            return snapshot with { CouponError = "Valor mÃ­nimo nÃ£o atingido para o cupom." };
+            return snapshot with { CouponError = "Valor mínimo não atingido para o cupom." };
 
         if (coupon.MaxUsesPerCustomer.HasValue)
         {

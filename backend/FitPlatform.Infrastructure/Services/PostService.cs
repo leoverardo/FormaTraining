@@ -29,20 +29,20 @@ public class PostService
     public async Task<ApiResponse<PostResponse>> CreateAsync(PostRequest request, Guid trainerId)
     {
         if (!string.IsNullOrWhiteSpace(request.ImageUrl) || !string.IsNullOrWhiteSpace(request.VideoUrl))
-            return ApiResponse<PostResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+            return ApiResponse<PostResponse>.Fail("Envio por URL não é permitido. Use upload de mídia e informe os MediaIds.");
 
         string? imageUrl = null;
         string? videoUrl = null;
         if (request.CoverMediaId.HasValue)
         {
             var coverMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.CoverMediaId.Value);
-            if (coverMedia == null) return ApiResponse<PostResponse>.Fail("MÃ­dia de capa nÃ£o encontrada.");
+            if (coverMedia == null) return ApiResponse<PostResponse>.Fail("Mídia de capa não encontrada.");
             imageUrl = coverMedia.SecureUrl ?? coverMedia.Url;
         }
         if (request.VideoMediaId.HasValue)
         {
             var videoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.VideoMediaId.Value);
-            if (videoMedia == null) return ApiResponse<PostResponse>.Fail("MÃ­dia de vÃ­deo nÃ£o encontrada.");
+            if (videoMedia == null) return ApiResponse<PostResponse>.Fail("Mídia de vídeo não encontrada.");
             videoUrl = videoMedia.SecureUrl ?? videoMedia.Url;
         }
 
@@ -78,7 +78,7 @@ public class PostService
         if (post == null) return ApiResponse<PostResponse>.Fail("Post não encontrado.");
 
         if (!string.IsNullOrWhiteSpace(request.ImageUrl) || !string.IsNullOrWhiteSpace(request.VideoUrl))
-            return ApiResponse<PostResponse>.Fail("Envio por URL nÃ£o Ã© permitido. Use upload de mÃ­dia e informe os MediaIds.");
+            return ApiResponse<PostResponse>.Fail("Envio por URL não é permitido. Use upload de mídia e informe os MediaIds.");
 
         var wasNotPublished = post.Status != PostStatus.Published;
         var isNowPublishing = request.Status == PostStatus.Published;
@@ -89,14 +89,14 @@ public class PostService
         if (request.CoverMediaId.HasValue)
         {
             var coverMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.CoverMediaId.Value);
-            if (coverMedia == null) return ApiResponse<PostResponse>.Fail("MÃ­dia de capa nÃ£o encontrada.");
+            if (coverMedia == null) return ApiResponse<PostResponse>.Fail("Mídia de capa não encontrada.");
             post.CoverMediaId = coverMedia.Id;
             post.ImageUrl = coverMedia.SecureUrl ?? coverMedia.Url;
         }
         if (request.VideoMediaId.HasValue)
         {
             var videoMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.VideoMediaId.Value);
-            if (videoMedia == null) return ApiResponse<PostResponse>.Fail("MÃ­dia de vÃ­deo nÃ£o encontrada.");
+            if (videoMedia == null) return ApiResponse<PostResponse>.Fail("Mídia de vídeo não encontrada.");
             post.VideoMediaId = videoMedia.Id;
             post.VideoUrl = videoMedia.SecureUrl ?? videoMedia.Url;
         }

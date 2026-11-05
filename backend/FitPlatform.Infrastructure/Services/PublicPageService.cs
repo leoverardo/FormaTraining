@@ -162,7 +162,7 @@ public class PublicPageService
         if (request.PublicBannerMediaId.HasValue)
         {
             var bannerMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.PublicBannerMediaId.Value);
-            if (bannerMedia == null) return ApiResponse<PublicPageResponse>.Fail("MÃ­dia de banner nÃ£o encontrada.");
+            if (bannerMedia == null) return ApiResponse<PublicPageResponse>.Fail("Mídia de banner não encontrada.");
             trainer.PublicBannerMediaId = bannerMedia.Id;
             trainer.BannerUrl = bannerMedia.SecureUrl ?? bannerMedia.Url;
         }
@@ -243,17 +243,17 @@ public class PublicPageService
         if (request.BeforeMediaId.HasValue)
         {
             var beforeMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.BeforeMediaId.Value);
-            if (beforeMedia == null) return ApiResponse<TransformationResponse>.Fail("MÃ­dia 'antes' nÃ£o encontrada.");
+            if (beforeMedia == null) return ApiResponse<TransformationResponse>.Fail("Mídia 'antes' não encontrada.");
             beforePhotoUrl = beforeMedia.SecureUrl ?? beforeMedia.Url;
         }
         if (request.AfterMediaId.HasValue)
         {
             var afterMedia = await _db.MediaFiles.FirstOrDefaultAsync(m => m.Id == request.AfterMediaId.Value);
-            if (afterMedia == null) return ApiResponse<TransformationResponse>.Fail("MÃ­dia 'depois' nÃ£o encontrada.");
+            if (afterMedia == null) return ApiResponse<TransformationResponse>.Fail("Mídia 'depois' não encontrada.");
             afterPhotoUrl = afterMedia.SecureUrl ?? afterMedia.Url;
         }
         if (!request.BeforeMediaId.HasValue && !request.AfterMediaId.HasValue)
-            return ApiResponse<TransformationResponse>.Fail("Informe ao menos uma mÃ­dia (before/after).");
+            return ApiResponse<TransformationResponse>.Fail("Informe ao menos uma mídia (before/after).");
 
         var t = new StudentTransformation
         {
