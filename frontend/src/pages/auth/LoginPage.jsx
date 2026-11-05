@@ -6,7 +6,6 @@ import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { ChevronRight } from 'lucide-react';
-import { BrandLogo } from '../../components/brand/BrandLogo';
 import { BRAND_ASSETS } from '../../components/brand/brandAssets';
 
 export function LoginPage() {
@@ -44,13 +43,8 @@ export function LoginPage() {
       </aside>
 
       {/* Right column ? login form */}
-      <div className="login-panel flex-1 flex items-center justify-center p-6 bg-[var(--surface)]">
+      <div className="login-panel flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <BrandLogo size="sm" />
-          </div>
-
           <div className="ds-card p-[var(--card-padding)]">
             <div className="mb-6">
               <h2 className="text-2xl font-semibold text-slate-900">Bem-vindo de volta</h2>

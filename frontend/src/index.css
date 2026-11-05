@@ -181,6 +181,9 @@
 .uc-section { padding-block: var(--section-gap); }
 .uc-fade-up { transition: opacity var(--duration-medium) var(--ease-apple), transform var(--duration-medium) var(--ease-apple); }
 
+.login-panel { background: #e6ebf5; }
+:root[data-theme='dark'] .login-panel { background: #0b1020; }
+
 .app-shell { background: var(--surface-muted); color: var(--text); }
 @layer components {
   .ds-card { background: var(--surface); border: 0; border-radius: var(--radius-card); }
