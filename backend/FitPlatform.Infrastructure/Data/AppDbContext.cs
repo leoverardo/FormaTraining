@@ -207,8 +207,14 @@ public class AppDbContext : DbContext
             e.HasIndex(ts => ts.PlatformPlanId);
             e.HasIndex(ts => ts.Provider);
             e.HasIndex(ts => ts.AbacatePaySubscriptionId);
+            e.HasIndex(ts => ts.AbacatePayCheckoutId);
+            // Suporta a varredura da rotina de reconciliação (Status + CreatedAt).
+            e.HasIndex(ts => new { ts.Status, ts.CreatedAt });
             e.Property(ts => ts.Status).HasConversion<int>();
             e.Property(ts => ts.BillingCycle).HasConversion<int>();
+            e.Property(ts => ts.PendingBillingCycle).HasConversion<int>();
+            e.Property(ts => ts.ProviderStatus).HasMaxLength(40);
+            e.Property(ts => ts.PendingPlanChangeProviderId).HasMaxLength(120);
             e.HasOne(ts => ts.Trainer).WithMany(t => t.Subscriptions).HasForeignKey(ts => ts.TrainerId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(ts => ts.PlatformPlan).WithMany(p => p.Subscriptions).HasForeignKey(ts => ts.PlatformPlanId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(ts => ts.PlatformPlanPrice).WithMany(p => p.Subscriptions).HasForeignKey(ts => ts.PlatformPlanPriceId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
@@ -229,6 +235,8 @@ public class AppDbContext : DbContext
             e.HasIndex(w => new { w.Provider, w.EventId }).IsUnique();
             e.HasIndex(w => w.ResourceId);
             e.HasIndex(w => w.ProcessingStatus);
+            // Suporta a varredura de retry (status + janela de reprocessamento).
+            e.HasIndex(w => new { w.ProcessingStatus, w.NextRetryAt });
             e.Property(w => w.ProcessingStatus).HasConversion<int>();
         });
         modelBuilder.Entity<DiscountCoupon>(e =>
@@ -237,6 +245,7 @@ public class AppDbContext : DbContext
             e.Property(x => x.DiscountType).HasConversion<int>();
             e.Property(x => x.AppliesToBillingCycle).HasConversion<int>();
             e.Property(x => x.DiscountValue).HasPrecision(18, 2);
+            e.Property(x => x.ProviderCouponCode).HasMaxLength(120);
         });
 
         modelBuilder.Entity<DiscountCouponRedemption>(e =>

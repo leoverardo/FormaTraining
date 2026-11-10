@@ -354,6 +354,13 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<int?>("MinimumPurchaseAmountInCents")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProviderCouponCode")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime?>("ProviderSyncedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("StartsAt")
                         .HasColumnType("datetime2");
 
@@ -811,6 +818,12 @@ namespace FitPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime?>("LastAttemptAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NextRetryAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("ProcessedAt")
                         .HasColumnType("datetime2");
 
@@ -843,6 +856,8 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("ProcessingStatus");
 
                     b.HasIndex("ResourceId");
+
+                    b.HasIndex("ProcessingStatus", "NextRetryAt");
 
                     b.HasIndex("Provider", "EventId")
                         .IsUnique();
@@ -2653,7 +2668,7 @@ namespace FitPlatform.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AbacatePayCheckoutId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AbacatePayCustomerId")
                         .HasColumnType("nvarchar(max)");
@@ -2688,14 +2703,39 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<string>("InitPoint")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("LastPaymentFailureAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("LastPaymentStatus")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastReconciledAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MercadoPagoPayerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MercadoPagoSubscriptionId")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentFailureCount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PendingBillingCycle")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PendingFinalAmountInCents")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PendingPlanChangeProviderId")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime?>("PendingPlanChangeRequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PendingPlatformPlanId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PlatformPlanId")
                         .HasColumnType("uniqueidentifier");
@@ -2706,6 +2746,13 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.Property<string>("Provider")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderStatus")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int>("ReconciliationAttempts")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -2724,6 +2771,8 @@ namespace FitPlatform.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AbacatePayCheckoutId");
+
                     b.HasIndex("AbacatePaySubscriptionId");
 
                     b.HasIndex("PlatformPlanId");
@@ -2735,6 +2784,8 @@ namespace FitPlatform.Infrastructure.Migrations
                     b.HasIndex("TrainerId");
 
                     b.HasIndex("TrainerOnboardingId");
+
+                    b.HasIndex("Status", "CreatedAt");
 
                     b.ToTable("TrainerSubscriptions");
                 });

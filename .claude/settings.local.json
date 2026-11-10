@@ -23,7 +23,10 @@
       "Bash(Select-Object -ExpandProperty Content)",
       "Bash(Select-Object -First 500)",
       "PowerShell($r = Invoke-RestMethod -Uri \"http://localhost:5000/api/public/trainers/carlos-trainer\"; \"slug=$\\($r.data.publicSlug\\)\"; \"posts=$\\($r.data.recentPosts.Count\\)\"; \"stats=$\\($r.data.stats | ConvertTo-Json -Compress\\)\"; \"testimonials=$\\($r.data.testimonials.Count\\)\"; \"transforms=$\\($r.data.transformations.Count\\)\")",
-      "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://localhost:5000/api/trainer/dashboard\" -TimeoutSec 5 -ErrorAction Stop; \"Status: $\\($response.StatusCode\\)\" } catch { \"Error: $\\($_.Exception.Message\\)\" })"
+      "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://localhost:5000/api/trainer/dashboard\" -TimeoutSec 5 -ErrorAction Stop; \"Status: $\\($response.StatusCode\\)\" } catch { \"Error: $\\($_.Exception.Message\\)\" })",
+      "PowerShell($r=\"c:\\\\Users\\\\Capitão\\\\Documents\\\\GitHub\\\\FormaTraining\\\\\"; echo \"=== DOCS ===\"; Get-ChildItem -Recurse docs,.claude,scripts,database -File | ForEach-Object { $_.FullName.Replace\\($r,\"\"\\) + \"  \\(\" + [math]::Round\\($_.Length/1024,1\\) + \" KB\\)\" })",
+      "PowerShell($r=\"c:\\\\Users\\\\Capitão\\\\Documents\\\\GitHub\\\\FormaTraining\\\\\"; echo \"=== PAGES ===\"; Get-ChildItem \"frontend\\\\src\\\\pages\" -Recurse -File | ForEach-Object { $_.FullName.Replace\\($r+\"frontend\\\\src\\\\pages\\\\\",\"\"\\) }; echo \"\"; echo \"=== SERVICES ===\"; Get-ChildItem \"frontend\\\\src\\\\services\" -File | Select-Object -ExpandProperty Name)",
+      "PowerShell($g = \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\"; if \\(Test-Path $g\\) { & $g log --date=short --pretty=\"%h %ad %s\" -25; echo \"---\"; & $g status --short } else { echo \"git not found at $g\" })"
     ]
   }
 }

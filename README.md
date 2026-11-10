@@ -194,13 +194,17 @@ POST /api/trainer/subscription/simulate-expired
 - `InitialCreate` — estrutura inicial do banco
 - `AddOnboardingProgressAndExtendedProfile` — onboarding, progresso, fotos, campos estendidos de trainer/student/user, PlatformPlanPrice, PasswordSetupToken
 
-## Próximos passos para integração real com Mercado Pago
+## Pagamentos
 
-1. Preencher `MercadoPago:AccessToken` e `MercadoPago:PublicKey` em `appsettings.json`
-2. Implementar `MercadoPagoPaymentProvider.CreateSubscriptionAsync` — POST para `https://api.mercadopago.com/preapproval`
-3. Implementar `PaymentService.HandleWebhookAsync` — validar assinatura e processar eventos
-4. Validar assinatura do webhook com `MercadoPago:WebhookSecret` em `PaymentsController.Webhook`
-5. Para e-mail real: substituir `ConsoleEmailService` por implementação SMTP/SendGrid/Resend
+A assinatura SaaS (trainer → plataforma) usa **AbacatePay**. A documentação completa da
+integração — endpoint único de webhook, eventos, reconciliação, retry, cancelamento,
+troca de plano e variáveis de ambiente — está em
+[`docs/abacatepay-webhook.md`](docs/abacatepay-webhook.md).
+
+O `MercadoPagoPaymentProvider` permanece apenas para a venda B2C de serviços do trainer
+(`ServiceSalesService`) e não participa do fluxo de assinatura.
+
+Para e-mail real: substituir `ConsoleEmailService` por implementação SMTP/SendGrid/Resend.
 
 ## Segurança
 

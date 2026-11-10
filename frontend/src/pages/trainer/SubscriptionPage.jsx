@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { trainerService } from '../../services/trainerService';
 import { platformPlanService } from '../../services/platformPlanService';
 import { paymentService } from '../../services/paymentService';
@@ -21,6 +22,8 @@ export function SubscriptionPage() {
   const [billingCycle, setBillingCycle] = useState(1);
   const [couponCode, setCouponCode] = useState('');
   const [premiumBlockMessage, setPremiumBlockMessage] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const checkoutResult = searchParams.get('checkout');
   const monthsByCycle = { 1: 1, 3: 6, 4: 12 };
   const load = () => {
     setLoading(true);
@@ -33,6 +36,31 @@ export function SubscriptionPage() {
   };
 
   useEffect(() => { load(); }, []);
+
+  // Retorno do checkout da AbacatePay: a ativação chega pelo webhook, então consulta
+  // a assinatura em segundo plano até ela ficar ativa (limite de ~2 minutos).
+  const subscriptionActive = sub?.status === 'Active';
+  useEffect(() => {
+    if (checkoutResult !== 'success' || subscriptionActive) return undefined;
+    let attempts = 0;
+    const timer = setInterval(() => {
+      attempts += 1;
+      if (attempts > 24) {
+        clearInterval(timer);
+        return;
+      }
+      trainerService.getSubscription()
+        .then((res) => setSub(res.data.data))
+        .catch(() => {});
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [checkoutResult, subscriptionActive]);
+
+  const dismissCheckoutResult = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('checkout');
+    setSearchParams(next, { replace: true });
+  };
 
   useEffect(() => {
     const message = sessionStorage.getItem('premiumBlockMessage');
@@ -74,6 +102,18 @@ export function SubscriptionPage() {
           <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
             {premiumBlockMessage}
           </p>
+        ) : null}
+        {checkoutResult === 'success' ? (
+          <div className={`mt-3 flex items-start justify-between gap-3 rounded-xl border px-3 py-2 text-sm ${subscriptionActive ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-indigo-200 bg-indigo-50 text-indigo-800'}`}>
+            <p>{subscriptionActive ? t('subscription.checkoutConfirmed') : t('subscription.checkoutProcessing')}</p>
+            {subscriptionActive ? <button type="button" onClick={dismissCheckoutResult} className="text-xs font-semibold">OK</button> : null}
+          </div>
+        ) : null}
+        {checkoutResult === 'canceled' ? (
+          <div className="mt-3 flex items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <p>{t('subscription.checkoutCanceled')}</p>
+            <button type="button" onClick={dismissCheckoutResult} className="text-xs font-semibold">OK</button>
+          </div>
         ) : null}
       </div>
 

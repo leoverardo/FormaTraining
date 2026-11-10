@@ -128,6 +128,15 @@ public class MercadoPagoPaymentProvider : IPaymentProvider
         };
     }
 
+    /// <summary>
+    /// O Mercado Pago não é usado para assinaturas SaaS (apenas para venda B2C de serviços),
+    /// portanto a listagem em lote não se aplica: retorna vazio para não quebrar a
+    /// rotina de reconciliação caso este provider venha a ser registrado.
+    /// </summary>
+    public Task<IReadOnlyList<ProviderSubscriptionDetails>> ListSubscriptionsAsync(
+        ProviderSubscriptionListQuery query, CancellationToken cancellationToken = default)
+        => Task.FromResult<IReadOnlyList<ProviderSubscriptionDetails>>(Array.Empty<ProviderSubscriptionDetails>());
+
     public async Task CancelSubscriptionAsync(string providerSubscriptionId, CancellationToken cancellationToken = default)
     {
         EnsureAccessToken();
@@ -139,9 +148,14 @@ public class MercadoPagoPaymentProvider : IPaymentProvider
         }
     }
 
-    public Task ChangeSubscriptionPlanAsync(ChangeProviderSubscriptionPlanRequest request, CancellationToken cancellationToken = default)
+    public Task<ProviderPlanChangeResult> ChangeSubscriptionPlanAsync(ChangeProviderSubscriptionPlanRequest request, CancellationToken cancellationToken = default)
     {
         throw new NotSupportedException("MercadoPago provider legado não suporta troca de plano via esta integração.");
+    }
+
+    public Task<ProviderCouponSyncResult> EnsureCouponAsync(ProviderCouponDefinition coupon, CancellationToken cancellationToken = default)
+    {
+        throw new NotSupportedException("MercadoPago provider legado não suporta cupons gerenciados pela plataforma.");
     }
 
     private HttpRequestMessage CreateRequest(HttpMethod method, string path, object? body = null)

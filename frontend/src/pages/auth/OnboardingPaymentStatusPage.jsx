@@ -14,23 +14,30 @@ export function OnboardingPaymentStatusPage() {
     setLoading(true);
     try {
       const res = await onboardingService.paymentStatus(onboardingId);
-      setStatus(res.data?.data || null);
+      const data = res.data?.data || null;
+      setStatus(data);
+      // Contratação concluída: descarta o id salvo para ele não ser reaproveitado depois.
+      if (data?.isPaymentConfirmed) {
+        localStorage.removeItem('onboarding_payment_pending_id');
+        localStorage.removeItem('onboarding_payment_checkout_url');
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  const confirmed = status?.isPaymentConfirmed;
+
   useEffect(() => {
+    if (confirmed) return undefined;
     load();
     const timer = setInterval(load, 5000);
     return () => clearInterval(timer);
-  }, [onboardingId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [onboardingId, confirmed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!onboardingId) {
     return <div className="min-h-screen p-6 flex items-center justify-center text-sm text-gray-600">Não foi possível localizar sua contratação. Volte ao cadastro.</div>;
   }
-
-  const confirmed = status?.isPaymentConfirmed;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">

@@ -6,6 +6,7 @@ using FitPlatform.Application.Configuration;
 using FitPlatform.Application.Common;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Infrastructure.Services;
+using FitPlatform.Infrastructure.BackgroundServices;
 using FitPlatform.Infrastructure.Data;
 using FitPlatform.Infrastructure.ExternalServices;
 using FitPlatform.Infrastructure.PaymentProviders;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Threading.RateLimiting;
@@ -22,21 +24,45 @@ using FitPlatform.Api.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
-{
-    ["Cloudinary:CloudName"] = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME"),
-    ["Cloudinary:ApiKey"] = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY"),
-    ["Cloudinary:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET"),
-    ["Cloudinary:Folder"] = Environment.GetEnvironmentVariable("CLOUDINARY_FOLDER"),
-    ["AbacatePay:BaseUrl"] = Environment.GetEnvironmentVariable("ABACATEPAY_BASE_URL"),
-    ["AbacatePay:ApiKey"] = Environment.GetEnvironmentVariable("ABACATEPAY_API_KEY"),
-    ["AbacatePay:WebhookSecret"] = Environment.GetEnvironmentVariable("ABACATEPAY_WEBHOOK_SECRET"),
-    ["AbacatePay:WebhookPublicKey"] = Environment.GetEnvironmentVariable("ABACATEPAY_WEBHOOK_PUBLIC_KEY"),
-    ["AbacatePay:SuccessUrl"] = Environment.GetEnvironmentVariable("ABACATEPAY_SUCCESS_URL"),
-    ["AbacatePay:ReturnUrl"] = Environment.GetEnvironmentVariable("ABACATEPAY_RETURN_URL"),
-    ["AbacatePay:DevMode"] = Environment.GetEnvironmentVariable("ABACATEPAY_DEV_MODE")
-});
-builder.Services.Configure<AbacatePayOptions>(builder.Configuration.GetSection(AbacatePayOptions.SectionName));
+// Configuração canônica: appsettings + variáveis de ambiente com separador padrão
+// (AbacatePay__ApiKey, AbacatePay__EnableSignatureValidation, Platform__FrontendBaseUrl...),
+// já registradas por WebApplication.CreateBuilder.
+// Os nomes planos antigos continuam funcionando como alias de menor precedência.
+builder.Configuration.AddLegacyEnvironmentVariableAliases(builder.Configuration);
+
+// URLs públicas centralizadas — nenhum domínio de produção fica hardcoded em código.
+builder.Services.Configure<PlatformUrlOptions>(builder.Configuration.GetSection(PlatformUrlOptions.SectionName));
+
+var isDevelopment = builder.Environment.IsDevelopment();
+
+builder.Services
+    .AddOptions<AbacatePayOptions>()
+    .Bind(builder.Configuration.GetSection(AbacatePayOptions.SectionName))
+    .PostConfigure(options =>
+    {
+        // Redirects de checkout derivam do domínio do frontend quando não informados
+        // explicitamente, evitando duplicar o domínio em duas chaves de configuração.
+        var platform = builder.Configuration.GetSection(PlatformUrlOptions.SectionName).Get<PlatformUrlOptions>()
+                       ?? new PlatformUrlOptions();
+
+        if (string.IsNullOrWhiteSpace(platform.FrontendBaseUrl))
+            platform.FrontendBaseUrl = builder.Configuration["FrontendUrl"] ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(options.SuccessUrl))
+            options.SuccessUrl = platform.BuildFrontendUrl(platform.OnboardingSuccessPath);
+
+        if (string.IsNullOrWhiteSpace(options.ReturnUrl))
+            options.ReturnUrl = platform.BuildFrontendUrl(platform.OnboardingReturnPath);
+
+        if (string.IsNullOrWhiteSpace(options.TrainerPanelUrl))
+            options.TrainerPanelUrl = platform.BuildFrontendUrl(platform.TrainerSubscriptionPath);
+    })
+    .Validate(options => !(options.EnableSignatureValidation == false && !isDevelopment),
+        "AbacatePay:EnableSignatureValidation não pode ser false fora do ambiente Development.")
+    .ValidateOnStart();
+
+builder.Services.AddSingleton<IValidateOptions<AbacatePayOptions>>(
+    new AbacatePayOptionsValidator(requireProductionHardening: !isDevelopment));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -46,9 +72,11 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IDateTimeProvider, SaoPauloDateTimeProvider>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddHttpClient<IPaymentProvider, AbacatePayPaymentProvider>();
-builder.Services.AddScoped<IPaymentWebhookValidator, AbacatePayWebhookValidator>();
 builder.Services.AddScoped<IAbacatePaySignatureValidator, AbacatePaySignatureValidator>();
 builder.Services.AddScoped<IAbacatePayWebhookService, AbacatePayWebhookService>();
+builder.Services.AddScoped<SubscriptionLifecycleService>();
+builder.Services.AddScoped<SubscriptionReconciliationRunner>();
+builder.Services.AddHostedService<SubscriptionReconciliationBackgroundService>();
 builder.Services.AddScoped<IEmailService, ConsoleEmailService>();
 builder.Services.AddScoped<PasswordSetupService>();
 builder.Services.AddScoped<OnboardingService>();
@@ -155,7 +183,7 @@ builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins(builder.Configuration["AllowedOrigins"]?.Split(',') ?? ["http://localhost:5173"])
+        policy.WithOrigins(builder.Configuration["http://localhost:5173"]?.Split(',') ?? ["http://localhost:5173"])
               .AllowAnyMethod()
               .AllowAnyHeader());
 });

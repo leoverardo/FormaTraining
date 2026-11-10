@@ -2,6 +2,7 @@ namespace FitPlatform.Application.Interfaces;
 
 /// <summary>
 /// Processa webhooks do AbacatePay de forma segura, idempotente e com rastreamento de status.
+/// É o único ponto de entrada de eventos da AbacatePay no domínio.
 /// </summary>
 public interface IAbacatePayWebhookService
 {
@@ -19,6 +20,16 @@ public interface IAbacatePayWebhookService
         string? querySecret,
         bool isDevelopmentEnvironment,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Reprocessa um evento já recebido e persistido cuja execução falhou.
+    ///
+    /// A autenticidade já foi verificada no recebimento original, portanto a validação
+    /// de secret/assinatura não é repetida — este método NÃO é acessível por HTTP e só
+    /// deve ser chamado pela rotina interna de retry.
+    /// </summary>
+    /// <param name="webhookLogId">Id do <c>PaymentWebhookLog</c> a reprocessar.</param>
+    Task<WebhookHandlerResult> ReprocessAsync(Guid webhookLogId, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -29,6 +40,9 @@ public sealed class WebhookHandlerResult
     /// <summary>True se a requisição foi rejeitada por falha de autenticação/assinatura.</summary>
     public bool IsUnauthorized { get; private init; }
 
+    /// <summary>True quando o evento foi efetivamente aplicado ao domínio.</summary>
+    public bool Applied { get; private init; }
+
     /// <summary>Mensagem descritiva do resultado.</summary>
     public string Message { get; private init; } = string.Empty;
 
@@ -37,6 +51,6 @@ public sealed class WebhookHandlerResult
         new() { IsUnauthorized = true, Message = reason };
 
     /// <summary>Cria um resultado de aceitação (HTTP 200).</summary>
-    public static WebhookHandlerResult Accepted(string message) =>
-        new() { IsUnauthorized = false, Message = message };
+    public static WebhookHandlerResult Accepted(string message, bool applied = false) =>
+        new() { IsUnauthorized = false, Applied = applied, Message = message };
 }

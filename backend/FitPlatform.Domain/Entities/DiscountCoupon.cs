@@ -18,4 +18,14 @@ public class DiscountCoupon : BaseEntity
     public Guid? AppliesToPlanId { get; set; }
     public BillingFrequency? AppliesToBillingCycle { get; set; }
     public int? MinimumPurchaseAmountInCents { get; set; }
+
+    /// <summary>
+    /// Código do cupom espelhado no provedor de pagamento, quando já sincronizado.
+    /// Enquanto nulo, o cupom ainda não existe na AbacatePay e será criado sob demanda
+    /// no primeiro checkout que o utilizar.
+    /// </summary>
+    public string? ProviderCouponCode { get; set; }
+
+    /// <summary>Momento da última sincronização bem-sucedida com o provedor.</summary>
+    public DateTime? ProviderSyncedAt { get; set; }
 }

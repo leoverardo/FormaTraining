@@ -46,6 +46,13 @@ public static class DatabaseSeeder
         };
         await context.PlatformPlanPrices.AddRangeAsync(prices);
 
+        // Produtos AbacatePay do Basic. As migrations V13/V20/V26 só atualizam planos já
+        // existentes; num banco novo o seeder roda depois delas, então as opções nascem aqui.
+        await context.PlanBillingOptions.AddRangeAsync(
+            new PlanBillingOption { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Monthly,    MonthsCount = 1,  CycleDiscountPercent = 0m,  BasePriceInCents = 5990,  FinalPriceInCents = 5990,  AbacatePayProductId = "prod_FsmDekBN0dpbyqn0UqtC4tWG", IsActive = true },
+            new PlanBillingOption { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Semiannual, MonthsCount = 6,  CycleDiscountPercent = 15m, BasePriceInCents = 35940, FinalPriceInCents = 30549, AbacatePayProductId = "prod_26kYBznyFUgmSYUNZ25dY6kj", IsActive = true },
+            new PlanBillingOption { Id = Guid.NewGuid(), PlatformPlanId = basicPlan.Id, BillingCycle = BillingFrequency.Yearly,     MonthsCount = 12, CycleDiscountPercent = 20m, BasePriceInCents = 71880, FinalPriceInCents = 57504, AbacatePayProductId = "prod_bn3nSLyu2mfwePQj4sAu3kxu", IsActive = true });
+
         // Users
         var ownerUser = new User { Id = Guid.NewGuid(), Name = "Admin Plataforma", Email = "admin@test.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"), Role = UserRole.Owner, IsActive = true };
         var trainerUser = new User { Id = Guid.NewGuid(), Name = "Carlos Trainer", Email = "trainer@test.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"), Role = UserRole.Trainer, IsActive = true };

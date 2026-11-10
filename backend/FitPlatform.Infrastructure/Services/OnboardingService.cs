@@ -167,10 +167,19 @@ public class OnboardingService
 
         var isValid = result.Data.IsValid;
         var message = result.Data.Message;
-        if (isValid && option != null && result.Data.FinalAmountInCents != option.FinalPriceInCents)
+
+        // Integridade: o produto cadastrado na AbacatePay precisa corresponder ao valor do
+        // ciclo ANTES do cupom. O desconto é aplicado pelo provedor no checkout (campo
+        // `coupons`), então o valor final com desconto é legítimo e não invalida o cupom.
+        if (isValid && option != null && result.Data.SubtotalAfterCycleDiscountInCents != option.FinalPriceInCents)
         {
             isValid = false;
-            message = "Este cupom não é suportado para cobrança recorrente neste plano/ciclo com a configuração atual da AbacatePay.";
+            message = "Plano/ciclo com preço divergente do produto configurado no provedor. Contate o suporte.";
+            _logger.LogError(
+                "Preview de cupom: preço divergente do produto AbacatePay. OnboardingId={OnboardingId} " +
+                "PlanId={PlanId} BillingCycle={BillingCycle} CalculadoCentavos={Calculated} ConfiguradoCentavos={Configured}",
+                onboardingId, onboarding.SelectedPlatformPlanId, onboarding.BillingCycle,
+                result.Data.SubtotalAfterCycleDiscountInCents, option.FinalPriceInCents);
         }
 
         return ApiResponse<OnboardingPricingPreviewResponse>.Ok(new OnboardingPricingPreviewResponse

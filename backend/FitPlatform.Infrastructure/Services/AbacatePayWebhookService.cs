@@ -1,5 +1,6 @@
 using System.Data;
 using System.Text.Json;
+using FitPlatform.Application.Configuration;
 using FitPlatform.Application.DTOs.Webhooks;
 using FitPlatform.Application.Interfaces;
 using FitPlatform.Domain.Entities;
@@ -7,22 +8,31 @@ using FitPlatform.Domain.Enums;
 using FitPlatform.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FitPlatform.Infrastructure.Services;
 
 /// <summary>
-/// Processa webhooks do AbacatePay de forma segura, idempotente e rastreável.
+/// Único processador de webhooks do AbacatePay da plataforma.
+///
 /// Responsabilidades:
-///   1. Validar secret (query param) e assinatura HMAC-SHA256 (header).
-///   2. Verificar idempotência via PaymentWebhookLog (Provider + EventId únicos).
-///   3. Despachar para o handler correto por tipo de evento.
-///   4. Atualizar status do log (Pending → Processing → Processed | Failed).
+///   1. Validar secret (query param) e assinatura HMAC-SHA256 (header X-Webhook-Signature).
+///   2. Aplicar a política de devMode (eventos sandbox não afetam uma instância de produção).
+///   3. Garantir idempotência via PaymentWebhookLog (índice único Provider + EventId).
+///   4. Resolver a assinatura interna e delegar a transição de estado ao
+///      <see cref="SubscriptionLifecycleService"/> — compartilhado com a reconciliação.
+///   5. Manter o ciclo do log (Processing → Processed | Failed | Abandoned) com dados de retry.
+///
+/// Nenhum log inclui secret, assinatura ou payload bruto.
 /// </summary>
 public sealed class AbacatePayWebhookService : IAbacatePayWebhookService
 {
+    private const string ProviderName = "AbacatePay";
+
     private readonly AppDbContext _db;
     private readonly IAbacatePaySignatureValidator _signatureValidator;
-    private readonly PasswordSetupService _passwordSetupService;
+    private readonly SubscriptionLifecycleService _lifecycle;
+    private readonly AbacatePayOptions _options;
     private readonly ILogger<AbacatePayWebhookService> _logger;
 
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
@@ -30,12 +40,14 @@ public sealed class AbacatePayWebhookService : IAbacatePayWebhookService
     public AbacatePayWebhookService(
         AppDbContext db,
         IAbacatePaySignatureValidator signatureValidator,
-        PasswordSetupService passwordSetupService,
+        SubscriptionLifecycleService lifecycle,
+        IOptions<AbacatePayOptions> options,
         ILogger<AbacatePayWebhookService> logger)
     {
         _db = db;
         _signatureValidator = signatureValidator;
-        _passwordSetupService = passwordSetupService;
+        _lifecycle = lifecycle;
+        _options = options.Value;
         _logger = logger;
     }
 
@@ -116,28 +128,126 @@ public sealed class AbacatePayWebhookService : IAbacatePayWebhookService
             "Webhook AbacatePay recebido. EventId={EventId} EventType={EventType} DevMode={DevMode}",
             eventId, eventType, payload.DevMode);
 
-        // ── 4. Idempotência + processamento ──────────────────────────────────
+        // ── 4. Política de devMode ───────────────────────────────────────────
+        // Uma instância configurada como produção (DevMode=false) não deve permitir que
+        // eventos gerados no sandbox da AbacatePay alterem assinaturas reais.
+        if (payload.DevMode && !_options.DevMode)
+        {
+            await PersistIgnoredDevModeEventAsync(eventId, eventType, rawBody, cancellationToken);
+            _logger.LogWarning(
+                "Webhook AbacatePay em devMode recebido por instância de produção — registrado e ignorado. " +
+                "EventId={EventId} EventType={EventType}", eventId, eventType);
+            return WebhookHandlerResult.Accepted("Evento devMode ignorado nesta instância.");
+        }
+
+        // ── 5. Registrar o evento ANTES de processar ─────────────────────────
+        // O log é gravado e commitado fora da transação de negócio para que uma falha de
+        // processamento deixe rastro e possa ser retentada.
+        var claim = await ClaimEventAsync(eventId, eventType, rawBody, cancellationToken);
+
+        if (claim.Outcome is EventClaimOutcome.AlreadyTerminal)
+        {
+            _logger.LogInformation(
+                "Duplicate webhook ignored. EventId={EventId} EventType={EventType} ExistingStatus={ExistingStatus}",
+                eventId, eventType, claim.ExistingStatus);
+            return WebhookHandlerResult.Accepted("Duplicate webhook ignored.");
+        }
+
+        if (claim.Outcome is EventClaimOutcome.InFlight)
+        {
+            // Outra execução (entrega concorrente do mesmo evento) já detém o registro.
+            // Responder 200 evita que a AbacatePay retente algo que está sendo tratado.
+            _logger.LogInformation(
+                "Duplicate webhook ignored: entrega concorrente em processamento. EventId={EventId} EventType={EventType}",
+                eventId, eventType);
+            return WebhookHandlerResult.Accepted("Duplicate webhook ignored (concurrent delivery).");
+        }
+
+        return await ProcessAsync(claim.Log!, payload, rawBody, eventType, cancellationToken);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Reprocessamento interno (retry) — sem revalidar assinatura
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    public async Task<WebhookHandlerResult> ReprocessAsync(Guid webhookLogId, CancellationToken cancellationToken = default)
+    {
+        var log = await _db.PaymentWebhookLogs
+            .FirstOrDefaultAsync(x => x.Id == webhookLogId && x.Provider == ProviderName, cancellationToken);
+
+        if (log is null)
+            return WebhookHandlerResult.Accepted("Log de webhook não encontrado.");
+
+        // Defesa em profundidade: mesmo que a consulta do runner mude, um estado terminal
+        // (Processed, Duplicate, Ignored, IgnoredDevMode, Abandoned) nunca é reprocessado.
+        if (IsTerminal(log.ProcessingStatus))
+        {
+            _logger.LogInformation(
+                "Retry recusado: evento em estado terminal. EventId={EventId} Status={Status}",
+                log.EventId, log.ProcessingStatus);
+            return WebhookHandlerResult.Accepted("Duplicate webhook ignored.");
+        }
+
+        // Só eventos que efetivamente falharam são elegíveis a retry.
+        if (log.ProcessingStatus != WebhookProcessingStatus.Failed)
+        {
+            _logger.LogInformation(
+                "Retry recusado: evento não está em Failed. EventId={EventId} Status={Status}",
+                log.EventId, log.ProcessingStatus);
+            return WebhookHandlerResult.Accepted("Evento não elegível a retry.");
+        }
+
+        if (log.RetryCount >= _options.Reconciliation.WebhookMaxRetries)
+        {
+            await AbandonLogAsync(log, "Limite de tentativas excedido.", cancellationToken);
+            return WebhookHandlerResult.Accepted("Limite de tentativas excedido — evento abandonado.");
+        }
+
+        AbacatePayWebhookPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<AbacatePayWebhookPayload>(log.RawPayload, JsonOpts);
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Retry de webhook: payload persistido inválido. EventId={EventId}", log.EventId);
+            await AbandonLogAsync(log, "Payload persistido inválido.", cancellationToken);
+            return WebhookHandlerResult.Accepted("Payload inválido — retry abandonado.");
+        }
+
+        if (payload is null)
+        {
+            await AbandonLogAsync(log, "Payload persistido nulo.", cancellationToken);
+            return WebhookHandlerResult.Accepted("Payload nulo — retry abandonado.");
+        }
+
+        log.ProcessingStatus = WebhookProcessingStatus.Processing;
+        log.RetryCount++;
+        log.LastAttemptAt = DateTime.UtcNow;
+        log.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation(
+            "Retry de webhook iniciado. EventId={EventId} EventType={EventType} RetryCount={RetryCount}",
+            log.EventId, log.Type, log.RetryCount);
+
+        return await ProcessAsync(log, payload, log.RawPayload, log.Type, cancellationToken);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Processamento transacional
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    private async Task<WebhookHandlerResult> ProcessAsync(
+        PaymentWebhookLog log,
+        AbacatePayWebhookPayload payload,
+        string rawBody,
+        string eventType,
+        CancellationToken cancellationToken)
+    {
         await using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
         try
         {
-            var existingLog = await _db.PaymentWebhookLogs
-                .FirstOrDefaultAsync(x => x.Provider == "AbacatePay" && x.EventId == eventId, cancellationToken);
-
-            // Evento já processado com sucesso → retornar 200 imediatamente.
-            if (existingLog?.ProcessingStatus == WebhookProcessingStatus.Processed)
-            {
-                _logger.LogInformation(
-                    "Webhook duplicado ignorado por idempotência. EventId={EventId}", eventId);
-                await tx.CommitAsync(cancellationToken);
-                return WebhookHandlerResult.Accepted("Webhook já processado (idempotência).");
-            }
-
-            // Criar ou atualizar log para Processing.
-            var log = BuildOrUpdateLog(existingLog, eventId, eventType, rawBody);
-            if (existingLog is null) _db.PaymentWebhookLogs.Add(log);
-            await _db.SaveChangesAsync(cancellationToken);
-
-            // ── 5. Resolver assinatura interna e despachar evento ────────────
             var subscription = await ResolveSubscriptionAsync(payload, cancellationToken);
 
             log.ResourceId =
@@ -145,34 +255,64 @@ public sealed class AbacatePayWebhookService : IAbacatePayWebhookService
                 ?? ExtractString(payload.Data, "checkout.id")
                 ?? ExtractString(payload.Data, "id");
 
-            await DispatchAsync(payload, rawBody, subscription, eventType, cancellationToken);
+            if (subscription is not null)
+            {
+                _logger.LogInformation(
+                    "Assinatura interna localizada para o evento. EventId={EventId} EventType={EventType} " +
+                    "SubscriptionId={SubscriptionId} TrainerId={TrainerId}",
+                    log.EventId, eventType, subscription.Id, subscription.TrainerId);
+            }
 
-            // ── 6. Marcar log como processado ────────────────────────────────
-            log.ProcessingStatus = WebhookProcessingStatus.Processed;
+            var outcome = await DispatchAsync(payload, rawBody, subscription, eventType, cancellationToken);
+
+            // Tipo de evento que a plataforma não trata é terminal como Ignored — fica
+            // auditável e jamais entra na fila de retry.
+            log.ProcessingStatus = outcome == DispatchOutcome.UnsupportedEvent
+                ? WebhookProcessingStatus.Ignored
+                : WebhookProcessingStatus.Processed;
+
             log.ProcessedAt = DateTime.UtcNow;
+            log.LastAttemptAt = DateTime.UtcNow;
+            log.NextRetryAt = null;
+            log.ErrorMessage = null;
             log.UpdatedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync(cancellationToken);
             await tx.CommitAsync(cancellationToken);
 
-            _logger.LogInformation(
-                "Webhook processado com sucesso. EventId={EventId} EventType={EventType} InternalSubscriptionId={SubId}",
-                eventId, eventType, subscription?.Id.ToString() ?? "não vinculado");
+            var applied = outcome == DispatchOutcome.Applied;
 
-            return WebhookHandlerResult.Accepted("Webhook processado.");
+            _logger.LogInformation(
+                "Webhook finalizado. EventId={EventId} EventType={EventType} " +
+                "InternalSubscriptionId={SubscriptionId} Status={Status} Applied={Applied}",
+                log.EventId, eventType, subscription?.Id.ToString() ?? "não vinculado",
+                log.ProcessingStatus, applied);
+
+            return WebhookHandlerResult.Accepted(
+                outcome == DispatchOutcome.UnsupportedEvent
+                    ? "Evento não tratado — registrado e ignorado."
+                    : "Webhook processado.",
+                applied);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erro interno ao processar webhook. EventId={EventId} EventType={EventType}", eventId, eventType);
+            _logger.LogError(ex,
+                "Erro interno ao processar webhook. EventId={EventId} EventType={EventType} RetryCount={RetryCount}",
+                log.EventId, eventType, log.RetryCount);
+
             try
             {
                 await tx.RollbackAsync(CancellationToken.None);
-                await MarkLogAsFailedAsync(eventId, ex.Message, CancellationToken.None);
             }
-            catch (Exception inner)
+            catch (Exception rollbackEx)
             {
-                _logger.LogError(inner, "Falha secundária ao marcar log como Failed. EventId={EventId}", eventId);
+                _logger.LogError(rollbackEx, "Falha ao efetuar rollback. EventId={EventId}", log.EventId);
             }
-            throw; // Propagar para o controller retornar 500 (AbacatePay retentar).
+
+            // O log foi persistido fora desta transação, portanto sobrevive ao rollback
+            // e pode ser retentado pela rotina de reconciliação.
+            await MarkLogAsFailedAsync(log, ex.Message, CancellationToken.None);
+
+            throw; // Propagar para o controller retornar 500 (AbacatePay retenta).
         }
     }
 
@@ -180,7 +320,20 @@ public sealed class AbacatePayWebhookService : IAbacatePayWebhookService
     // Event dispatching
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private async Task DispatchAsync(
+    /// <summary>Resultado do despacho, usado para decidir o status final do log.</summary>
+    private enum DispatchOutcome
+    {
+        /// <summary>Evento conhecido que alterou o domínio.</summary>
+        Applied,
+
+        /// <summary>Evento conhecido, porém sem efeito (duplicado, sem assinatura vinculada, já ativo).</summary>
+        NoOp,
+
+        /// <summary>Tipo de evento que a plataforma não trata.</summary>
+        UnsupportedEvent
+    }
+
+    private async Task<DispatchOutcome> DispatchAsync(
         AbacatePayWebhookPayload payload,
         string rawBody,
         TrainerSubscription? sub,
@@ -190,261 +343,124 @@ public sealed class AbacatePayWebhookService : IAbacatePayWebhookService
         switch (eventType)
         {
             case "subscription.completed":
-                await HandleSubscriptionCompletedAsync(sub, payload, rawBody, isFirstCompletion: true, ct);
-                break;
+                return ToOutcome(await HandleSubscriptionCompletedAsync(sub, payload, rawBody, ct));
 
             case "subscription.renewed":
-                await HandleSubscriptionRenewedAsync(sub, payload, rawBody, ct);
-                break;
+                return ToOutcome(await HandleSubscriptionRenewedAsync(sub, payload, rawBody, ct));
 
             case "subscription.cancelled":
-                await HandleSubscriptionCancelledAsync(sub, payload, ct);
-                break;
+            case "subscription.canceled":
+                return ToOutcome(await HandleSubscriptionCancelledAsync(sub, eventType, ct));
+
+            // Falha de cobrança recorrente.
+            //
+            // Este evento NÃO consta no catálogo público de webhooks da AbacatePay, que
+            // documenta subscription.completed / renewed / cancelled. O handler é mantido
+            // de forma puramente defensiva — herdado do fluxo legado e tolerante à evolução
+            // da API. Se o evento nunca chegar, este ramo não é exercido e nada se perde:
+            // a detecção de divergência de cobrança é responsabilidade da reconciliação
+            // (SubscriptionReconciliationRunner), que não depende deste evento.
+            case "subscription.payment_failed":
+            case "subscription.payment.failed":
+                return ToOutcome(await HandleSubscriptionPaymentFailedAsync(sub, payload, rawBody, eventType, ct));
 
             case "checkout.completed":
-                await HandleCheckoutCompletedAsync(sub, payload, rawBody, ct);
-                break;
+                return ToOutcome(await HandleCheckoutCompletedAsync(sub, payload, rawBody, ct));
 
             default:
-                // Evento desconhecido: salvar log e retornar 200 (não quebrar).
+                // Evento não tratado: log persistido como Ignored e 200 OK — nunca retentado.
                 _logger.LogInformation(
-                    "Evento AbacatePay desconhecido salvo sem processamento. EventType={EventType}", eventType);
-                break;
+                    "Evento AbacatePay não tratado — registrado como Ignored. EventType={EventType}", eventType);
+                return DispatchOutcome.UnsupportedEvent;
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // subscription.completed
-    // ═══════════════════════════════════════════════════════════════════════════
+    private static DispatchOutcome ToOutcome(bool applied) =>
+        applied ? DispatchOutcome.Applied : DispatchOutcome.NoOp;
 
-    private async Task HandleSubscriptionCompletedAsync(
-        TrainerSubscription? sub,
-        AbacatePayWebhookPayload payload,
-        string rawBody,
-        bool isFirstCompletion,
-        CancellationToken ct)
+    private async Task<bool> HandleSubscriptionCompletedAsync(
+        TrainerSubscription? sub, AbacatePayWebhookPayload payload, string rawBody, CancellationToken ct)
     {
         if (sub is null)
         {
             _logger.LogWarning("subscription.completed: nenhuma assinatura interna encontrada para vincular.");
-            return;
+            return false;
         }
 
-        var now = DateTime.UtcNow;
-        var abacateSubId = ExtractString(payload.Data, "subscription.id");
-        var checkoutId   = ExtractString(payload.Data, "checkout.id");
-        var customerId   = ExtractString(payload.Data, "customer.id")
-                        ?? ExtractString(payload.Data, "customerId");
-        var paymentId    = ExtractString(payload.Data, "payment.id");
-        var amountCents  = ExtractInt(payload.Data, "payment.amount")
-                        ?? ExtractInt(payload.Data, "amount");
-
-        // Atualizar assinatura
-        sub.Status = TrainerSubscriptionStatus.Active;
-        sub.LastPaymentStatus = "paid";
-        sub.EndDate = CalculateCycleEndDate(sub.BillingCycle);
-        sub.UpdatedAt = now;
-
-        if (!string.IsNullOrWhiteSpace(abacateSubId)) sub.AbacatePaySubscriptionId ??= abacateSubId;
-        if (!string.IsNullOrWhiteSpace(customerId))   sub.AbacatePayCustomerId     ??= customerId;
-        if (!string.IsNullOrWhiteSpace(checkoutId))   sub.AbacatePayCheckoutId     ??= checkoutId;
-
-        // Resolver ou criar pagamento
-        var payment = await _db.TrainerPayments
-            .Where(x => x.TrainerSubscriptionId == sub.Id && x.Provider == "AbacatePay")
-            .OrderByDescending(x => x.CreatedAt)
-            .FirstOrDefaultAsync(ct);
-
-        if (payment is null)
-        {
-            payment = new TrainerPayment
-            {
-                TrainerId              = sub.TrainerId,
-                TrainerSubscriptionId  = sub.Id,
-                Amount                 = amountCents.HasValue ? amountCents.Value / 100m : sub.FinalAmountInCents / 100m,
-                Status                 = PaymentStatus.Approved,
-                Provider               = "AbacatePay",
-                ProviderPaymentId      = paymentId,
-                ProviderSubscriptionId = abacateSubId ?? sub.AbacatePaySubscriptionId,
-                AbacatePayCheckoutId   = checkoutId   ?? sub.AbacatePayCheckoutId,
-                PaidAt                 = now,
-                RawPayload             = rawBody
-            };
-            _db.TrainerPayments.Add(payment);
-        }
-        else
-        {
-            payment.Status                 = PaymentStatus.Approved;
-            payment.PaidAt               ??= now;
-            payment.ProviderPaymentId    ??= paymentId;
-            payment.ProviderSubscriptionId ??= abacateSubId ?? sub.AbacatePaySubscriptionId;
-            payment.RawPayload             = rawBody;
-            payment.UpdatedAt              = now;
-        }
-
-        await _db.SaveChangesAsync(ct);
-
-        if (isFirstCompletion)
-        {
-            await TryRedeemCouponAsync(sub, payment, ct);
-            await AdvanceOnboardingAsync(sub, ct);
-        }
-
-        _logger.LogInformation(
-            "subscription.completed: assinatura ativada. SubscriptionId={SubId} TrainerId={TrainerId} " +
-            "AbacateSubId={AbacateSubId} CheckoutId={CheckoutId} PaymentId={PaymentId}",
-            sub.Id, sub.TrainerId,
-            abacateSubId ?? "N/A",
-            checkoutId   ?? "N/A",
-            paymentId    ?? "N/A");
+        return await _lifecycle.ActivateAsync(sub, BuildContext(payload, rawBody), ct);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // subscription.renewed
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    private async Task HandleSubscriptionRenewedAsync(
-        TrainerSubscription? sub,
-        AbacatePayWebhookPayload payload,
-        string rawBody,
-        CancellationToken ct)
+    private async Task<bool> HandleSubscriptionRenewedAsync(
+        TrainerSubscription? sub, AbacatePayWebhookPayload payload, string rawBody, CancellationToken ct)
     {
         if (sub is null)
         {
             _logger.LogWarning("subscription.renewed: nenhuma assinatura interna encontrada para vincular.");
-            return;
+            return false;
         }
 
-        var now          = DateTime.UtcNow;
-        var abacateSubId = ExtractString(payload.Data, "subscription.id") ?? sub.AbacatePaySubscriptionId;
-        var paymentId    = ExtractString(payload.Data, "payment.id");
-        var amountCents  = ExtractInt(payload.Data, "payment.amount") ?? ExtractInt(payload.Data, "amount");
-
-        // Idempotência por payment.id: não duplicar pagamento de renovação.
-        if (!string.IsNullOrWhiteSpace(paymentId))
-        {
-            var alreadyRenewed = await _db.TrainerPayments.AnyAsync(
-                x => x.TrainerSubscriptionId == sub.Id
-                     && x.Provider == "AbacatePay"
-                     && x.ProviderPaymentId == paymentId
-                     && x.Status == PaymentStatus.Approved,
-                ct);
-
-            if (alreadyRenewed)
-            {
-                _logger.LogInformation(
-                    "subscription.renewed: renovação já registrada. PaymentId={PaymentId}", paymentId);
-                return;
-            }
-        }
-
-        // Manter ativo e estender período.
-        sub.Status = TrainerSubscriptionStatus.Active;
-        sub.LastPaymentStatus = "paid";
-        sub.EndDate = CalculateCycleEndDate(sub.BillingCycle);
-        sub.UpdatedAt = now;
-        if (!string.IsNullOrWhiteSpace(abacateSubId)) sub.AbacatePaySubscriptionId ??= abacateSubId;
-
-        // Novo registro de pagamento para a renovação.
-        var renewal = new TrainerPayment
-        {
-            TrainerId              = sub.TrainerId,
-            TrainerSubscriptionId  = sub.Id,
-            Amount                 = amountCents.HasValue ? amountCents.Value / 100m : sub.FinalAmountInCents / 100m,
-            Status                 = PaymentStatus.Approved,
-            Provider               = "AbacatePay",
-            ProviderPaymentId      = paymentId,
-            ProviderSubscriptionId = abacateSubId,
-            AbacatePayCheckoutId   = sub.AbacatePayCheckoutId,
-            PaidAt                 = now,
-            RawPayload             = rawBody
-        };
-        _db.TrainerPayments.Add(renewal);
-        await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "subscription.renewed: renovação registrada. SubscriptionId={SubId} TrainerId={TrainerId} " +
-            "PaymentId={PaymentId} NovaDataFim={EndDate:O}",
-            sub.Id, sub.TrainerId, paymentId ?? "N/A", sub.EndDate);
+        return await _lifecycle.RegisterRenewalAsync(sub, BuildContext(payload, rawBody), ct);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // subscription.cancelled
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    private async Task HandleSubscriptionCancelledAsync(
-        TrainerSubscription? sub,
-        AbacatePayWebhookPayload payload,
-        CancellationToken ct)
+    private async Task<bool> HandleSubscriptionCancelledAsync(
+        TrainerSubscription? sub, string eventType, CancellationToken ct)
     {
         if (sub is null)
         {
-            _logger.LogWarning("subscription.cancelled: nenhuma assinatura interna encontrada para vincular.");
-            return;
+            _logger.LogWarning("{EventType}: nenhuma assinatura interna encontrada para vincular.", eventType);
+            return false;
         }
 
-        sub.Status = TrainerSubscriptionStatus.Canceled;
-        sub.LastPaymentStatus = "cancelled";
-        sub.UpdatedAt = DateTime.UtcNow;
-        // EndDate é preservado deliberadamente para que o handler de autorização possa
-        // conceder acesso gracioso até o fim do período já pago.
-
-        await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "subscription.cancelled: assinatura cancelada. SubscriptionId={SubId} TrainerId={TrainerId} " +
-            "AcessoAte={EndDate:O}",
-            sub.Id, sub.TrainerId, sub.EndDate);
+        return await _lifecycle.CancelAsync(sub, SubscriptionTransitionSource.Webhook, ct);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // checkout.completed  (fallback para primeiro pagamento)
-    // ═══════════════════════════════════════════════════════════════════════════
+    private async Task<bool> HandleSubscriptionPaymentFailedAsync(
+        TrainerSubscription? sub, AbacatePayWebhookPayload payload, string rawBody, string eventType, CancellationToken ct)
+    {
+        if (sub is null)
+        {
+            _logger.LogWarning("{EventType}: nenhuma assinatura interna encontrada para vincular.", eventType);
+            return false;
+        }
 
-    private async Task HandleCheckoutCompletedAsync(
-        TrainerSubscription? sub,
-        AbacatePayWebhookPayload payload,
-        string rawBody,
-        CancellationToken ct)
+        return await _lifecycle.RegisterPaymentFailureAsync(sub, BuildContext(payload, rawBody), ct);
+    }
+
+    /// <summary>
+    /// Fallback do primeiro pagamento: usado quando checkout.completed chega antes de
+    /// (ou no lugar de) subscription.completed.
+    /// </summary>
+    private async Task<bool> HandleCheckoutCompletedAsync(
+        TrainerSubscription? sub, AbacatePayWebhookPayload payload, string rawBody, CancellationToken ct)
     {
         if (sub is null)
         {
             _logger.LogWarning("checkout.completed: nenhuma assinatura interna encontrada para vincular.");
-            return;
+            return false;
         }
 
-        // Assinatura já ativa → subscription.completed já foi processado, nada a fazer.
         if (sub.Status == TrainerSubscriptionStatus.Active)
         {
             _logger.LogInformation(
-                "checkout.completed: assinatura já está ativa — fallback desnecessário. SubscriptionId={SubId}", sub.Id);
-            return;
-        }
-
-        // Verificar pagamento duplicado pelo payment.id.
-        var paymentId = ExtractString(payload.Data, "payment.id") ?? ExtractString(payload.Data, "id");
-        if (!string.IsNullOrWhiteSpace(paymentId))
-        {
-            var dup = await _db.TrainerPayments.AnyAsync(
-                x => x.TrainerSubscriptionId == sub.Id
-                     && x.Provider == "AbacatePay"
-                     && x.ProviderPaymentId == paymentId
-                     && x.Status == PaymentStatus.Approved,
-                ct);
-
-            if (dup)
-            {
-                _logger.LogInformation(
-                    "checkout.completed: pagamento já registrado, fallback ignorado. PaymentId={PaymentId}", paymentId);
-                return;
-            }
+                "checkout.completed: assinatura já está ativa — fallback desnecessário. SubscriptionId={SubscriptionId}", sub.Id);
+            return false;
         }
 
         _logger.LogInformation(
-            "checkout.completed: ativando assinatura via fallback. SubscriptionId={SubId}", sub.Id);
+            "checkout.completed: ativando assinatura via fallback. SubscriptionId={SubscriptionId}", sub.Id);
 
-        await HandleSubscriptionCompletedAsync(sub, payload, rawBody, isFirstCompletion: true, ct);
+        return await _lifecycle.ActivateAsync(sub, BuildContext(payload, rawBody), ct);
     }
+
+    private static SubscriptionPaymentContext BuildContext(AbacatePayWebhookPayload payload, string rawBody) =>
+        new(
+            ProviderSubscriptionId: ExtractString(payload.Data, "subscription.id"),
+            ProviderCheckoutId: ExtractString(payload.Data, "checkout.id") ?? ExtractString(payload.Data, "id"),
+            ProviderCustomerId: ExtractString(payload.Data, "customer.id") ?? ExtractString(payload.Data, "customerId"),
+            ProviderPaymentId: ExtractString(payload.Data, "payment.id"),
+            AmountInCents: ExtractInt(payload.Data, "payment.amount") ?? ExtractInt(payload.Data, "amount"),
+            RawPayload: rawBody,
+            Source: SubscriptionTransitionSource.Webhook);
 
     // ═══════════════════════════════════════════════════════════════════════════
     // Resolução de assinatura interna
@@ -499,130 +515,226 @@ public sealed class AbacatePayWebhookService : IAbacatePayWebhookService
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // Coupon redemption (copiado do PaymentService para manter o service autônomo)
+    // Persistência do log
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private async Task TryRedeemCouponAsync(
-        TrainerSubscription sub, TrainerPayment payment, CancellationToken ct)
+    private enum EventClaimOutcome
     {
-        if (string.IsNullOrWhiteSpace(sub.CouponCodeApplied) || sub.CouponDiscountAmountInCents <= 0)
-            return;
+        /// <summary>Esta execução detém o evento e deve processá-lo.</summary>
+        Claimed,
 
-        var coupon = await _db.DiscountCoupons.FirstOrDefaultAsync(
-            c => c.Code.ToUpper() == sub.CouponCodeApplied!.ToUpper(), ct);
-        if (coupon is null) return;
+        /// <summary>O evento já atingiu um estado terminal — nada a reprocessar.</summary>
+        AlreadyTerminal,
 
-        var alreadyRedeemed = await _db.DiscountCouponRedemptions.AnyAsync(
-            r => r.CouponId == coupon.Id && r.TrainerId == sub.TrainerId && r.SubscriptionId == sub.Id, ct);
-        if (alreadyRedeemed) return;
+        /// <summary>Outra execução concorrente detém o evento neste momento.</summary>
+        InFlight
+    }
 
-        if (coupon.MaxUsesTotal.HasValue && coupon.CurrentUses >= coupon.MaxUsesTotal.Value)
+    private sealed record EventClaim(EventClaimOutcome Outcome, PaymentWebhookLog? Log, WebhookProcessingStatus? ExistingStatus);
+
+    /// <summary>
+    /// Janela em que um registro em <c>Processing</c> é considerado "em voo" por outra
+    /// execução. Passado esse tempo, presume-se que o processo anterior morreu sem
+    /// atualizar o status e o evento volta a ser reivindicável.
+    /// </summary>
+    private static readonly TimeSpan InFlightWindow = TimeSpan.FromMinutes(5);
+
+    /// <summary>
+    /// Reivindica o evento para processamento, aplicando a idempotência por
+    /// <c>EventId</c> (o "ProviderEventId" da AbacatePay).
+    ///
+    /// Três barreiras, da mais barata à mais forte:
+    ///   1. leitura do registro existente → estado terminal encerra o fluxo;
+    ///   2. registro em <c>Processing</c> dentro da janela → entrega concorrente;
+    ///   3. índice UNIQUE (Provider, EventId) → última barreira, trata a corrida real
+    ///      entre dois INSERTs simultâneos via <see cref="DbUpdateException"/>.
+    ///
+    /// O commit acontece aqui, fora da transação de negócio, para que o rastro do
+    /// webhook sobreviva a um rollback do processamento.
+    /// </summary>
+    private async Task<EventClaim> ClaimEventAsync(
+        string eventId, string eventType, string rawBody, CancellationToken ct)
+    {
+        var existing = await _db.PaymentWebhookLogs
+            .FirstOrDefaultAsync(x => x.Provider == ProviderName && x.EventId == eventId, ct);
+
+        if (existing is not null)
+            return await EvaluateExistingAsync(existing, ct);
+
+        var log = new PaymentWebhookLog
         {
-            _logger.LogWarning(
-                "Cupom sem saldo no resgate. Coupon={Coupon} SubscriptionId={SubId}", coupon.Code, sub.Id);
-            return;
+            Provider = ProviderName,
+            EventId = eventId,
+            Type = eventType,
+            RawPayload = rawBody,
+            ProcessingStatus = WebhookProcessingStatus.Processing,
+            LastAttemptAt = DateTime.UtcNow
+        };
+        _db.PaymentWebhookLogs.Add(log);
+
+        try
+        {
+            await _db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException)
+        {
+            // Corrida real entre duas entregas simultâneas: o índice único
+            // (Provider, EventId) garante que apenas uma linha exista. O perdedor
+            // relê o registro vencedor e desiste do processamento.
+            _db.Entry(log).State = EntityState.Detached;
+
+            var concurrent = await _db.PaymentWebhookLogs
+                .FirstOrDefaultAsync(x => x.Provider == ProviderName && x.EventId == eventId, ct);
+
+            if (concurrent is null) throw; // violação de unicidade de outra natureza
+
+            _logger.LogInformation(
+                "Entrega concorrente detectada pelo índice único. EventId={EventId} EventType={EventType}",
+                eventId, eventType);
+
+            return await EvaluateExistingAsync(concurrent, ct, cameFromUniqueViolation: true);
         }
 
-        if (coupon.MaxUsesPerCustomer.HasValue)
+        return new EventClaim(EventClaimOutcome.Claimed, log, null);
+    }
+
+    /// <summary>Decide o que fazer com um registro que já existe para este evento.</summary>
+    private async Task<EventClaim> EvaluateExistingAsync(
+        PaymentWebhookLog existing, CancellationToken ct, bool cameFromUniqueViolation = false)
+    {
+        if (IsTerminal(existing.ProcessingStatus))
+            return new EventClaim(EventClaimOutcome.AlreadyTerminal, existing, existing.ProcessingStatus);
+
+        var inFlight = existing.ProcessingStatus == WebhookProcessingStatus.Processing
+                       && existing.LastAttemptAt.HasValue
+                       && DateTime.UtcNow - existing.LastAttemptAt.Value < InFlightWindow;
+
+        if (inFlight)
         {
-            var uses = await _db.DiscountCouponRedemptions
-                .CountAsync(x => x.CouponId == coupon.Id && x.TrainerId == sub.TrainerId, ct);
-            if (uses >= coupon.MaxUsesPerCustomer.Value)
+            // Não sobrescreve o registro nem processa em paralelo: apenas registra a duplicata.
+            if (cameFromUniqueViolation)
             {
-                _logger.LogWarning(
-                    "Limite de cupom por cliente excedido. Coupon={Coupon} TrainerId={TrainerId}",
-                    coupon.Code, sub.TrainerId);
-                return;
+                _logger.LogInformation(
+                    "Entrega concorrente descartada. EventId={EventId} EventType={EventType}",
+                    existing.EventId, existing.Type);
             }
+            return new EventClaim(EventClaimOutcome.InFlight, existing, existing.ProcessingStatus);
         }
 
-        _db.DiscountCouponRedemptions.Add(new DiscountCouponRedemption
-        {
-            CouponId              = coupon.Id,
-            TrainerId             = sub.TrainerId,
-            SubscriptionId        = sub.Id,
-            PaymentId             = payment.Id,
-            RedeemedAt            = DateTime.UtcNow,
-            DiscountAmountInCents = sub.CouponDiscountAmountInCents
-        });
-        coupon.CurrentUses += 1;
-        coupon.UpdatedAt = DateTime.UtcNow;
+        // Registro órfão (Processing antigo) ou Failed: reivindicar para nova tentativa.
+        existing.ProcessingStatus = WebhookProcessingStatus.Processing;
+        existing.RetryCount++;
+        existing.LastAttemptAt = DateTime.UtcNow;
+        existing.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(ct);
+
+        return new EventClaim(EventClaimOutcome.Claimed, existing, null);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // Avanço de onboarding
-    // ═══════════════════════════════════════════════════════════════════════════
+    /// <summary>
+    /// Estados a partir dos quais um evento nunca mais é reprocessado — tanto em uma
+    /// reentrega do provedor quanto pela rotina de retry.
+    /// </summary>
+    private static bool IsTerminal(WebhookProcessingStatus status) => status
+        is WebhookProcessingStatus.Processed
+        or WebhookProcessingStatus.Duplicate
+        or WebhookProcessingStatus.Ignored
+        or WebhookProcessingStatus.IgnoredDevMode
+        or WebhookProcessingStatus.Abandoned;
 
-    private async Task AdvanceOnboardingAsync(TrainerSubscription sub, CancellationToken ct)
-    {
-        if (!sub.TrainerOnboardingId.HasValue) return;
-
-        var onboarding = await _db.TrainerOnboardings
-            .FirstOrDefaultAsync(x => x.Id == sub.TrainerOnboardingId.Value, ct);
-        if (onboarding is null) return;
-        if (onboarding.Status is OnboardingStatus.Canceled or OnboardingStatus.Completed) return;
-
-        TryAdvanceStatus(onboarding, OnboardingStatus.PaymentApproved);
-        onboarding.UpdatedAt = DateTime.UtcNow;
-        onboarding.CreatedTrainerId ??= sub.TrainerId;
-
-        if (!onboarding.CreatedUserId.HasValue)
-        {
-            var trainer = await _db.Trainers.FirstOrDefaultAsync(x => x.Id == sub.TrainerId, ct);
-            if (trainer is not null) onboarding.CreatedUserId = trainer.UserId;
-        }
-
-        if (onboarding.CreatedUserId.HasValue)
-        {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == onboarding.CreatedUserId.Value, ct);
-            if (user is not null && !user.IsActive)
-            {
-                user.IsActive = true;
-                user.UpdatedAt = DateTime.UtcNow;
-                await _passwordSetupService.GenerateAndSendSetupTokenAsync(
-                    user, "FitPlatform", isStudent: false);
-            }
-        }
-
-        TryAdvanceStatus(onboarding, OnboardingStatus.AccountCreated);
-        TryAdvanceStatus(onboarding, OnboardingStatus.Completed);
-
-        _logger.LogInformation(
-            "Onboarding avançado via webhook. OnboardingId={OnboardingId} NovoStatus={Status}",
-            onboarding.Id, onboarding.Status);
-    }
-
-    private static void TryAdvanceStatus(TrainerOnboarding o, OnboardingStatus target)
-    {
-        if (OnboardingRank(target) > OnboardingRank(o.Status)) o.Status = target;
-    }
-
-    private static int OnboardingRank(OnboardingStatus s) => s switch
-    {
-        OnboardingStatus.Draft          => 0,
-        OnboardingStatus.WaitingPayment => 1,
-        OnboardingStatus.PaymentApproved => 2,
-        OnboardingStatus.AccountCreated => 3,
-        OnboardingStatus.Completed      => 4,
-        OnboardingStatus.Canceled       => -1,
-        _                               => 0
-    };
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // Helpers
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    private async Task MarkLogAsFailedAsync(string eventId, string error, CancellationToken ct)
+    private async Task PersistIgnoredDevModeEventAsync(
+        string eventId, string eventType, string rawBody, CancellationToken ct)
     {
         try
         {
-            var log = await _db.PaymentWebhookLogs
-                .FirstOrDefaultAsync(x => x.Provider == "AbacatePay" && x.EventId == eventId, ct);
-            if (log is null) return;
+            var existing = await _db.PaymentWebhookLogs
+                .FirstOrDefaultAsync(x => x.Provider == ProviderName && x.EventId == eventId, ct);
 
-            log.ProcessingStatus = WebhookProcessingStatus.Failed;
-            log.ErrorMessage     = error.Length > 2000 ? error[..2000] : error;
-            log.UpdatedAt        = DateTime.UtcNow;
+            if (existing is not null)
+            {
+                // Nunca rebaixar um estado terminal já alcançado.
+                if (!IsTerminal(existing.ProcessingStatus))
+                {
+                    existing.ProcessingStatus = WebhookProcessingStatus.IgnoredDevMode;
+                    existing.ProcessedAt ??= DateTime.UtcNow;
+                    existing.NextRetryAt = null;
+                    existing.LastAttemptAt = DateTime.UtcNow;
+                    existing.UpdatedAt = DateTime.UtcNow;
+                    await _db.SaveChangesAsync(ct);
+                }
+                return;
+            }
+
+            _db.PaymentWebhookLogs.Add(new PaymentWebhookLog
+            {
+                Provider = ProviderName,
+                EventId = eventId,
+                Type = eventType,
+                RawPayload = rawBody,
+                ProcessingStatus = WebhookProcessingStatus.IgnoredDevMode,
+                ProcessedAt = DateTime.UtcNow,
+                LastAttemptAt = DateTime.UtcNow
+            });
+            await _db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogWarning(ex, "Não foi possível registrar evento devMode ignorado. EventId={EventId}", eventId);
+        }
+    }
+
+    /// <summary>
+    /// Registra a falha no log do webhook depois de um rollback do processamento.
+    ///
+    /// Crítico: a exceção que derrubou a transação normalmente deixou entidades inválidas
+    /// rastreadas no <c>ChangeTracker</c> (por exemplo, o pagamento cuja gravação falhou).
+    /// Salvar sem limpar reenviaria essas mesmas entidades e a atualização do log falharia
+    /// de novo — apagando exatamente o rastro que precisamos preservar.
+    /// Por isso o rastreamento é descartado e o log é relido do banco antes da escrita.
+    /// </summary>
+    private async Task MarkLogAsFailedAsync(PaymentWebhookLog log, string error, CancellationToken ct)
+    {
+        var logId = log.Id;
+        var eventId = log.EventId;
+
+        try
+        {
+            _db.ChangeTracker.Clear();
+
+            var fresh = await _db.PaymentWebhookLogs.FirstOrDefaultAsync(x => x.Id == logId, ct);
+            if (fresh is null)
+            {
+                _logger.LogError(
+                    "Log do webhook não encontrado ao registrar falha. EventId={EventId}", eventId);
+                return;
+            }
+
+            var maxRetries = _options.Reconciliation.WebhookMaxRetries;
+            var backoffMinutes = Math.Max(1, _options.Reconciliation.WebhookRetryBackoffMinutes);
+
+            fresh.ErrorMessage = Sanitize(error);
+            fresh.LastAttemptAt = DateTime.UtcNow;
+            fresh.UpdatedAt = DateTime.UtcNow;
+
+            if (fresh.RetryCount >= maxRetries)
+            {
+                fresh.ProcessingStatus = WebhookProcessingStatus.Abandoned;
+                fresh.NextRetryAt = null;
+                _logger.LogError(
+                    "Webhook abandonado após exceder o limite de tentativas. EventId={EventId} EventType={EventType} RetryCount={RetryCount} MaxRetries={MaxRetries}",
+                    fresh.EventId, fresh.Type, fresh.RetryCount, maxRetries);
+            }
+            else
+            {
+                fresh.ProcessingStatus = WebhookProcessingStatus.Failed;
+                // Backoff exponencial limitado (5, 10, 20, 40... minutos).
+                var delay = backoffMinutes * Math.Pow(2, Math.Min(fresh.RetryCount, 6));
+                fresh.NextRetryAt = DateTime.UtcNow.AddMinutes(delay);
+                _logger.LogWarning(
+                    "Webhook marcado para retry. EventId={EventId} EventType={EventType} RetryCount={RetryCount} NextRetryAt={NextRetryAt:O}",
+                    fresh.EventId, fresh.Type, fresh.RetryCount, fresh.NextRetryAt);
+            }
+
             await _db.SaveChangesAsync(ct);
         }
         catch (Exception ex)
@@ -631,53 +743,62 @@ public sealed class AbacatePayWebhookService : IAbacatePayWebhookService
         }
     }
 
-    private static PaymentWebhookLog BuildOrUpdateLog(
-        PaymentWebhookLog? existing, string eventId, string eventType, string rawBody)
-    {
-        if (existing is not null)
-        {
-            existing.ProcessingStatus = WebhookProcessingStatus.Processing;
-            existing.RetryCount++;
-            existing.UpdatedAt = DateTime.UtcNow;
-            return existing;
-        }
+    /// <summary>
+    /// Trunca a mensagem de erro para o tamanho da coluna. A mensagem vem de exceções
+    /// internas (EF/SQL) e nunca carrega secret, assinatura ou API key — o cliente HTTP
+    /// da AbacatePay só lança mensagens com endpoint e status code.
+    /// </summary>
+    private static string Sanitize(string error) =>
+        string.IsNullOrWhiteSpace(error) ? "Erro não especificado."
+        : error.Length > 2000 ? error[..2000]
+        : error;
 
-        return new PaymentWebhookLog
-        {
-            Provider         = "AbacatePay",
-            EventId          = eventId,
-            Type             = eventType,
-            RawPayload       = rawBody,
-            ProcessingStatus = WebhookProcessingStatus.Processing
-        };
+    private async Task AbandonLogAsync(PaymentWebhookLog log, string reason, CancellationToken ct)
+    {
+        log.ProcessingStatus = WebhookProcessingStatus.Abandoned;
+        log.ErrorMessage = reason;
+        log.NextRetryAt = null;
+        log.LastAttemptAt = DateTime.UtcNow;
+        log.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(ct);
     }
 
-    private static DateTime CalculateCycleEndDate(BillingFrequency cycle) => cycle switch
-    {
-        BillingFrequency.Semiannual => DateTime.UtcNow.AddMonths(6),
-        BillingFrequency.Yearly     => DateTime.UtcNow.AddMonths(12),
-        _                           => DateTime.UtcNow.AddMonths(1)
-    };
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Helpers de leitura de JSON
+    // ═══════════════════════════════════════════════════════════════════════════
 
     /// <summary>Extrai um valor string de um JsonElement dado um caminho com pontos.</summary>
     private static string? ExtractString(JsonElement element, string path)
     {
+        if (element.ValueKind != JsonValueKind.Object) return null;
+
         var current = element;
         foreach (var segment in path.Split('.', StringSplitOptions.RemoveEmptyEntries))
         {
-            if (!current.TryGetProperty(segment, out current)) return null;
+            if (current.ValueKind != JsonValueKind.Object || !current.TryGetProperty(segment, out current))
+                return null;
         }
-        return current.ValueKind == JsonValueKind.String ? current.GetString() : current.ToString();
+
+        return current.ValueKind switch
+        {
+            JsonValueKind.String => current.GetString(),
+            JsonValueKind.Null or JsonValueKind.Undefined => null,
+            _ => current.ToString()
+        };
     }
 
     /// <summary>Extrai um valor int de um JsonElement dado um caminho com pontos.</summary>
     private static int? ExtractInt(JsonElement element, string path)
     {
+        if (element.ValueKind != JsonValueKind.Object) return null;
+
         var current = element;
         foreach (var segment in path.Split('.', StringSplitOptions.RemoveEmptyEntries))
         {
-            if (!current.TryGetProperty(segment, out current)) return null;
+            if (current.ValueKind != JsonValueKind.Object || !current.TryGetProperty(segment, out current))
+                return null;
         }
-        return current.TryGetInt32(out var value) ? value : null;
+
+        return current.ValueKind == JsonValueKind.Number && current.TryGetInt32(out var value) ? value : null;
     }
 }
