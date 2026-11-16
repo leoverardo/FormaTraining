@@ -1,0 +1,21 @@
+{
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+  "changes": "Imagens reduzidas para 960 px de largura; o enquadramento pode ser recortado na exibição.",
+  "images": [
+    {
+      "file": "agachamento-livre.jpg",
+      "title": "Squat woman",
+      "author": "Em Bhoo",
+      "source": "https://commons.wikimedia.org/wiki/File:Squat_woman.jpg",
+      "originalSource": "https://www.flickr.com/photos/embhoo/5759454850/"
+    },
+    {
+      "file": "leg-press.jpg",
+      "title": "Girl playing weights with legs on the exercise machine",
+      "author": "Nenad Stojkovic",
+      "source": "https://commons.wikimedia.org/wiki/File:Girl_playing_weights_with_legs_on_the_exercise_machine.jpg",
+      "originalSource": "https://www.flickr.com/photos/nenadstojkovic/49061192878/"
+    }
+  ]
+}
