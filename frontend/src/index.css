@@ -322,6 +322,34 @@ select option { background-color: var(--surface); color: var(--text); }
 .app-content th { font-size: 12px; font-weight: 500; letter-spacing: 0; }
 .app-content :is(h1, h2, h3, h4), .uc-page-header { overflow-wrap: anywhere; }
 .app-content > :first-child { min-width: 0; }
+
+/* Keep the chronology in its own gutter, outside measurements and notes. */
+.uc-progress-timeline { --progress-marker-offset: 30px; }
+@media (min-width: 640px) {
+  .uc-progress-timeline { --progress-marker-offset: 38px; }
+}
+.uc-progress-timeline > li::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: var(--progress-marker-offset);
+  bottom: calc(-20px - var(--progress-marker-offset));
+  width: 1px;
+  background: var(--border-strong);
+}
+.uc-progress-timeline > li:last-child::before { display: none; }
+.uc-progress-timeline > li::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(var(--progress-marker-offset) - 5px);
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  background: var(--bg);
+}
+.uc-progress-timeline > li:first-child::after { background: var(--primary); }
 .gallery-landing { overflow-wrap: break-word; }
 
 /* Expansion intentionally moves the following content. Grid tracks follow the

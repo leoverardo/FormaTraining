@@ -9,7 +9,8 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { PageContainer } from '../../components/ui/PageContainer';
 import { SectionCard } from '../../components/ui/SectionCard';
 import { Skeleton } from '../../components/ui/Skeleton';
-import { TrendingUp, Plus, Trash2 } from 'lucide-react';
+import { Textarea } from '../../components/forms/Textarea';
+import { TrendingUp, Plus, Trash2, ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 
 const emptyForm = {
   weight: '', height: '', chest: '', waist: '', abdomen: '', hip: '',
@@ -24,12 +25,17 @@ const metricLabels = [
   ['waist', 'Cintura', 'cm'],
   ['abdomen', 'Abdômen', 'cm'],
   ['hip', 'Quadril', 'cm'],
-  ['rightArm', 'Braço D', 'cm'],
-  ['leftArm', 'Braço E', 'cm'],
-  ['rightThigh', 'Coxa D', 'cm'],
-  ['leftThigh', 'Coxa E', 'cm'],
-  ['bodyFatPercentage', '% Gordura', '%'],
+  ['rightArm', 'Braço direito', 'cm'],
+  ['leftArm', 'Braço esquerdo', 'cm'],
+  ['rightThigh', 'Coxa direita', 'cm'],
+  ['leftThigh', 'Coxa esquerda', 'cm'],
+  ['bodyFatPercentage', 'Gordura corporal', '%'],
 ];
+
+const numberFormat = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
+const diffFormat = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1, signDisplay: 'exceptZero' });
+// Measurements are calendar dates. Do not shift midnight UTC to the previous day.
+const formatDate = value => new Date(`${value.slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR');
 
 function ProgressSkeleton() {
   return (
@@ -74,7 +80,7 @@ export function StudentProgressPage() {
     const selected = [
       ['Peso', latest.weight, previous?.weight, 'kg'],
       ['Cintura', latest.waist, previous?.waist, 'cm'],
-      ['% Gordura', latest.bodyFatPercentage, previous?.bodyFatPercentage, '%'],
+      ['Gordura corporal', latest.bodyFatPercentage, previous?.bodyFatPercentage, '%'],
       ['Abdômen', latest.abdomen, previous?.abdomen, 'cm'],
     ];
     return selected
@@ -87,7 +93,7 @@ export function StudentProgressPage() {
     setSaving(true);
     try {
       const payload = Object.fromEntries(
-        Object.entries(form).map(([k, v]) => [k, k === 'progressDate' || k === 'notes' ? (v || null) : (v === '' ? null : parseFloat(v) || null)]),
+        Object.entries(form).map(([k, v]) => [k, k === 'progressDate' || k === 'notes' ? (v || null) : (v === '' ? null : parseFloat(v))]),
       );
       await progressService.createOwn(payload);
       toast('Progresso registrado!');
@@ -118,12 +124,12 @@ export function StudentProgressPage() {
 
   return (
     <PageContainer className="space-y-5 pb-20 sm:pb-0">
-      <section className="rounded-[var(--radius-card)] bg-[var(--surface)] p-5 sm:p-6 text-[var(--text)]">
+      <section className="text-[var(--text)]">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-[var(--text-secondary)] text-sm">Acompanhe sua evolução</p>
-            <h1 className="font-semibold mt-1 uc-heading">Meu Progresso</h1>
-            <p className="text-[var(--text-secondary)] text-sm mt-2">Última atualização: {latest ? new Date(latest.progressDate).toLocaleDateString('pt-BR') : '—'}</p>
+            <h1 className="uc-heading">Meu Progresso</h1>
+            <p className="text-[var(--text-secondary)] text-sm mt-2">Seu histórico de peso e medidas, registro a registro.</p>
+            {latest && <p className="text-[var(--text-secondary)] text-xs mt-2">Última atualização: {formatDate(latest.progressDate)}</p>}
           </div>
           <Button size="sm" onClick={() => setModalOpen(true)}><Plus size={14} />Registrar</Button>
         </div>
@@ -138,59 +144,77 @@ export function StudentProgressPage() {
         />
       ) : (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {highlights.map((item) => (
-              <SectionCard key={item.label} className="p-4" title={item.label}>
-                <p className="text-2xl font-semibold text-slate-900">{item.current}{item.unit}</p>
-                {item.diff != null ? (
-                  <p className={`text-xs mt-1 ${item.diff <= 0 ? 'text-[var(--status-success-text)]' : 'text-[var(--status-warning-text)]'}`}>
-                    {item.diff > 0 ? '+' : ''}{item.diff.toFixed(1)}{item.unit} desde o último registro
-                  </p>
-                ) : <p className="text-xs mt-1 text-slate-400">Sem comparação anterior</p>}
-              </SectionCard>
-            ))}
-          </div>
-
-          <SectionCard title="Linha do tempo" description="Histórico completo de evolução corporal">
-            <div className="space-y-4">
-              {records.map((record, idx) => (
-                <article key={record.id} className="relative rounded-2xl border border-slate-200 p-4">
-                  {idx !== records.length - 1 && <span className="absolute left-5 top-12 bottom-[-18px] w-px bg-[var(--surface-control)]" />}
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                      <span className="h-3 w-3 rounded-full bg-[var(--brand-indigo)] mt-1" />
-                      <div>
-                        <p className="font-semibold text-slate-900">{new Date(record.progressDate).toLocaleDateString('pt-BR')}</p>
-                        <p className="text-xs text-slate-500">Registro #{records.length - idx}</p>
-                      </div>
+          {highlights.length > 0 && (
+            <SectionCard title="Últimas medidas" description={previous ? `Variação em relação a ${formatDate(previous.progressDate)}` : 'Seu primeiro registro é o ponto de partida.'}>
+              <dl className="grid grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-6">
+                {highlights.map((item) => {
+                  const difference = item.diff != null && Math.abs(item.diff) < 0.05 ? 0 : item.diff;
+                  const DifferenceIcon = difference > 0 ? ArrowUpRight : difference < 0 ? ArrowDownRight : Minus;
+                  return (
+                    <div key={item.label} className="min-w-0">
+                      <dt className="text-sm text-[var(--text-secondary)]">{item.label}</dt>
+                      <dd className="mt-1 text-2xl sm:text-3xl font-semibold tabular-nums text-[var(--text)]">
+                        {numberFormat.format(item.current)} <span className="text-sm font-normal text-[var(--text-secondary)]">{item.unit}</span>
+                      </dd>
+                      <dd className="mt-2 text-xs text-[var(--text-secondary)]">
+                        {difference != null ? (
+                          <span className="inline-flex items-center gap-1.5"><DifferenceIcon size={15} aria-hidden="true" />
+                            <span>{diffFormat.format(difference)} {item.unit === '%' ? 'p.p.' : item.unit}</span>
+                          </span>
+                        ) : 'Sem comparação anterior'}
+                      </dd>
                     </div>
-                    <button onClick={() => setDeleteTarget(record.id)} className="p-1.5 rounded-lg hover:bg-[var(--status-danger-bg)] text-red-400"><Trash2 size={14} /></button>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                    {metricLabels.filter(([field]) => record[field] != null).map(([field, label, unit]) => (
-                      <div key={field} className="rounded-xl bg-[var(--surface-muted)] px-3 py-2 text-center border border-slate-100">
-                        <p className="text-xs text-slate-500">{label}</p>
-                        <p className="font-semibold text-slate-800 text-sm">{record[field]}{unit}</p>
-                      </div>
-                    ))}
-                  </div>
-                  {record.notes && <p className="text-xs text-slate-600 mt-3 bg-[var(--status-warning-bg)] border border-[var(--status-warning-bg)] rounded-lg px-3 py-2">{record.notes}</p>}
-                </article>
-              ))}
+                  );
+                })}
+              </dl>
+            </SectionCard>
+          )}
+
+          <section aria-labelledby="progress-history-title" className="pt-3">
+            <div className="mb-5">
+              <h2 id="progress-history-title" className="text-xl font-semibold text-[var(--text)]">Linha do tempo</h2>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">{records.length} {records.length === 1 ? 'registro' : 'registros'} · Do mais recente ao primeiro</p>
             </div>
-          </SectionCard>
+            <ol aria-label="Registros de evolução" className="uc-progress-timeline space-y-5">
+              {records.map((record, idx) => (
+                <li key={record.id} className="relative pl-6 sm:pl-8">
+                  <article aria-labelledby={`progress-date-${record.id}`} className="rounded-[var(--radius-md)] bg-[var(--surface)] p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div>
+                        <h3 id={`progress-date-${record.id}`} className="text-lg font-semibold tabular-nums text-[var(--text)]"><time dateTime={record.progressDate.slice(0, 10)}>{formatDate(record.progressDate)}</time></h3>
+                        <p className="text-xs text-[var(--text-secondary)] mt-1">Registro #{records.length - idx}{idx === 0 ? ' · Mais recente' : ''}</p>
+                      </div>
+                      <button type="button" aria-label={`Remover registro de ${formatDate(record.progressDate)}`} onClick={() => setDeleteTarget(record.id)} className="uc-icon-button shrink-0 hover:bg-[var(--status-danger-bg)] hover:text-[var(--danger)]"><Trash2 size={18} aria-hidden="true" /></button>
+                    </div>
+                    <dl className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-5 border-t border-[var(--border)] pt-4">
+                      {metricLabels.filter(([field]) => record[field] != null).map(([field, label, unit]) => (
+                        <div key={field} className="min-w-0">
+                          <dt className="text-xs text-[var(--text-secondary)]">{label}</dt>
+                          <dd className="mt-1 text-base sm:text-lg font-semibold tabular-nums text-[var(--text)]">{numberFormat.format(record[field])} <span className="text-xs font-normal text-[var(--text-secondary)]">{unit}</span></dd>
+                        </div>
+                      ))}
+                    </dl>
+                    {record.notes && <div className="mt-5 rounded-[var(--radius-sm)] bg-[var(--surface-muted)] p-4">
+                      <p className="text-xs font-semibold text-[var(--text-secondary)]">Observações</p>
+                      <p className="mt-2 text-sm leading-relaxed text-[var(--text)] whitespace-pre-wrap break-words">{record.notes}</p>
+                    </div>}
+                  </article>
+                </li>
+              ))}
+            </ol>
+          </section>
         </>
       )}
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Registrar progresso" size="lg">
         <form onSubmit={handleSave} className="space-y-4">
           <Input label="Data" type="date" {...f('progressDate')} />
-          <div className="grid grid-cols-2 gap-3">
-            {metricLabels.map(([field, label]) => <Input key={field} label={`${label}${field === 'bodyFatPercentage' ? '' : ' (cm/kg conforme campo)'}`} type="number" step="0.01" {...f(field)} />)}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {metricLabels.map(([field, label, unit]) => <Input key={field} label={`${label} (${unit})`} type="number" min="0" step="0.01" {...f(field)} />)}
           </div>
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Observações</label>
-            <textarea className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" rows={3} value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} />
+            <label htmlFor="progress-notes" className="block text-sm font-semibold text-[var(--text)]">Observações</label>
+            <Textarea id="progress-notes" rows={3} value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} />
           </div>
           <div className="flex gap-3">
             <Button variant="secondary" type="button" onClick={() => setModalOpen(false)} className="flex-1">Cancelar</Button>
