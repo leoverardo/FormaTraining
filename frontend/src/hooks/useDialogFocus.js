@@ -13,7 +13,12 @@ export function useDialogFocus(dialogRef, open, onClose, initialSelector = 'inpu
       (dialogRef.current?.querySelector(initialSelector) || focusable()[0] || dialogRef.current)?.focus();
     });
     const handleKey = event => {
-      if (event.key === 'Escape') { event.preventDefault(); closeRef.current(); }
+      if (event.key === 'Escape') {
+        // Let the browser dismiss its top-layer picker before closing the form.
+        if (CSS.supports('selector(select:open)') && dialogRef.current?.querySelector('select:open')) return;
+        event.preventDefault();
+        closeRef.current();
+      }
       if (event.key !== 'Tab') return;
       const nodes = focusable();
       const first = nodes[0];

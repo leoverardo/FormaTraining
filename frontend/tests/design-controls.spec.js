@@ -38,3 +38,21 @@ test('menu disponível no tablet e modal operável por teclado', async ({ page }
   await expect(dialog).not.toBeVisible();
   await assertNoPageOverflow(page);
 });
+
+test('Escape fecha primeiro as opções do select e preserva o formulário do modal', async ({ page }) => {
+  await installVisualApi(page);
+  await page.goto('/trainer/appointments');
+  await page.getByRole('button', { name: 'Novo compromisso', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  const select = dialog.locator('select').last();
+  await select.click();
+  await select.locator('option[value="Other"]').click();
+  await expect(select).toHaveValue('Other');
+  await select.click();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeVisible();
+  await expect(select).toHaveValue('Other');
+  await expect(select).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+});
