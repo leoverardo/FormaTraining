@@ -10,6 +10,9 @@ import { ProductStory } from './ProductStory';
 import { PlatformOverview } from './PlatformOverview';
 import { useLandingMotion } from './useLandingMotion';
 import { useMotionPreference } from '../../features/motion/useMotionPreference';
+import { useTheme } from '../../contexts/ThemeContext';
+import { CardFanCarousel } from '../../components/ui/card-fan-carousel';
+import { carouselScreens, screenSource } from './appScreens';
 import './marketing.css';
 
 const plans = [
@@ -26,6 +29,7 @@ const faqs = [
 
 export function LandingPage() {
   const root = useRef(null);
+  const { theme } = useTheme();
   const reduced = useMotionPreference();
   const [motionEnabled, setMotionEnabled] = useState(true);
   const moving = motionEnabled && !reduced;
@@ -49,10 +53,15 @@ export function LandingPage() {
         </div>
       </section>
       <PlatformOverview />
+      <section id="por-dentro" className="gallery-section gallery-mobile-showcase" aria-label="Explore o aplicativo">
+        <div className="gallery-shell gallery-center"><h2>Seu acompanhamento.<br /><span>Em cada detalhe.</span></h2><p className="gallery-copy">Explore as telas do personal e do aluno, nos modos claro e escuro. Um cuidado que acompanha a sua rotina.</p></div>
+        <div className="gallery-screens-fan"><CardFanCarousel cards={carouselScreens} theme={theme} enabled={moving} /></div>
+        <p className="gallery-footnote gallery-center">Capturas reais da interface mobile. Dados demonstrativos.</p>
+      </section>
       <section id="produto" className="gallery-band gallery-section"><div className="gallery-shell"><div className="gallery-section-heading"><h2>Menos tarefas.<br /><span>Mais possibilidades.</span></h2><a href="#como-funciona" className="gallery-link">Veja como funciona <ChevronRight size={17} /></a></div>
-        <FeatureCarousel enabled={moving}><article><p>ALUNOS</p><h3>Cada pessoa.<br />Todo o contexto.</h3><span>Objetivos, histórico e conversas reunidos para um acompanhamento próximo.</span><div className="gallery-student-list">{[['LA', 'Lucas Almeida', 'Foco em força'], ['AO', 'Ana Oliveira', 'Em evolução'], ['PS', 'Pedro Santos', 'Mais constância']].map(([initials, name, label]) => <div key={name}><i>{initials}</i><div><b>{name}</b><small>{label}</small></div><ChevronRight size={16} /></div>)}</div><UsersRound className="gallery-feature-icon" size={22} /></article>
-        <article><p>TREINOS</p><h3>Seu conhecimento.<br />Em movimento.</h3><span>Monte rotinas claras e organize sua biblioteca de exercícios do seu jeito.</span><div className="gallery-workout-card"><Dumbbell size={32} /><small>TREINO A</small><b>Uma boa base.<br />Um novo limite.</b><div><span>6 exercícios</span><span>45 minutos</span></div></div><Dumbbell className="gallery-feature-icon" size={22} /></article>
-        <article><p>EVOLUÇÃO</p><h3>Pequenos passos.<br />Avanços visíveis.</h3><span>Check-ins, fotos e registros transformam constância em uma história.</span><div className="gallery-progress-visual"><strong>86<span>%</span></strong><small>constância da semana</small><div>{[36, 52, 47, 70, 61, 86, 96].map((h, i) => <i key={i} style={{ height: `${h}%` }} />)}</div></div><HeartPulse className="gallery-feature-icon" size={22} /></article></FeatureCarousel>
+        <FeatureCarousel enabled={moving}><article><p>ALUNOS</p><h3>Cada pessoa.<br />Todo o contexto.</h3><span>Objetivos, histórico e conversas reunidos para um acompanhamento próximo.</span><img className="gallery-feature-screen" src={screenSource('personal-alunos', theme)} width="390" height="844" alt="Tela do personal: gestão de alunos no celular" loading="lazy" /><UsersRound className="gallery-feature-icon" size={22} /></article>
+        <article><p>TREINOS</p><h3>Seu conhecimento.<br />Em movimento.</h3><span>Monte rotinas claras e organize sua biblioteca de exercícios do seu jeito.</span><img className="gallery-feature-screen" src={screenSource('aluno-treino', theme)} width="390" height="844" alt="Tela do aluno: execução do treino no celular" loading="lazy" /><Dumbbell className="gallery-feature-icon" size={22} /></article>
+        <article><p>EVOLUÇÃO</p><h3>Pequenos passos.<br />Avanços visíveis.</h3><span>Check-ins, fotos e registros transformam constância em uma história.</span><img className="gallery-feature-screen" src={screenSource('aluno-progresso', theme)} width="390" height="844" alt="Tela do aluno: registros de evolução no celular" loading="lazy" /><HeartPulse className="gallery-feature-icon" size={22} /></article></FeatureCarousel>
       </div></section>
       <section id="experiencia" className="gallery-section"><div className="gallery-shell gallery-editorial"><div><p className="gallery-eyebrow">A experiência do aluno</p><h2>O próximo passo.<br /><span>Sempre por perto.</span></h2><p className="gallery-copy">Seu cuidado continua entre uma sessão e outra. Uma experiência simples de usar, com o treino do dia, a evolução e a conversa com você no mesmo lugar.</p><ul className="gallery-checks">{['Treinos claros, na palma da mão', 'Uma linha do tempo de conquistas', 'Conexão direta com seu personal'].map(text => <li key={text}><Check size={18} />{text}</li>)}</ul><Link to="/student/register" className="gallery-link">Conheça seu espaço <ChevronRight size={17} /></Link></div><div className="gallery-student-stage"><StudentDevicePreview scrollScreens={moving} /></div></div></section>
       <ProductStory enabled={moving} />

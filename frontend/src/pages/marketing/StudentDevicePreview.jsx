@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
+import { screenSource } from './appScreens';
 
 const screens = [
-  { src: '/marketing/aluno-painel.jpg', alt: 'Tela do aluno: painel' },
-  { src: '/marketing/aluno-treinos.jpg', alt: 'Tela do aluno: treinos' },
-  { src: '/marketing/aluno-progresso.jpg', alt: 'Tela do aluno: progresso' },
+  { key: 'aluno-painel', alt: 'Tela do aluno: painel' },
+  { key: 'aluno-treino', alt: 'Tela do aluno: treinos' },
+  { key: 'aluno-progresso', alt: 'Tela do aluno: progresso' },
 ];
 
-export function StudentDevicePreview({ scrollScreens = false }) {
+export function StudentDevicePreview({ scrollScreens = false, screenKey }) {
+  const { theme } = useTheme();
   const device = useRef(null);
   const [active, setActive] = useState(0);
 
@@ -32,9 +35,10 @@ export function StudentDevicePreview({ scrollScreens = false }) {
     };
   }, [scrollScreens]);
 
-  const screen = screens[scrollScreens ? active : 0];
+  const screen = screens.find(item => item.key === screenKey) || screens[scrollScreens ? active : 0];
+  const src = screenSource(screen.key, theme);
   return <div ref={device} className="student-device">
     <div className="device-speaker" aria-hidden="true" />
-    <img key={screen.src} className="student-device-screen" src={screen.src} width="390" height="844" alt={screen.alt} loading="lazy" />
+    <img key={src} className="student-device-screen" src={src} width="390" height="844" alt={screen.alt} loading="lazy" />
   </div>;
 }

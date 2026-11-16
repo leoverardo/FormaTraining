@@ -84,7 +84,7 @@ for (const width of [390, 768]) test(`narrativa móvel ${width}px apresenta demo
   await page.goto('/landing');
   const chapter = page.locator('.gallery-story-chapter[data-chapter="1"]');
   await chapter.scrollIntoViewIfNeeded();
-  await expect(chapter.locator('.gallery-prescription-preview')).toBeVisible();
+  await expect(chapter.getByRole('img', { name: 'Tela do aluno: treinos', exact: true })).toBeVisible();
   await expect(page.locator('.gallery-story-stage')).toHaveCSS('position', 'static');
   await assertNoPageOverflow(page);
 });

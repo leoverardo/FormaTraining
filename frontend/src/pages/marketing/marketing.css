@@ -71,6 +71,10 @@
 .product-appointment b { display: block; font-size: 9px; font-weight: 500; }
 .product-appointment small { display: block; font-size: 8px; color: var(--text-muted); }
 .gallery-band { background: var(--surface-muted); }
+.gallery-mobile-showcase { overflow: clip; }
+.gallery-mobile-showcase .gallery-copy { margin-inline: auto; max-width: 560px; }
+.gallery-screens-fan { width: min(1280px, 100%); margin: 16px auto 0; }
+.gallery-feature-screen { display: block; width: min(100%, 180px); height: auto; margin: 28px auto 12px; border: 1px solid var(--border); border-radius: 20px; }
 .gallery-section { padding: var(--section-gap) 0; scroll-margin-top: 69px; }
 .gallery-section h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 600; line-height: 1.08; letter-spacing: -.025em; }
 .gallery-section h2 span { color: var(--text-secondary); }
