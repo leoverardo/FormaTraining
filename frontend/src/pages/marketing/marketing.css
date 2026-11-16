@@ -137,7 +137,8 @@
 .gallery-faq article:first-child { padding-top: 0; }
 .gallery-faq button { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 100%; padding-right: 4px; text-align: left; font-size: 17px; font-weight: 500; }
 .gallery-faq button > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-.gallery-faq svg { flex: none; transition: transform .2s; }
+.gallery-faq svg { flex: none; transition: transform var(--duration-disclosure) var(--ease-apple); }
+.gallery-landing[data-motion='reduced'] .gallery-faq svg { transition: none; }
 .gallery-faq svg.is-open { transform: rotate(45deg); }
 .gallery-faq article p { margin-top: 16px; font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
 .gallery-final h2 { font-size: clamp(40px, 6vw, 72px); }

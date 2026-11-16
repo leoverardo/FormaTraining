@@ -78,6 +78,7 @@
   --text-hero: 80px;
   --ease-apple: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 180ms;
+  --duration-disclosure: 220ms;
   --duration-medium: 400ms;
   --duration-slow: 800ms;
   --content-width: 1200px;
@@ -240,6 +241,16 @@ select:not([multiple]):not([size]):disabled { background-color: var(--surface-mu
 .app-content :is(h1, h2, h3, h4), .uc-page-header { overflow-wrap: anywhere; }
 .app-content > :first-child { min-width: 0; }
 .gallery-landing { overflow-wrap: break-word; }
+
+/* Expansion intentionally moves the following content. Grid tracks follow the
+   natural content size, without guessed max-heights or per-frame JS measuring. */
+.uc-disclosure { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows var(--duration-disclosure) var(--ease-apple), opacity var(--duration-fast) var(--ease-apple); }
+.uc-disclosure[data-open='true'] { grid-template-rows: 1fr; opacity: 1; }
+.uc-disclosure__clip { min-height: 0; overflow: hidden; }
+.uc-disclosure[data-motion='reduced'] { transition: none; }
+.uc-disclosure-toggle { display: inline-flex; align-items: center; justify-content: center; }
+.uc-disclosure-toggle svg { transition: transform var(--duration-disclosure) var(--ease-apple); }
+.uc-disclosure-toggle[aria-expanded='true'] svg { transform: rotate(180deg); }
 
 @media (max-width: 1024px) {
   .uc-container { width: min(100% - 48px, var(--content-width-tablet)); }

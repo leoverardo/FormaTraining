@@ -10,7 +10,8 @@ import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingState } from '../../components/ui/LoadingState';
-import { ClipboardList, Plus, Pencil, Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
+import { Collapsible } from '../../components/ui/Collapsible';
+import { ClipboardList, Plus, Pencil, Trash2, ChevronDown, GripVertical } from 'lucide-react';
 
 const emptyWorkout = { name: '', goal: '', level: 1, description: '', status: 1 };
 
@@ -87,9 +88,11 @@ export function WorkoutsPage() {
             <div key={w.id} className="ds-card overflow-hidden">
               <div className="px-6 py-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto sm:flex-1">
-                  <button onClick={() => setExpandedId(expandedId === w.id ? null : w.id)} className="text-gray-400 hover:text-gray-600">
-                    {expandedId === w.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                  </button>
+                  <h2>
+                    <button type="button" id={`workout-toggle-${w.id}`} aria-label={`Exercícios de ${w.name}`} aria-expanded={expandedId === w.id} aria-controls={`workout-panel-${w.id}`} onClick={() => setExpandedId(expandedId === w.id ? null : w.id)} className="uc-disclosure-toggle text-gray-400 hover:text-gray-600">
+                      <ChevronDown size={18} aria-hidden="true" />
+                    </button>
+                  </h2>
                   <div className="min-w-0 break-words">
                     <p className="font-semibold text-gray-900 text-sm">{w.name}</p>
                     <p className="text-gray-400 text-xs">{w.exercises?.length || 0} exercícios · {w.level}</p>
@@ -102,7 +105,7 @@ export function WorkoutsPage() {
                   <button onClick={() => setDeleteTarget(w)} className="p-1.5 rounded-lg hover:bg-[var(--status-danger-bg)] text-[var(--status-danger-text)] transition-colors"><Trash2 size={16} /></button>
                 </div>
               </div>
-              {expandedId === w.id && (
+              <Collapsible open={expandedId === w.id} id={`workout-panel-${w.id}`} labelledBy={`workout-toggle-${w.id}`}>
                 <div className="border-t border-gray-100 px-6 py-4 bg-[var(--surface-muted)]">
                   {w.exercises?.length === 0 ? (
                     <p className="text-sm text-gray-400 text-center py-4">Nenhum exercício adicionado.</p>
@@ -121,7 +124,7 @@ export function WorkoutsPage() {
                     </div>
                   )}
                 </div>
-              )}
+              </Collapsible>
             </div>
           ))}
         </div>
