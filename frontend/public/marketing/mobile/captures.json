@@ -1,0 +1,13 @@
+{
+  "capturedOn": "2026-11-15",
+  "viewport": { "width": 390, "height": 844 },
+  "source": "Capturas do front-end UpCoach renderizado no navegador, com dados demonstrativos e sem informações reais de clientes.",
+  "themes": ["light", "dark"],
+  "screens": [
+    { "name": "aluno-painel", "route": "/student/dashboard" },
+    { "name": "aluno-treino", "route": "/student/workouts/:id", "state": "Sessão em andamento" },
+    { "name": "aluno-progresso", "route": "/student/progress" },
+    { "name": "aluno-checkin", "route": "/student/check-in" },
+    { "name": "personal-alunos", "route": "/trainer/students" }
+  ]
+}
