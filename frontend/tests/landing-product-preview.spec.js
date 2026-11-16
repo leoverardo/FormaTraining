@@ -23,24 +23,41 @@ test('apresentação usa telas reais do personal e do aluno', async ({ page }) =
   await expect(story.locator('.gallery-story-stage').getByRole('img', { name: 'Tela do aluno: painel' })).toBeVisible();
 });
 
-test('telas do aluno acompanham a rolagem e respeitam movimento reduzido', async ({ page }) => {
+test('telas do aluno trocam automaticamente a cada três segundos e respeitam pausa', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.clock.install();
   await page.goto('/landing');
   const section = page.locator('#experiencia');
-  const scrollToProgress = async progress => {
-    await page.evaluate(value => {
-      const section = document.querySelector('#experiencia');
-      const rect = section.getBoundingClientRect();
-      window.scrollTo({ top: rect.top + window.scrollY - window.innerHeight * 0.8 + value * (rect.height + window.innerHeight * 0.45), behavior: 'instant' });
-    }, progress);
-  };
-  await scrollToProgress(0.15);
+  await section.scrollIntoViewIfNeeded();
   await expect(section.getByRole('img', { name: 'Tela do aluno: painel' })).toBeVisible();
-  await scrollToProgress(0.5);
+  await page.clock.runFor(3100);
   await expect(section.getByRole('img', { name: 'Tela do aluno: treinos' })).toBeVisible();
-  await scrollToProgress(0.85);
+  await page.clock.runFor(3000);
   await expect(section.getByRole('img', { name: 'Tela do aluno: progresso' })).toBeVisible();
+  await page.getByRole('button', { name: 'Pausar animações', exact: true }).click();
+  await page.clock.runFor(6500);
+  await expect(section.getByRole('img', { name: 'Tela do aluno: progresso' })).toBeVisible();
+  await page.getByRole('button', { name: 'Ativar animações', exact: true }).click();
+  await page.clock.runFor(3100);
+  await expect(section.getByRole('img', { name: 'Tela do aluno: check-in' })).toBeVisible();
   await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.clock.runFor(6500);
   await expect(section.getByRole('img', { name: 'Tela do aluno: painel' })).toBeVisible();
 });
+
+for (const width of [320, 390, 768, 1440]) {
+  test(`fundo envolve o celular inteiro com margem em ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/landing');
+    const stage = page.locator('.gallery-student-stage');
+    await stage.scrollIntoViewIfNeeded();
+    const margins = await stage.evaluate(element => {
+      const outer = element.getBoundingClientRect();
+      const phone = element.querySelector('.student-device').getBoundingClientRect();
+      return [phone.top - outer.top, outer.bottom - phone.bottom, phone.left - outer.left, outer.right - phone.right];
+    });
+    for (const margin of margins) expect(margin).toBeGreaterThanOrEqual(16);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+  });
+}
