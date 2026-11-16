@@ -79,6 +79,7 @@
   --ease-apple: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 180ms;
   --duration-disclosure: 220ms;
+  --duration-exit: 160ms;
   --duration-medium: 400ms;
   --duration-slow: 800ms;
   --content-width: 1200px;
@@ -251,6 +252,16 @@ select:not([multiple]):not([size]):disabled { background-color: var(--surface-mu
 .uc-disclosure-toggle { display: inline-flex; align-items: center; justify-content: center; }
 .uc-disclosure-toggle svg { transition: transform var(--duration-disclosure) var(--ease-apple); }
 .uc-disclosure-toggle[aria-expanded='true'] svg { transform: rotate(180deg); }
+
+.uc-modal__backdrop { opacity: 1; transition: opacity var(--duration-fast) var(--ease-apple); }
+.uc-modal__panel { opacity: 1; transform: none; transition: opacity var(--duration-disclosure) var(--ease-apple), transform var(--duration-disclosure) var(--ease-apple); }
+.uc-modal[data-open='false'] { pointer-events: none; }
+.uc-modal[data-open='false'] .uc-modal__backdrop { opacity: 0; transition-duration: var(--duration-exit); }
+.uc-modal[data-open='false'] .uc-modal__panel { opacity: 0; transform: translateY(4px) scale(.99); transition-duration: var(--duration-exit); }
+@starting-style {
+  .uc-modal[data-open='true'] .uc-modal__backdrop { opacity: 0; }
+  .uc-modal[data-open='true'] .uc-modal__panel { opacity: 0; transform: translateY(8px) scale(.99); }
+}
 
 @media (max-width: 1024px) {
   .uc-container { width: min(100% - 48px, var(--content-width-tablet)); }

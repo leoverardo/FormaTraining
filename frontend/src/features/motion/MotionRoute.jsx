@@ -18,7 +18,7 @@ export function MotionRoute() {
       if (surface) surface.dataset.motion = reduced ? 'reduced' : 'enabled';
       if (reduced) return;
       const targets = [...root.querySelectorAll('.app-content h1, .app-content .ds-card, .auth-screen h1, .auth-screen h2, .auth-screen img, main h1, main h2, [role="dialog"] h2')]
-        .filter(element => !seen.has(element) && element.getClientRects().length && !element.closest('[aria-hidden="true"]') && !element.querySelector('table, [role="grid"]'))
+        .filter(element => !seen.has(element) && element.getClientRects().length && !element.closest('[aria-hidden="true"], [data-motion-surface]') && !element.querySelector('table, [role="grid"]'))
         .slice(0, 8);
       targets.forEach(element => seen.add(element));
       if (targets.length) context.add(() => gsap.from(targets, {
