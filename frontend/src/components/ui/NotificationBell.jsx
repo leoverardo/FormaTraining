@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { notificationService } from '../../services/notificationService';
 import { Bell } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useExitPresence } from '../../hooks/useExitPresence';
 
 export function NotificationBell() {
   const { user } = useAuth();
   const [count, setCount] = useState(0);
   const [open, setOpen] = useState(false);
+  const present = useExitPresence(open);
+  const panelId = useId();
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -48,7 +51,7 @@ export function NotificationBell() {
 
   return (
     <div className="relative">
-      <button onClick={handleOpen} aria-label="Notificações" aria-expanded={open} className="uc-icon-button relative transition-colors">
+      <button onClick={handleOpen} aria-label="Notificações" aria-expanded={open} aria-controls={panelId} className="uc-icon-button relative transition-colors">
         <Bell size={20} />
         {count > 0 && (
           <span className="absolute top-1 right-1 w-4 h-4 bg-[var(--danger-fill)] text-white text-xs rounded-full flex items-center justify-center leading-none">
@@ -57,10 +60,10 @@ export function NotificationBell() {
         )}
       </button>
 
-      {open && (
+      {present && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-12 w-80 max-w-[calc(100vw-40px)] ds-card border border-[var(--border)] z-50 overflow-hidden">
+          {open && <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />}
+          <div id={panelId} data-open={open} data-motion-surface aria-hidden={!open} inert={!open} className="uc-popover absolute right-0 top-12 w-80 max-w-[calc(100vw-40px)] ds-card border border-[var(--border)] z-50 overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
               <span className="font-semibold text-sm text-gray-900">Notificações</span>
               {count > 0 && (

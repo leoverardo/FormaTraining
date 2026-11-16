@@ -5,6 +5,7 @@ import { BrandLogo } from '../components/brand/BrandLogo';
 import { NotificationBell } from '../components/ui/NotificationBell';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 import { useDialogFocus } from '../hooks/useDialogFocus';
+import { useExitPresence } from '../hooks/useExitPresence';
 
 function SidebarItems({ groups, onNavigate }) {
   return (
@@ -66,6 +67,7 @@ function DesktopSidebar({ groups, onLogout, user, roleLabel }) {
 
 function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel }) {
   const drawerRef = useRef(null);
+  const present = useExitPresence(open);
   useDialogFocus(drawerRef, open, onClose, 'a[href]');
   useEffect(() => {
     if (!open) return undefined;
@@ -75,11 +77,11 @@ function MobileDrawer({ open, onClose, groups, onLogout, user, roleLabel }) {
     desktop.addEventListener('change', closeOnDesktop);
     return () => desktop.removeEventListener('change', closeOnDesktop);
   }, [open, onClose]);
-  if (!open) return null;
+  if (!present) return null;
   return (
-    <div className="fixed inset-0 z-50 md:hidden">
-      <button className="absolute inset-0 bg-black/35 backdrop-blur-[1px]" onClick={onClose} aria-label="Fechar menu" />
-      <aside ref={drawerRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Menu de navegação" className="absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-[var(--surface)] border-r border-slate-200 flex flex-col">
+    <div className="uc-drawer fixed inset-0 z-50 md:hidden" data-open={open} data-motion-surface aria-hidden={!open} inert={!open}>
+      <button className="uc-drawer__backdrop absolute inset-0 bg-black/35 backdrop-blur-[1px]" onClick={onClose} aria-label="Fechar menu" />
+      <aside ref={drawerRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Menu de navegação" className="uc-drawer__panel absolute left-0 top-0 bottom-0 w-72 max-w-[88vw] bg-[var(--surface)] border-r border-slate-200 flex flex-col">
         <div className="px-4 py-5 border-b border-slate-200">
           <div className="min-w-0">
             <BrandLogo size="sm" />
