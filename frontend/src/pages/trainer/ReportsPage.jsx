@@ -47,8 +47,8 @@ export function ReportsPage() {
                 <tr className="bg-[var(--surface-muted)] border-b border-gray-100">
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Aluno</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">?ltimo acesso</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">?ltimo check-in</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Último acesso</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Último check-in</th>
                   <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 uppercase">Check-ins</th>
                   <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 uppercase">Treinos</th>
                 </tr>
