@@ -106,7 +106,7 @@
 .gallery-copy { font-size: 17px; line-height: 1.5; color: var(--text-secondary); max-width: 440px; margin-top: 24px; }
 .gallery-checks { display: grid; gap: 16px; margin: 32px 0; font-size: 14px; }
 .gallery-checks li { display: flex; align-items: center; gap: 12px; }
-.gallery-student-stage { display: grid; place-items: center; border-radius: 28px; background: var(--surface-muted); padding: 48px 20px 0; overflow: hidden; height: 620px; }
+.gallery-student-stage { display: grid; place-items: center; min-width: 0; border-radius: 28px; background: var(--surface-muted); padding: 64px 24px; overflow: hidden; }
 .student-device { width: 272px; padding: 7px; border: 2px solid #5a6275; border-radius: 42px; background: #111725; position: relative; box-shadow: 12px 24px 38px rgba(8, 16, 40, .22), inset 1px 1px 1px rgba(255, 255, 255, .25); }
 .student-device-screen { display: block; width: 100%; height: auto; border-radius: 32px; background: #f5f5f7; }
 @media (prefers-reduced-motion: no-preference) {
@@ -115,7 +115,7 @@
 }
 .device-speaker { height: 8px; width: 60px; border-radius: 99px; position: absolute; z-index: 1; top: 10px; left: calc(50% - 30px); background: #111725; }
 .gallery-student-stage { perspective: 1100px; }
-.gallery-student-stage .student-device { transform: rotateY(-8deg) rotateX(3deg); transform-origin: center bottom; }
+.gallery-student-stage .student-device { width: min(272px, 100%); min-width: 0; transform: rotateY(-8deg) rotateX(3deg); transform-origin: center bottom; }
 .gallery-story-product-image { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; }
 .gallery-workflow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 64px; }
 .gallery-workflow article > span { font-size: 13px; color: var(--text-muted); }
@@ -219,7 +219,7 @@
   .gallery-features h3 { font-size: 30px; }
   .gallery-student-list, .gallery-workout-card, .gallery-progress-visual { max-width: 330px; margin-inline: auto; }
   .gallery-editorial { grid-template-columns: 1fr; }
-  .gallery-student-stage { height: 610px; }
+  .gallery-student-stage { padding: 48px 20px; }
   .gallery-workflow { grid-template-columns: 1fr; gap: 32px; margin-top: 40px; }
   .gallery-workflow article { border-top: 1px solid var(--border-strong); padding-top: 24px; }
   .gallery-workflow h3 { margin-top: 12px; }

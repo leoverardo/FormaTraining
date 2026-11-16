@@ -21,7 +21,7 @@ export function useLandingMotion(root, enabled) {
       const context = gsap.context(() => {
         gsap.to('.gallery-desktop-device', { y: -48, rotateX: 3, ease: 'none', scrollTrigger: { trigger: '.gallery-product-stage', start: 'top 75%', end: 'bottom top', scrub: 0.8 } });
         gsap.to('.gallery-product-caption', { y: -85, ease: 'none', scrollTrigger: { trigger: '.gallery-product-stage', start: 'top 80%', end: 'bottom top', scrub: 1 } });
-        gsap.fromTo('.gallery-student-stage .student-device', { y: 65, rotation: 3 }, { y: 0, rotation: 0, ease: 'none', scrollTrigger: { trigger: '.gallery-student-stage', start: 'top bottom', end: 'center center', scrub: 0.6 } });
+        gsap.fromTo('.gallery-student-stage .student-device', { y: 24, rotation: 3 }, { y: 0, rotation: 0, ease: 'none', scrollTrigger: { trigger: '.gallery-student-stage', start: 'top bottom', end: 'center center', scrub: 0.6 } });
       }, root);
       return () => context.revert();
     });
