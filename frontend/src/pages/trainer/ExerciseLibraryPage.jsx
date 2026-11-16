@@ -12,7 +12,8 @@ import { FormPage } from '../../components/forms/FormPage';
 import { FormHeader } from '../../components/forms/FormHeader';
 import { FormSection } from '../../components/forms/FormSection';
 import { FormGrid } from '../../components/forms/FormGrid';
-import { Dumbbell, Search, Download, ExternalLink, Library } from 'lucide-react';
+import { ExerciseCardMedia } from '../../components/ui/ExerciseCardMedia';
+import { Search, Download, ExternalLink, Library } from 'lucide-react';
 
 const levelOptions = [
   { value: 'all', label: 'Todos os niveis' },
@@ -23,17 +24,6 @@ const levelOptions = [
 
 function normalized(value) {
   return String(value || '').toLowerCase().trim();
-}
-
-function Placeholder({ name }) {
-  return (
-    <div className="flex h-40 items-center justify-center bg-[var(--brand-ink)] text-indigo-100">
-      <div className="text-center">
-        <Dumbbell className="mx-auto" size={24} />
-        <p className="mt-2 text-xs">{name || 'Exercicio base'}</p>
-      </div>
-    </div>
-  );
 }
 
 export function ExerciseLibraryPage() {
@@ -114,7 +104,7 @@ export function ExerciseLibraryPage() {
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((item) => (
             <article key={item.id} className="overflow-hidden ds-card transition hover:-translate-y-0.5">
-              {item.imageUrl ? <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover" /> : <Placeholder name={item.name} />}
+              <ExerciseCardMedia imageUrl={item.imageUrl} name={item.name} />
               <div className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <Badge variant="info">Base UpCoach</Badge>
