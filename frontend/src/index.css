@@ -199,12 +199,37 @@
 .ds-control[aria-invalid='true'] { border-color: var(--danger); }
 .ds-control:disabled { background: var(--surface-muted); opacity: .65; }
 .ds-control--textarea { border-radius: 20px; min-height: 112px; resize: vertical; }
+
+/* Keep native selection and keyboard behavior while giving every single-select
+   the same visual treatment, including controls rendered inside dialogs. */
+select:not([multiple]):not([size]) {
+  appearance: none;
+  min-height: 44px;
+  padding: 10px 44px 10px 20px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23707070' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  color: var(--text);
+  cursor: pointer;
+}
+:root[data-theme='dark'] select:not([multiple]):not([size]) {
+  color-scheme: dark;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23aeb7c7' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+}
+select:not([multiple]):not([size]):hover:not(:disabled) { border-color: var(--text-secondary); }
+select:not([multiple]):not([size]):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: var(--focus-ring); }
+select:not([multiple]):not([size])[aria-invalid='true'] { border-color: var(--danger); }
+select:not([multiple]):not([size]):disabled { background-color: var(--surface-muted); opacity: .65; cursor: not-allowed; }
+
 .uc-icon-button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border-radius: 9999px; color: var(--text-secondary); }
 .uc-icon-button:hover { background: var(--surface-muted); color: var(--text); }
 .uc-inverse { --text: #f5f7ff; --text-secondary: #b3bdcf; --text-muted: #aeb7c7; --border-strong: #b3bdcf; --link: #a5b4fc; }
 .app-content { width: min(100%, 1264px); margin-inline: auto; }
 .app-content input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']),
-.app-content select, .app-content textarea { min-height: 44px; background: var(--surface); color: var(--text); }
+.app-content select, .app-content textarea { min-height: 44px; background-color: var(--surface); color: var(--text); }
 .app-content input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']),
 .app-content select { border-radius: 980px; }
 .app-content :is(input, select, textarea) { min-width: 0; max-width: 100%; }
