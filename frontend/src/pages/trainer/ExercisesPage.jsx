@@ -22,6 +22,7 @@ import { PreviewCard } from '../../components/forms/PreviewCard';
 import { FormActions } from '../../components/forms/FormActions';
 import { Dumbbell, Plus, Pencil, Trash2, PlayCircle, Search, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getExerciseExample } from '../../features/exercises/exampleImages';
 
 const empty = { name: '', muscleGroup: '', description: '', instructions: '', imageUrl: '', videoUrl: '', level: 1 };
 const emptyMedia = { imageMediaId: null, videoMediaId: null };
@@ -43,7 +44,21 @@ function normalized(value) {
 }
 
 function CardMedia({ imageUrl, name }) {
-  if (imageUrl) return <img src={imageUrl} alt={name} className="h-40 w-full object-cover" />;
+  const example = !imageUrl ? getExerciseExample(name) : null;
+  const src = imageUrl || example?.src;
+  const [failedSrc, setFailedSrc] = useState(null);
+  if (src && src !== failedSrc) return (
+    <figure>
+      <div className="relative">
+        <img src={src} alt={example?.alt || name} loading="lazy" decoding="async" onError={() => setFailedSrc(src)} className="h-40 w-full object-cover" />
+        {example && <span className="absolute bottom-3 left-3 rounded-full bg-[var(--surface)] px-3 py-1 text-xs font-medium text-[var(--text)]">Imagem de exemplo</span>}
+      </div>
+      {example && <figcaption className="bg-[var(--surface-muted)] px-4 py-2 text-xs text-[var(--text-secondary)]">
+        Foto: <a href={example.source} target="_blank" rel="noreferrer" className="underline underline-offset-2">{example.author}</a> · <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noreferrer" className="underline underline-offset-2">CC BY 2.0</a>
+        <span className="sr-only">. Imagem reduzida e recortada na exibição.</span>
+      </figcaption>}
+    </figure>
+  );
   return (
     <div className="flex h-40 items-center justify-center bg-[var(--brand-ink)] text-indigo-100">
       <div className="text-center">
