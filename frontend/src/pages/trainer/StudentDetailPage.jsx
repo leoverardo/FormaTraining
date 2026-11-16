@@ -322,7 +322,7 @@ export function StudentDetailPage() {
                 {[['Foto inicial', compareA, setCompareA], ['Foto atual', compareB, setCompareB]].map(([label, val, setter]) => (
                   <div key={label}>
                     <p className="text-xs text-gray-400 mb-1">{label}</p>
-                    <select className="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 mb-2 bg-[var(--surface)]" value={val?.id || ''} onChange={e => setter(photos.find(p => p.id === e.target.value) || null)}>
+                    <select className="ds-control text-sm mb-2" value={val?.id || ''} onChange={e => setter(photos.find(p => p.id === e.target.value) || null)}>
                       <option value="">Selecione...</option>
                       {photos.map(p => <option key={p.id} value={p.id}>{new Date(p.photoDate).toLocaleDateString('pt-BR')}</option>)}
                     </select>
@@ -491,7 +491,7 @@ export function StudentDetailPage() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
-              <select className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" value={habitForm.category} onChange={(e) => setHabitForm((p) => ({ ...p, category: e.target.value }))}>
+              <select className="ds-control text-sm" value={habitForm.category} onChange={(e) => setHabitForm((p) => ({ ...p, category: e.target.value }))}>
                 {['Custom', 'Water', 'Sleep', 'Nutrition', 'Cardio', 'Steps'].map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>

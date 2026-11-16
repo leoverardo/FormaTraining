@@ -122,13 +122,13 @@ export function AppointmentsPage() {
       </div>
 
       <div className="ds-card grid gap-3 sm:grid-cols-3 p-[var(--card-padding)]">
-        <select className="rounded-xl border border-gray-300 px-3 py-2 text-sm" value={filters.status} onChange={(e) => setFilters((p) => ({ ...p, status: e.target.value }))}>
+        <select className="ds-control text-sm" value={filters.status} onChange={(e) => setFilters((p) => ({ ...p, status: e.target.value }))}>
           <option value="">Todos status</option>{statuses.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
-        <select className="rounded-xl border border-gray-300 px-3 py-2 text-sm" value={filters.type} onChange={(e) => setFilters((p) => ({ ...p, type: e.target.value }))}>
+        <select className="ds-control text-sm" value={filters.type} onChange={(e) => setFilters((p) => ({ ...p, type: e.target.value }))}>
           <option value="">Todos tipos</option>{types.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
-        <select className="rounded-xl border border-gray-300 px-3 py-2 text-sm" value={filters.studentId} onChange={(e) => setFilters((p) => ({ ...p, studentId: e.target.value }))}>
+        <select className="ds-control text-sm" value={filters.studentId} onChange={(e) => setFilters((p) => ({ ...p, studentId: e.target.value }))}>
           <option value="">Todos alunos</option>{students.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
       </div>
@@ -159,11 +159,11 @@ export function AppointmentsPage() {
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? 'Editar compromisso' : 'Novo compromisso'}>
         <form onSubmit={save} className="space-y-3">
-          <select className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" value={form.studentId} onChange={(e) => setForm((p) => ({ ...p, studentId: e.target.value }))}>
+          <select className="ds-control text-sm" value={form.studentId} onChange={(e) => setForm((p) => ({ ...p, studentId: e.target.value }))}>
             <option value="">Sem aluno vinculado</option>{students.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
           <input className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" placeholder="Título" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} required />
-          <select className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}>{types.map((t) => <option key={t} value={t}>{t}</option>)}</select>
+          <select className="ds-control text-sm" value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}>{types.map((t) => <option key={t} value={t}>{t}</option>)}</select>
           <textarea className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm" rows={2} placeholder="Descrição" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <input type="datetime-local" className="rounded-xl border border-gray-300 px-3 py-2 text-sm" value={form.startAt} onChange={(e) => setForm((p) => ({ ...p, startAt: e.target.value }))} required />

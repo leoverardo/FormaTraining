@@ -83,7 +83,7 @@ export function TrainerLeadsPage() {
                       <select
                         value={lead.status}
                         onChange={(e) => updateStatus(lead.id, e.target.value)}
-                        className="rounded-lg border border-slate-300 px-2 py-1 text-xs"
+                        className="ds-control text-sm"
                       >
                         {statusOptions.map((status) => <option key={status} value={status}>{status}</option>)}
                       </select>

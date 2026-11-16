@@ -77,7 +77,7 @@ export function SchedulePage() {
           <div className="flex-1 min-w-48">
             <label className="block text-sm font-medium text-gray-700 mb-1">Selecionar aluno</label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-[var(--surface)]"
+              className="ds-control text-sm"
               value={selectedStudent}
               onChange={e => setSelectedStudent(e.target.value)}
             >
@@ -121,13 +121,13 @@ export function SchedulePage() {
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Dia da semana</label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-[var(--surface)]" value={form.dayOfWeek} onChange={e => setForm(p => ({ ...p, dayOfWeek: parseInt(e.target.value) }))}>
+            <select className="ds-control text-sm" value={form.dayOfWeek} onChange={e => setForm(p => ({ ...p, dayOfWeek: parseInt(e.target.value) }))}>
               {days.map((d, i) => <option key={i} value={i}>{d}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Treino</label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-[var(--surface)]" value={form.workoutId} onChange={e => setForm(p => ({ ...p, workoutId: e.target.value }))} required>
+            <select className="ds-control text-sm" value={form.workoutId} onChange={e => setForm(p => ({ ...p, workoutId: e.target.value }))} required>
               <option value="">Selecione...</option>
               {workouts.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
             </select>

@@ -4,6 +4,7 @@ import { anamnesisService } from '../../services/anamnesisService';
 import { useToast } from '../../components/ui/Toast';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Select';
 import { LoadingState } from '../../components/ui/LoadingState';
 
 const empty = {
@@ -368,19 +369,12 @@ export function StudentAnamnesisPage() {
 
 function SelectField({ label, value, onChange, options, placeholder }) {
   return (
-    <div className="space-y-1.5">
-      <label className="block text-sm font-semibold text-slate-700">{label}</label>
-      <select
-        className="h-11 w-full rounded-xl border border-slate-300 bg-[var(--surface)] px-3.5 text-sm text-slate-800 transition focus:border-[var(--primary)] focus:outline-none focus:ring-4 focus:ring-indigo-100"
-        value={value}
-        onChange={onChange}
-      >
+    <Select label={label} value={value} onChange={onChange}>
         <option value="">{placeholder}</option>
         {options.map((opt) => (
           <option key={opt} value={opt}>{opt}</option>
         ))}
-      </select>
-    </div>
+    </Select>
   );
 }
 

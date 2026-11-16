@@ -102,14 +102,14 @@ export function StudentPhotosPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
             <div>
               <p className="text-xs text-slate-500 mb-1">Antes</p>
-              <select className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-2 bg-[var(--surface)]" value={compareAId} onChange={(e) => setCompareAId(e.target.value)}>
+              <select className="ds-control text-sm mb-2" value={compareAId} onChange={(e) => setCompareAId(e.target.value)}>
                 {sortedPhotos.map((p) => <option key={p.id} value={p.id}>{new Date(p.photoDate).toLocaleDateString('pt-BR')}</option>)}
               </select>
               {compareA ? <img src={compareA.imageUrl} alt="Antes" className="w-full h-56 object-cover rounded-2xl border border-slate-100" /> : null}
             </div>
             <div>
               <p className="text-xs text-slate-500 mb-1">Depois</p>
-              <select className="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-2 bg-[var(--surface)]" value={compareBId} onChange={(e) => setCompareBId(e.target.value)}>
+              <select className="ds-control text-sm mb-2" value={compareBId} onChange={(e) => setCompareBId(e.target.value)}>
                 {sortedPhotos.map((p) => <option key={p.id} value={p.id}>{new Date(p.photoDate).toLocaleDateString('pt-BR')}</option>)}
               </select>
               {compareB ? <img src={compareB.imageUrl} alt="Depois" className="w-full h-56 object-cover rounded-2xl border border-slate-100" /> : null}
